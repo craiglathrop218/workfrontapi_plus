@@ -35,7 +35,7 @@ class Workfront(object):
 
     CORE_URL = "https://{subdomain}.{env}.workfront.com/attask/api/v{version}/"
 
-    def __init__(self, subdomain, env='sandbox', api_version='7.0', api_key=None, session_id=None, user_id=None, debug=False):
+    def __init__(self, subdomain, env='sandbox', api_version='7.0', api_key=None, session_id=None, user_id=None, debug=False, test_mode=False):
         """
         Setup class
         
@@ -56,6 +56,16 @@ class Workfront(object):
         self.user_id = user_id
         self.api_key = api_key
         self.debug = debug
+        self.test_mode = test_mode
+
+        if self.test_mode:
+            self._request = self.test_mode_make_request
+        else:
+            self._request = self._make_request
+
+    @staticmethod
+    def test_mode_make_request(*args, **kwargs):
+        return args, kwargs
 
     def login(self, username, password=None):
         """
@@ -146,20 +156,18 @@ class Workfront(object):
         """
         path = '{0}'.format(objcode)
         params = {'updates': updates}
-        print(params)
         return self._request(path, params, self.PUT, fields)
 
     def bulk_create(self, objcode, updates, fields=None):
         """
         Bulk creation of objects such as tasks, issues, other.
 
-        This method differes from bulk in that it uses the POST operation, not PUT
+        This method differs from bulk in that it uses the POST operation, not PUT
         :param objcode: object type (i.e. 'PROJECT')
-        :param updates: A list of dicts contining the updates
+        :param updates: A list of dicts containing the updates
         :param fields: List of field names to return for each object
         :return: The results of the _request as a list of newly created objects
         """
-
         path = '/{0}'.format(objcode)
         params = {'updates': updates}
         return self._request(path, params, self.POST, fields)
@@ -416,7 +424,7 @@ class Workfront(object):
 
         return output_string
 
-    def _request(self, path, params, method, fields=None, raw=False):
+    def _make_request(self, path, params, method, fields=None, raw=False):
         """
         Makes the request to Workfront API
 
