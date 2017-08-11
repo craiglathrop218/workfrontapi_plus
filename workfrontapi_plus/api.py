@@ -49,7 +49,7 @@ class Workfront(object):
         self.subdomain = subdomain
         url = self.CORE_URL.format(subdomain=subdomain,
                                    env=env,
-                                   api_version=api_version)
+                                   version=api_version)
         
         self.url = url
         self.session_id = session_id
@@ -136,6 +136,21 @@ class Workfront(object):
 
         return self._request(path, params, self.PUT, fields)
 
+
+    def _bulk_segmenter(self, bulk_method, **kwargs):
+        if 'updates' in kwargs:
+            data = kwargs['updates']
+            key = 'updates'
+
+        else:
+            data = kwargs['objids']
+            key = 'objids'
+        for i in range(0, len(data), 100):
+            sliced_update_list = list(data[i:i + 100])
+            kwargs[key] = sliced_update_list
+            bulk_method(**kwargs)
+
+
     def bulk(self, objcode, updates, fields=None):
         """
         Makes bulk updates to existing objects
@@ -144,9 +159,11 @@ class Workfront(object):
         :param fields: A list of fields to return - Optional
         :return: The results of the _request as a list of updated objects
         """
+
+        if len(updates) > 100:
+            res = self._bulk_segmenter(self.bulk, objcode = objcode, updates = updates, fields = fields)
         path = '{0}'.format(objcode)
         params = {'updates': updates}
-        print(params)
         return self._request(path, params, self.PUT, fields)
 
     def bulk_create(self, objcode, updates, fields=None):
@@ -159,7 +176,8 @@ class Workfront(object):
         :param fields: List of field names to return for each object
         :return: The results of the _request as a list of newly created objects
         """
-
+        if len(updates) > 100:
+            res = self._bulk_segmenter(self.bulk, objcode = objcode, updates = updates, fields = fields)
         path = '/{0}'.format(objcode)
         params = {'updates': updates}
         return self._request(path, params, self.POST, fields)
@@ -222,6 +240,9 @@ class Workfront(object):
                        will throw an error as it will not be able to find those ID's.
         :return: The results of the deletion
         """
+
+        if len(objids) > 100:
+            res = self._bulk_segmenter(self.bulk, objcode = objcode, objids = objids, force=True, atomic=True)
         path = '/{0}'.format(objcode)
 
         params = {"ID": objids, "force": force}
