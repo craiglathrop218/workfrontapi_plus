@@ -64,8 +64,8 @@ class Workfront(object):
             self._request = self._make_request
 
     @staticmethod
-    def test_mode_make_request(*args, **kwargs):
-        return args, kwargs
+    def test_mode_make_request(*args):
+        return args
 
     def login(self, username, password=None):
         """
@@ -146,8 +146,8 @@ class Workfront(object):
 
         return self._request(path, params, self.PUT, fields)
 
-
     def _bulk_segmenter(self, bulk_method, **kwargs):
+        output = []
         if 'updates' in kwargs:
             data = kwargs['updates']
             key = 'updates'
@@ -158,7 +158,9 @@ class Workfront(object):
         for i in range(0, len(data), 100):
             sliced_update_list = list(data[i:i + 100])
             kwargs[key] = sliced_update_list
-            bulk_method(**kwargs)
+            output += bulk_method(**kwargs)
+
+        return output
 
 
     def bulk(self, objcode, updates, fields=None):
@@ -172,6 +174,7 @@ class Workfront(object):
 
         if len(updates) > 100:
             res = self._bulk_segmenter(self.bulk, objcode = objcode, updates = updates, fields = fields)
+            return res
         path = '{0}'.format(objcode)
         params = {'updates': updates}
         return self._request(path, params, self.PUT, fields)
