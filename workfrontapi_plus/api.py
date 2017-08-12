@@ -23,6 +23,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 import math
+import pprint
 
 
 class Workfront(object):
@@ -36,7 +37,7 @@ class Workfront(object):
 
     CORE_URL = "https://{subdomain}.{env}.workfront.com/attask/api/v{version}/"
 
-    def __init__(self, subdomain, env='sandbox', api_version='7.0', api_key=None, session_id=None, user_id=None, debug=False, test_mode=False):
+    def __init__(self, subdomain, env, api_version='7.0', api_key=None, session_id=None, user_id=None, debug=False, test_mode=False):
         """
         Setup class
         
@@ -274,17 +275,22 @@ class Workfront(object):
         :return:
         """
         path = '/{0}/search'.format(objcode)
-        if get_all or limit > 2000:
+        if get_all or limit:
+            max_limit = 500
             output = []
             first = 0
             count = self.count(objcode, params)
-            count = count if count < limit else limit
-            loop_count = int(math.ceil(count/2000))
-            limit = 2000
+            if limit:
+                count = count if count < limit else limit
+                limit = max_limit if limit > max_limit else limit
+            else:
+                limit = max_limit
+            loop_count = int(math.ceil(count/max_limit))
             params['$$LIMIT'] = limit
             for i in range(0, loop_count):
+                if i == (loop_count - 1):
+                    params['$$LIMIT'] = count - ((loop_count - 1) * limit)
                 params['$$FIRST'] = first
-                first += limit
                 res = self._request(path, params, self.GET, fields)
                 output += res
                 first += limit
@@ -306,7 +312,7 @@ class Workfront(object):
 
 
         path = '/{0}/count'.format(objcode)
-        return self._request(path, params, self.GET)
+        return self._request(path, params, self.GET)['count']
 
     def report(self, objcode, params, agg_field, agg_func, group_by_field=None, rollup=False):
         """
@@ -546,10 +552,10 @@ class Workfront(object):
         try:
             response = urllib.request.urlopen(dest, bin_data)
         except urllib.error.URLError as e:
-            # error_msg = e.read().decode("utf8", 'ignore')
-            # error_msg_decode = json.loads(error_msg)
-            # # pprint.pprint(e)
-            # pprint.pprint(error_msg)
+            error_msg = e.read().decode("utf8", 'ignore')
+            error_msg_decode = json.loads(error_msg)
+            # pprint.pprint(e)
+            pprint.pprint(error_msg)
             if self.debug:
                 print('API Key: ', self.api_key, ' Session ID: ', self.session_id)
                 print('Params: ', params)
