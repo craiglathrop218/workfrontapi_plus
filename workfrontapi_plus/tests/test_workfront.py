@@ -2,21 +2,61 @@ from unittest import TestCase
 from workfrontapi_plus import Workfront
 from wfconfig import WorkfrontConfig
 
-import hashlib
-import json
+import hashlib, json, requests
+from nose.tools import assert_true
+
+'''https://realpython.com/blog/python/testing-third-party-apis-with-mocks/'''
 
 class TestWorkfront(TestCase):
 
     api = Workfront(WorkfrontConfig.subdomain, 'preview', api_key=WorkfrontConfig.api_key, test_mode=True)
 
-    def hash_dict(self, some_dict, make_list=False):
+
+######## UTILITY METHODS ##########
+    @staticmethod
+    def hash_dict(some_dict, make_list=False):
         dict_string = json.dumps(some_dict, sort_keys=True)
         dict_string = dict_string.encode('ascii', 'ignore')
         res = hashlib.sha1(dict_string).hexdigest()
         return [res] if make_list else res
 
+    @staticmethod
+    def api_response(data, dest):
+        params_dict = {}
+        data = str(data)
+        data_list = data.split("&")
+        for item in data_list:
+            key_value_split = item.split("=")
+            # str() because some stuff is byte vale b"..."
+            params_dict[str(key_value_split[0])] = str(key_value_split[1])
 
-########
+        params_dict['path'] = dest
+
+        json_out = json.dumps(params_dict)
+
+        return json_out
+
+    # @staticmethod
+    # def test_api():
+    #     res = requests.get()
+
+
+########  LIVE E2E TESTS #############
+
+    def e2e_controller(self):
+        pass
+
+    def test_live_search(self):
+        self.api._request = self.api._make_request
+        res = self.api.search('task', {'name': 'cra', 'name_Mod': 'cicontains'}, ['name'])
+        print(res[0])
+        assert_true(isinstance(res, list))
+
+
+
+
+
+########  BEGIN UNIT TESTS ###########
 
     def test_login(self):
         # Test with a password
@@ -344,8 +384,51 @@ class TestWorkfront(TestCase):
     def test_make_update_as_user(self):
         pass
 
-    def test__make_params_string(self):
-        pass
+    def test__parse_parameter_lists(self):
+
+        params = {'status': ['CUR', 'PLN', 'APP'],
+                  'status_Mod': 'in'}
+        res = self.api._parse_parameter_lists(params)
+        # Convert to a list so there can be a stable order to the elements. Without this Python will somewhat
+        # randomly re-order the elements.
+        res = sorted(res.split("&"))
+        golden = ['status=APP', 'status=CUR', 'status=PLN', 'status_Mod=in']
+        self.assertEqual(res, golden)
+
+        params = {}
+        params['assignedToID_Mod'] = "notblank"
+        params['percentComplete'] = "100"
+        params['percentComplete_Mod'] = "lt"
+
+        params['canStart'] = ['true', 'false', 'maybe']
+        params['canStart_Mod'] = 'in'
+
+        params['plannedStartDate'] = '$$TODAY+5d'
+        params['plannedStartDate_Mod'] = 'lt'
+
+        params['project:statusEquatesWith'] = ['CUR', 'PLN', 'TST']
+        params['project:statusEquatesWith_Mod'] = 'in'
+
+        params['DE:project:Clover Notifications'] = 'On'
+        params['DE:project:Clover Notifications_Mod'] = 'eq'
+
+        params['DE:Send Notifications for This Task'] = 'Yes'
+        params['DE:Send Notifications for This Task_Mod'] = 'eq'
+        res = self.api._parse_parameter_lists(params)
+        res = sorted(res.split("&"))
+        golden = ['DE:Send Notifications for This Task=Yes', 'DE:Send Notifications for This Task_Mod=eq', 'DE:project:Clover Notifications=On', 'DE:project:Clover Notifications_Mod=eq', 'assignedToID_Mod=notblank', 'canStart=false', 'canStart=maybe', 'canStart=true', 'canStart_Mod=in', 'percentComplete=100', 'percentComplete_Mod=lt', 'plannedStartDate=$$TODAY+5d', 'plannedStartDate_Mod=lt', 'project:statusEquatesWith=CUR', 'project:statusEquatesWith=PLN', 'project:statusEquatesWith=TST', 'project:statusEquatesWith_Mod=in']
+
+        self.assertEqual(res, golden)
 
     def test__make_request(self):
-        pass
+        path = '/task/abc123'
+        params = {'a': 'b'}
+        method = self.api.GET
+        fields = ['a', 'b', 'c']
+
+        self.api._open_api_connection = self.api_response
+
+        res = self.api._request(path, params, method, fields)
+        res = sorted(res)
+        self.assertEqual(1,1)
+
