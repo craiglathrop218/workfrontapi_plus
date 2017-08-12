@@ -20,7 +20,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-
 #  Original copyright notice from Workfront Version of this API
 #
 #  Copyright (c) 2010 AtTask, Inc.
@@ -38,15 +37,15 @@ SOFTWARE.
 #  COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 #  OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import codecs
-import json
+import codecs, requests, json, math
+
 import urllib.error
 import urllib.parse
 import urllib.request
-import math
+
+
 
 class Workfront(object):
-
     GET = 'GET'
     POST = 'POST'
     PUT = 'PUT'
@@ -57,7 +56,8 @@ class Workfront(object):
 
     CORE_URL = "https://{subdomain}.{env}.workfront.com/attask/api/v{version}"
 
-    def __init__(self, subdomain, env, api_version='7.0', api_key=None, session_id=None, user_id=None, debug=False, test_mode=False):
+    def __init__(self, subdomain, env, api_version='7.0', api_key=None, session_id=None, user_id=None, debug=False,
+                 test_mode=False):
         """
         Setup class
         
@@ -69,11 +69,11 @@ class Workfront(object):
         :param user_id: The ID of the authenticated user
         """
         self.subdomain = subdomain
-        url = self.CORE_URL.format(subdomain=subdomain,
-                                   env=env,
-                                   version=api_version)
-        
-        self.url = url
+        api_base_url = self.CORE_URL.format(subdomain=subdomain,
+                                            env=env,
+                                            version=api_version)
+
+        self.api_base_url = api_base_url
         self.session_id = session_id
         self.user_id = user_id
         self.api_key = api_key
@@ -85,6 +85,7 @@ class Workfront(object):
         # of the method.
         self._request = self._make_request
         self._count = self.count
+        self._open_api_connection = self._p_open_api_connection
 
     @staticmethod
     def test_mode_make_request(*args):
@@ -98,6 +99,9 @@ class Workfront(object):
         
         If an API key is set the password is not needed. The resulting sessionID
         will allow you to act on behalf of a user.
+
+        https://developers.workfront.com/api-docs/#Login
+
         :param username: The Workfront username, typically an email address
         :param password: The Workfront password
         :return: The results of the login.
@@ -141,6 +145,8 @@ class Workfront(object):
     def put(self, objcode, objid, params, fields=None):
         """
         Updates an existing object, returns the updated object.
+
+        https://developers.workfront.com/api-docs/#PUT
 
         :param objcode: object type (i.e. 'PROJECT')
         :param objid: The ID of the object to act on
@@ -192,7 +198,6 @@ class Workfront(object):
 
         return output
 
-
     def bulk(self, objcode, updates, fields=None):
         """
         Makes bulk updates to existing objects
@@ -229,6 +234,9 @@ class Workfront(object):
     def post(self, objcode, params, fields=None):
         """
         Creates a new object, returns the new object
+
+        https://developers.workfront.com/api-docs/#POST
+
         :param objcode: object type (i.e. 'PROJECT')
         :param params: A dict of parameters to filter on.
         :param fields: List of field names to return for each object.
@@ -285,7 +293,7 @@ class Workfront(object):
         :return: The results of the deletion
         """
         if len(objids) > 100:
-            res = self._bulk_segmenter(self.bulk_delete, objcode = objcode, objids = objids, force=True, atomic=True)
+            res = self._bulk_segmenter(self.bulk_delete, objcode=objcode, objids=objids, force=True, atomic=True)
             return res
         path = '/{0}'.format(objcode)
 
@@ -314,7 +322,7 @@ class Workfront(object):
                 limit = max_limit if limit > max_limit else limit
             else:
                 limit = max_limit
-            loop_count = int(math.ceil(count/max_limit))
+            loop_count = int(math.ceil(count / max_limit))
             params['$$LIMIT'] = limit
             for i in range(0, loop_count):
                 if i == (loop_count - 1):
@@ -327,7 +335,6 @@ class Workfront(object):
 
         return self._request(path, params, self.GET, fields)
 
-
     def count(self, objcode, params):
         """
         Count objects for a given set of filters (params).
@@ -338,7 +345,6 @@ class Workfront(object):
                          'name_Mod: 'cicontains'}
         :return:
         """
-
 
         path = '/{0}/count'.format(objcode)
         return self._request(path, params, self.GET)['count']
@@ -414,7 +420,8 @@ class Workfront(object):
 
         return self._request(path, params, self.GET)
 
-    def make_update_as_user(self, user_email, exec_method, objcode, params, objid=None, action=None, objids=None, fields=None, logout=False):
+    def make_update_as_user(self, user_email, exec_method, objcode, params, objid=None, action=None, objids=None,
+                            fields=None, logout=False):
         """
         Performs an action on behalf of another user.
 
@@ -468,9 +475,8 @@ class Workfront(object):
         else:
             raise ValueError('Login Failed')
 
-
     @staticmethod
-    def _make_params_string(params):
+    def _parse_parameter_lists(params):
         """
         Searches params and converts lists to comma sep strings
 
@@ -491,32 +497,21 @@ class Workfront(object):
         :param params: A dict of the filter parameters
         :return: The filters params converted to a string
         """
-        if params:
-            output_string = ""
+        output_string = ""
 
-            # Bulk updates use an "updates":[] (key:list) format. We don't want to convert those.
-            if "updates" not in params:
-                # output_string = ""
-
-                for key, value in params.items():
-                    if isinstance(value, list):
-
-                        for list_item in value:
-                            output_string = "{output_string}&{key}={value}".format(output_string=output_string,
-                                                                                   key=key, value=list_item)
-                    else:
-                        if len(output_string) == 0:
-                            output_string = "{key}={value}".format(key=key, value=value)
-                        else:
-                            output_string = "{output_string}&{key}={value}".format(output_string=output_string, key=key,
-                                                                                   value=value)
+        for key, value in params.items():
+            if isinstance(value, list):
+                # Convert list to multiple instances of same key.
+                # Sort to make unit testing easier
+                value = sorted(value)
+                for list_item in value:
+                    output_string = "{output_string}&{key}={value}".format(output_string=output_string,
+                                                                           key=key, value=list_item)
             else:
-                return params
-
-        else:
-            return None
-
-        return output_string
+                output_string = "{output_string}&{key}={value}".format(output_string=output_string, key=key,
+                                                                       value=value)
+        # There will be an & on the far left. Strip that off
+        return output_string[1:]
 
     def _make_request(self, path, params, method, fields=None, raw=False):
         """
@@ -544,42 +539,45 @@ class Workfront(object):
 
         :return: The query results
         """
+        api_param_string = self._prepare_params(method, params, fields)
+
+        api_path = self.api_base_url + path
+        data = self._open_api_connection(api_param_string, api_path)
+
+        return data if raw else data['data']
+
+    def _p_open_api_connection(self, data, dest):
+        """
+        Makes the request to the Workfront API
+
+        :param data: The URL parameters string
+        :param dest: API URL
+        :return: json results of query
+        """
+        try:
+            response = requests.get(dest, data)
+        except requests.exceptions.RequestException as e:
+            raise WorkfrontAPIException(e)
+        return response.json()
+
+    def _prepare_params(self, method, params, fields):
+
         # If no params passed in set a blank dict.
         params = params if params else {}
-
         params['method'] = method
-
-        self._set_authentication(params)
+        params = self._set_authentication(params)
 
         if fields:
             params['fields'] = ','.join(fields)
 
-        dest = self.url + path
-
-        params = self._make_params_string(params)
-
-        if isinstance(params, str):
-            # url encodes string without encoding ampersand or equals sign characters
+        if method == self.GET and params:
+            params = self._parse_parameter_lists(params)
             data = urllib.parse.quote(params, '&=')
         else:
             data = urllib.parse.urlencode(params)
-        bin_data = data.encode('ascii')
-
-        if self.debug:
-            print('API Key: ', self.api_key, ' Session ID: ', self.session_id)
-            print('Params: ', params)
-            print('Data: ', data)
-
-        try:
-            response = urllib.request.urlopen(dest, bin_data)
-        except urllib.error.URLError as e:
-
-            raise WorkfrontAPIException(e)
-
-        reader = codecs.getreader("utf-8")
-        data = json.load(reader(response))
-
-        return data if raw else data['data']
+        # @todo Check if we need to convert to ascii here. Might be able to just return data.
+        #return data.encode('ascii')
+        return data
 
     def _set_authentication(self, params):
         """
@@ -601,13 +599,12 @@ class Workfront(object):
 
 class WorkfrontAPIException(Exception):
     """Raised when a _request fails"""
-    def __init__(self, errors):
 
+    def __init__(self, errors):
         error_msg = errors.read().decode("utf8", 'ignore')
         error_msg_decode = json.loads(error_msg)
         message = error_msg_decode['error']['message']
         super().__init__(message)
-
 
 
 class ObjCode:
