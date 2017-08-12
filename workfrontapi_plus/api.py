@@ -22,6 +22,7 @@ import json
 import urllib.error
 import urllib.parse
 import urllib.request
+import math
 
 
 class Workfront(object):
@@ -250,7 +251,7 @@ class Workfront(object):
             params['atomic'] = 'true'
         return self._request(path, params, self.DELETE)
 
-    def search(self, objcode, params, fields=None):
+    def search(self, objcode, params, fields=None, get_all=False, limit=None):
         """
         Search for objects against a given set of filters (params).
 
@@ -260,7 +261,39 @@ class Workfront(object):
         :return:
         """
         path = '/{0}/search'.format(objcode)
+        if get_all or limit > 2000:
+            output = []
+            first = 0
+            count = self.count(objcode, params)
+            count = count if count < limit else limit
+            loop_count = int(math.ceil(count/2000))
+            limit = 2000
+            params['$$LIMIT'] = limit
+            for i in range(0, loop_count):
+                params['$$FIRST'] = first
+                first += limit
+                res = self._request(path, params, self.GET, fields)
+                output += res
+                first += limit
+            return output
+
         return self._request(path, params, self.GET, fields)
+
+
+    def count(self, objcode, params):
+        """
+        Count objects for a given set of filters (params).
+
+        :param objcode: Object code to count.
+        :param params:  Dict of criteria to use as filter
+                        {'name': 'example task',
+                         'name_Mod: 'cicontains'}
+        :return:
+        """
+
+
+        path = '/{0}/count'.format(objcode)
+        return self._request(path, params, self.GET)
 
     def report(self, objcode, params, agg_field, agg_func, group_by_field=None, rollup=False):
         """
