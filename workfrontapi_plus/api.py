@@ -169,6 +169,13 @@ class Workfront(object):
         return self._request(path, params, self.PUT, fields)
 
     def _bulk_segmenter(self, bulk_method, **kwargs):
+        """
+        Breaks a list of items up into chunks of 100 for processing.
+
+        :param bulk_method: An instance of the method (self.bulk, self.bulk_delete, self.bulk_create)
+        :param kwargs: The various parameters
+        :return: The output of the update from API
+        """
         output = []
         if 'updates' in kwargs:
             data = kwargs['updates']
@@ -195,9 +202,9 @@ class Workfront(object):
         """
 
         if len(updates) > 100:
-            res = self._bulk_segmenter(self.bulk, objcode = objcode, updates = updates, fields = fields)
+            res = self._bulk_segmenter(self.bulk, objcode=objcode, updates=updates, fields=fields)
             return res
-        path = '{0}'.format(objcode)
+        path = '/{0}'.format(objcode)
         params = {'updates': updates}
         return self._request(path, params, self.PUT, fields)
 
@@ -212,7 +219,8 @@ class Workfront(object):
         :return: The results of the _request as a list of newly created objects
         """
         if len(updates) > 100:
-            res = self._bulk_segmenter(self.bulk, objcode = objcode, updates = updates, fields = fields)
+            res = self._bulk_segmenter(self.bulk_create, objcode=objcode, updates=updates, fields=fields)
+            return res
         path = '/{0}'.format(objcode)
         params = {'updates': updates}
         return self._request(path, params, self.POST, fields)
@@ -275,9 +283,9 @@ class Workfront(object):
                        will throw an error as it will not be able to find those ID's.
         :return: The results of the deletion
         """
-
         if len(objids) > 100:
-            res = self._bulk_segmenter(self.bulk, objcode = objcode, objids = objids, force=True, atomic=True)
+            res = self._bulk_segmenter(self.bulk_delete, objcode = objcode, objids = objids, force=True, atomic=True)
+            return res
         path = '/{0}'.format(objcode)
 
         params = {"ID": objids, "force": force}
