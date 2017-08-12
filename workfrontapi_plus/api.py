@@ -1,5 +1,3 @@
-#
-
 #  Original copyright notice from Workfront Version of this API
 #
 #  Copyright (c) 2010 AtTask, Inc.
@@ -23,19 +21,18 @@ import urllib.error
 import urllib.parse
 import urllib.request
 import math
-import pprint
-
 
 class Workfront(object):
+
     GET = 'GET'
     POST = 'POST'
     PUT = 'PUT'
     DELETE = 'DELETE'
 
-    PATH_LOGIN = "/login"
-    PATH_LOGOUT = "/logout"
+    LOGIN_PATH = "/login"
+    LOGOUT_PATH = "/logout"
 
-    CORE_URL = "https://{subdomain}.{env}.workfront.com/attask/api/v{version}/"
+    CORE_URL = "https://{subdomain}.{env}.workfront.com/attask/api/v{version}"
 
     def __init__(self, subdomain, env, api_version='7.0', api_key=None, session_id=None, user_id=None, debug=False, test_mode=False):
         """
@@ -85,7 +82,7 @@ class Workfront(object):
         if password:
             params['password'] = password
 
-        data = self._request(self.PATH_LOGIN, params, self.GET)
+        data = self._request(self.LOGIN_PATH, params, self.GET)
 
         if 'sessionID' in data:
             self.session_id = data['sessionID']
@@ -101,7 +98,7 @@ class Workfront(object):
 
         Clears the class session_id and user_id fields.
         """
-        self._request(self.PATH_LOGOUT, None, self.GET)
+        self._request(self.LOGOUT_PATH, None, self.GET)
         self.session_id = None
         self.user_id = None
 
@@ -114,12 +111,12 @@ class Workfront(object):
         :param fields: list of field names to return for each object
         :return: Data from Workfront
         """
-        path = '{0}'.format(objcode)
+        path = '/{0}'.format(objcode)
         return self._request(path, {'ids': ','.join(ids)}, fields)
 
     def put(self, objcode, objid, params, fields=None):
         """
-        Updates an existing object, returns the updated object
+        Updates an existing object, returns the updated object.
 
         :param objcode: object type (i.e. 'PROJECT')
         :param objid: The ID of the object to act on
@@ -441,7 +438,7 @@ class Workfront(object):
 
 
     @staticmethod
-    def make_params_string(params):
+    def _make_params_string(params):
         """
         Searches params and converts lists to comma sep strings
 
@@ -535,7 +532,7 @@ class Workfront(object):
 
         dest = self.url + path
 
-        params = self.make_params_string(params)
+        params = self._make_params_string(params)
 
         if isinstance(params, str):
             # url encodes string without encoding ampersand or equals sign characters
@@ -552,15 +549,8 @@ class Workfront(object):
         try:
             response = urllib.request.urlopen(dest, bin_data)
         except urllib.error.URLError as e:
-            error_msg = e.read().decode("utf8", 'ignore')
-            error_msg_decode = json.loads(error_msg)
-            # pprint.pprint(e)
-            pprint.pprint(error_msg)
-            if self.debug:
-                print('API Key: ', self.api_key, ' Session ID: ', self.session_id)
-                print('Params: ', params)
-                print('Data: ', data)
-            raise StreamAPIException(e)
+
+            raise WorkfrontAPIException(e)
 
         reader = codecs.getreader("utf-8")
         data = json.load(reader(response))
@@ -568,9 +558,16 @@ class Workfront(object):
         return data if raw else data['data']
 
 
-class StreamAPIException(Exception):
+class WorkfrontAPIException(Exception):
     """Raised when a _request fails"""
-    pass
+    def __init__(self, errors):
+
+        error_msg = errors.read().decode("utf8", 'ignore')
+        error_msg_decode = json.loads(error_msg)
+        message = error_msg_decode['error']['message']
+        super().__init__(message)
+
+
 
 class ObjCode:
     """
