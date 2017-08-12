@@ -37,12 +37,8 @@ SOFTWARE.
 #  COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 #  OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import codecs, requests, json, math
-
-import urllib.error
-import urllib.parse
-import urllib.request
-
+import requests
+import math
 
 
 class Workfront(object):
@@ -53,6 +49,8 @@ class Workfront(object):
 
     LOGIN_PATH = "/login"
     LOGOUT_PATH = "/logout"
+
+    OBJCODES = ObjCode()
 
     CORE_URL = "https://{subdomain}.{env}.workfront.com/attask/api/v{version}"
 
@@ -554,11 +552,13 @@ class Workfront(object):
         :param dest: API URL
         :return: json results of query
         """
-        try:
-            response = requests.get(dest, data)
-        except requests.exceptions.RequestException as e:
-            raise WorkfrontAPIException(e)
-        return response.json()
+        response = requests.get(dest, data)
+        # except requests.exceptions.RequestException as e:
+        if response.ok:
+            return response.json()
+        else:
+            raise WorkfrontAPIException(response.text)
+
 
     def _prepare_params(self, method, params, fields):
 
@@ -572,12 +572,9 @@ class Workfront(object):
 
         if method == self.GET and params:
             params = self._parse_parameter_lists(params)
-            data = urllib.parse.quote(params, '&=')
-        else:
-            data = urllib.parse.urlencode(params)
+
         # @todo Check if we need to convert to ascii here. Might be able to just return data.
-        #return data.encode('ascii')
-        return data
+        return params
 
     def _set_authentication(self, params):
         """
@@ -600,11 +597,8 @@ class Workfront(object):
 class WorkfrontAPIException(Exception):
     """Raised when a _request fails"""
 
-    def __init__(self, errors):
-        error_msg = errors.read().decode("utf8", 'ignore')
-        error_msg_decode = json.loads(error_msg)
-        message = error_msg_decode['error']['message']
-        super().__init__(message)
+    def __init__(self, error_msg):
+        super().__init__(error_msg)
 
 
 class ObjCode:

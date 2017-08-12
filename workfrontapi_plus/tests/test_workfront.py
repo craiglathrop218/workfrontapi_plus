@@ -1,9 +1,11 @@
 from unittest import TestCase
 from workfrontapi_plus import Workfront
+
 from wfconfig import WorkfrontConfig
 
 import hashlib, json, requests
 from nose.tools import assert_true
+
 
 '''https://realpython.com/blog/python/testing-third-party-apis-with-mocks/'''
 
@@ -51,6 +53,11 @@ class TestWorkfront(TestCase):
         res = self.api.search('task', {'name': 'cra', 'name_Mod': 'cicontains'}, ['name'])
         print(res[0])
         assert_true(isinstance(res, list))
+
+    def test_make_error(self):
+        self.api._request = self.api._make_request
+        with self.assertRaises(Exception) as context:
+            res = self.api.search('task', {'namea': 'cra', 'name_Mod': 'cicontains'}, ['name'])
 
 
 

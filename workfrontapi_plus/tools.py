@@ -46,3 +46,28 @@ class Tools(object):
         """
         # @todo build flatten response method
         pass
+
+    @staticmethod
+    def text_mode(text):
+        """
+        Converts Workfront "Text Mode" into a parameter string.
+
+        :param text: A string containing Workfront text mode parameters
+        :return: A dict version of the passed in parameters
+        """
+        output = {}
+
+        for line in text.splitlines():
+
+            key, value = line.split("=")
+
+            # key = key_pair[0].strip()
+            # value = key_pair[1].strip()
+
+            if "\t" in value:
+                # It's a list
+                value_list = value.split("\t")
+                output[key] = value_list
+            else:
+                output[key] = value
+        return output
