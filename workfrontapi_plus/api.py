@@ -80,10 +80,11 @@ class Workfront(object):
         self.debug = debug
         self.test_mode = test_mode
 
-        if self.test_mode:
-            self._request = self.test_mode_make_request
-        else:
-            self._request = self._make_request
+        # These methods are set as class variables to enable easy re-assignment during unit testing.
+        # These values are typically overwritten by the unit tests with a lambda function simulating the results
+        # of the method.
+        self._request = self._make_request
+        self._count = self.count
 
     @staticmethod
     def test_mode_make_request(*args):
@@ -268,10 +269,10 @@ class Workfront(object):
 
         :param objcode: object type (i.e. 'PROJECT')
         :param objids: A list of object IDs to be deleted
-        :param force: Force deletion of the object with relationships. For example
+        :param force: True by default. Force deletion of the object with relationships. For example
                       if a task is deleted with force "False" associated expenses will
                       not be removed.
-        :param atomic: Removes all objects at the same time. This is useful is situations where you might be deleting
+        :param atomic: True by default. Removes all objects at the same time. This is useful is situations where you might be deleting
                        a parent object with children in the same set of "ids". For example:
 
                        Task A
@@ -307,7 +308,7 @@ class Workfront(object):
             max_limit = 500
             output = []
             first = 0
-            count = self.count(objcode, params)
+            count = self._count(objcode, params)
             if limit:
                 count = count if count < limit else limit
                 limit = max_limit if limit > max_limit else limit
@@ -491,7 +492,7 @@ class Workfront(object):
         :return: The filters params converted to a string
         """
         if params:
-            output_string = ""  # This line is causing output string to be a blank string if updates is in params
+            output_string = ""
 
             # Bulk updates use an "updates":[] (key:list) format. We don't want to convert those.
             if "updates" not in params:
@@ -548,15 +549,7 @@ class Workfront(object):
 
         params['method'] = method
 
-        # Added a check to see if a session ID is being used instead of API Key - CL 8/4
-        if self.session_id:
-            params['sessionID'] = self.session_id
-        elif self.api_key:
-            params['apiKey'] = self.api_key
-        else:
-            if self.debug:
-                print('API Key: ', self.api_key, ' Session ID: ', self.session_id)
-            raise ValueError("No valid authentication method provided. You must set either a sessionID or API Key.")
+        self._set_authentication(params)
 
         if fields:
             params['fields'] = ','.join(fields)
@@ -587,6 +580,23 @@ class Workfront(object):
         data = json.load(reader(response))
 
         return data if raw else data['data']
+
+    def _set_authentication(self, params):
+        """
+        Adds the authentication into params.
+
+        :param params:
+        :return:
+        """
+        # Added a check to see if a session ID is being used instead of API Key - CL 8/4
+        if self.session_id:
+            params['sessionID'] = self.session_id
+        elif self.api_key:
+            params['apiKey'] = self.api_key
+        else:
+            raise ValueError("No valid authentication method provided. You must set either a sessionID or API Key.")
+
+        return params
 
 
 class WorkfrontAPIException(Exception):
