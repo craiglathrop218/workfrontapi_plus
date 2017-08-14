@@ -48,12 +48,11 @@ class TestWorkfrontE2E(TestCase):
         print('Updated task name to {0}.'.format(t_updates[0]['name']))
 
         # Test search
-        self.assertEqual(len(self.live_search(hash_str)), len(task_ids))
+        search_res = self.live_search(hash_str)
+        self.assertEqual(len(search_res), len(task_ids))
 
         del_res = self.bulk_delete_tasks(task_ids)
         print('Deleted task: ', del_res['success'])
-
-
 
         self.delete_a_proj(project['id'])
 
@@ -70,23 +69,22 @@ class TestWorkfrontE2E(TestCase):
 
     def make_bulk_tasks(self, proj_id):
         tasks = []
-        for x in range(150):
+        for x in range(50):
             tasks.append({'name': 'This is the First Task',
                           'projectID': proj_id,
-                          'plannedStartDate': '2017-12-01',
-                          'extRefID': 'This is a test',
-                          'description': 'This is a '
+                          'plannedStartDate': '2017-12-01'
                           })
         return self.api.bulk_create('task', tasks)
 
     def bulk_update_tasks(self, task_ids, hash):
         updates = []
         for t_id in task_ids:
-            updates.append({'name': 'update aaaaaaaaa the First Task',
+            updates.append({'name': 'Hash: {0}'.format(hash),
                             'ID': t_id,
-                            'plannedStartDate': '2017-12-01',
-                            'extRefID': 'This is a test',
-                            'description': 'This is a '})
+                            'description': '''object_hook is an optional function that will be called with the result 
+                             of any object literal decoded (a dict). The return value of object_hook will be used instead
+                             of the dict. This feature can be used to implement custom decoders (e.g. JSON-RPC class 
+                             hinting). '''})
 
         return self.api.bulk('task', updates)
 

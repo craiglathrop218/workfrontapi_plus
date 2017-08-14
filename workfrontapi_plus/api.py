@@ -235,8 +235,13 @@ class Workfront(object):
         :return: The results of the _request as a list of updated objects
         """
         max_objs_per_loop = self.get_max_update_obj_size(updates)
+        res = []
         if len(updates) > max_objs_per_loop:
-            res = self._bulk_segmenter(self.bulk, objs_per_loop=max_objs_per_loop, objcode=objcode, updates=updates, fields=fields)
+            res = self._bulk_segmenter(self.bulk,
+                                      objs_per_loop=max_objs_per_loop,
+                                      objcode=objcode,
+                                      updates=updates,
+                                      fields=fields)
             return res
         path = '/{0}'.format(objcode)
         params = {'updates': json.dumps(updates)}
@@ -254,8 +259,13 @@ class Workfront(object):
         :return: The results of the _request as a list of newly created objects
         """
         max_objs_per_loop = self.get_max_update_obj_size(updates)
+        res = []
         if len(updates) > self._max_bulk:
-            res = self._bulk_segmenter(self.bulk_create, objs_per_loop=max_objs_per_loop,  objcode=objcode, updates=updates, fields=fields)
+            res = self._bulk_segmenter(self.bulk_create,
+                                       objs_per_loop=max_objs_per_loop,
+                                       objcode=objcode,
+                                       updates=updates,
+                                       fields=fields)
             return res
         path = '/{0}'.format(objcode)
         params = {'updates': json.dumps(updates)}
@@ -322,8 +332,14 @@ class Workfront(object):
                        will throw an error as it will not be able to find those ID's.
         :return: The results of the deletion
         """
+        res = []
         if len(objids) > self._max_bulk:
-            res = self._bulk_segmenter(self.bulk_delete, objcode=objcode, objids=objids, force=True, atomic=True)
+            res = self._bulk_segmenter(self.bulk_delete,
+                                       objs_per_loop=self._max_bulk,
+                                       objcode=objcode,
+                                       objids=objids,
+                                       force=True,
+                                       atomic=True)
             return res
         path = '/{0}'.format(objcode)
 
