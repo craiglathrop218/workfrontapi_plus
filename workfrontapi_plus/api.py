@@ -39,6 +39,7 @@ SOFTWARE.
 
 import requests
 import math
+import json
 
 
 class Workfront(object):
@@ -50,7 +51,7 @@ class Workfront(object):
     LOGIN_PATH = "/login"
     LOGOUT_PATH = "/logout"
 
-    OBJCODES = ObjCode()
+    # OBJCODES = ObjCode()
 
     CORE_URL = "https://{subdomain}.{env}.workfront.com/attask/api/v{version}"
 
@@ -77,6 +78,8 @@ class Workfront(object):
         self.api_key = api_key
         self.debug = debug
         self.test_mode = test_mode
+        self._max_bulk = 99
+        self._max_results = 2000
 
         # These methods are set as class variables to enable easy re-assignment during unit testing.
         # These values are typically overwritten by the unit tests with a lambda function simulating the results
@@ -84,6 +87,8 @@ class Workfront(object):
         self._request = self._make_request
         self._count = self.count
         self._open_api_connection = self._p_open_api_connection
+
+
 
     @staticmethod
     def test_mode_make_request(*args):
@@ -175,7 +180,7 @@ class Workfront(object):
 
     def _bulk_segmenter(self, bulk_method, **kwargs):
         """
-        Breaks a list of items up into chunks of 100 for processing.
+        Breaks a list of items up into chunks for processing.
 
         :param bulk_method: An instance of the method (self.bulk, self.bulk_delete, self.bulk_create)
         :param kwargs: The various parameters
@@ -189,8 +194,8 @@ class Workfront(object):
         else:
             data = kwargs['objids']
             key = 'objids'
-        for i in range(0, len(data), 100):
-            sliced_update_list = list(data[i:i + 100])
+        for i in range(0, len(data), self._max_bulk):
+            sliced_update_list = list(data[i:i + self._max_bulk])
             kwargs[key] = sliced_update_list
             output += bulk_method(**kwargs)
 
@@ -205,11 +210,11 @@ class Workfront(object):
         :return: The results of the _request as a list of updated objects
         """
 
-        if len(updates) > 100:
+        if len(updates) > self._max_bulk:
             res = self._bulk_segmenter(self.bulk, objcode=objcode, updates=updates, fields=fields)
             return res
         path = '/{0}'.format(objcode)
-        params = {'updates': updates}
+        params = {'updates': json.dumps(updates, )}
         return self._request(path, params, self.PUT, fields)
 
     def bulk_create(self, objcode, updates, fields=None):
@@ -222,11 +227,11 @@ class Workfront(object):
         :param fields: List of field names to return for each object
         :return: The results of the _request as a list of newly created objects
         """
-        if len(updates) > 100:
+        if len(updates) > self._max_bulk:
             res = self._bulk_segmenter(self.bulk_create, objcode=objcode, updates=updates, fields=fields)
             return res
         path = '/{0}'.format(objcode)
-        params = {'updates': updates}
+        params = {'updates': json.dumps(updates)}
         return self._request(path, params, self.POST, fields)
 
     def post(self, objcode, params, fields=None):
@@ -290,7 +295,7 @@ class Workfront(object):
                        will throw an error as it will not be able to find those ID's.
         :return: The results of the deletion
         """
-        if len(objids) > 100:
+        if len(objids) > self._max_bulk:
             res = self._bulk_segmenter(self.bulk_delete, objcode=objcode, objids=objids, force=True, atomic=True)
             return res
         path = '/{0}'.format(objcode)
@@ -311,16 +316,15 @@ class Workfront(object):
         """
         path = '/{0}/search'.format(objcode)
         if get_all or limit:
-            max_limit = 500
             output = []
             first = 0
             count = self._count(objcode, params)
             if limit:
                 count = count if count < limit else limit
-                limit = max_limit if limit > max_limit else limit
+                limit = self._max_results if limit > self._max_results else limit
             else:
-                limit = max_limit
-            loop_count = int(math.ceil(count / max_limit))
+                limit = self._max_results
+            loop_count = int(math.ceil(count / self._max_results))
             params['$$LIMIT'] = limit
             for i in range(0, loop_count):
                 if i == (loop_count - 1):
