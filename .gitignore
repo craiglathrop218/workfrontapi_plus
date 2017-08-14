@@ -18,3 +18,8 @@ typings
 
 .idea
 
+# Python cache
+__pycache__
+.pyc
+
+wfconfig.py
