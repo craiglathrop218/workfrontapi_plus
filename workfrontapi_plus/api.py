@@ -178,7 +178,8 @@ class Workfront(object):
 
         return self._request(path, params, self.PUT, fields)
 
-    def _bulk_segmenter(self, bulk_method, **kwargs):
+    @staticmethod
+    def _bulk_segmenter(bulk_method, objs_per_loop, **kwargs):
         """
         Breaks a list of items up into chunks for processing.
 
@@ -190,31 +191,56 @@ class Workfront(object):
         if 'updates' in kwargs:
             data = kwargs['updates']
             key = 'updates'
-
         else:
             data = kwargs['objids']
             key = 'objids'
-        for i in range(0, len(data), self._max_bulk):
-            sliced_update_list = list(data[i:i + self._max_bulk])
+        for i in range(0, len(data), objs_per_loop):
+
+            sliced_update_list = list(data[i:i + objs_per_loop])
             kwargs[key] = sliced_update_list
             output += bulk_method(**kwargs)
 
         return output
 
+    def get_max_update_obj_size(self, updates):
+        """
+        Gets the total len of the updates when converted to JSON.
+
+        There appears to be a char limit of ~6800 when making a bulk request. This seems related to total
+        char len only, not number of elements.
+
+        This method checks the size of the JSON converted "updates" and calculates a safe self._max_bulk
+        value.
+        :param updates: A dict containing updates
+        :return: A safe value for self._max_bulk
+        """
+        # Actual limit seems to be ~6894 but errors are seen sometime at numbers down to 5000. It's possible that
+        # the problem is not related to overall char size, but is something to do with some other field length or
+        # attempting to add or modify so many objects at once. This issue isn't well understood at the moment.
+        api_char_limit = 3000
+        updates_len = len(updates)
+        json_len = len(json.dumps(updates))
+        char_per_update_element = int(math.ceil(json_len/updates_len))
+        safe_elements_per_loop = int(math.floor(api_char_limit / char_per_update_element))
+        print('Safe number of update elements per loop is {0}'.format(safe_elements_per_loop))
+        return safe_elements_per_loop if safe_elements_per_loop < self._max_bulk else self._max_bulk
+
     def bulk(self, objcode, updates, fields=None):
         """
         Makes bulk updates to existing objects
+
         :param objcode: object type (i.e. 'PROJECT')
         :param updates: A list of dicts contining the updates
         :param fields: A list of fields to return - Optional
         :return: The results of the _request as a list of updated objects
         """
-
-        if len(updates) > self._max_bulk:
-            res = self._bulk_segmenter(self.bulk, objcode=objcode, updates=updates, fields=fields)
+        max_objs_per_loop = self.get_max_update_obj_size(updates)
+        if len(updates) > max_objs_per_loop:
+            res = self._bulk_segmenter(self.bulk, objs_per_loop=max_objs_per_loop, objcode=objcode, updates=updates, fields=fields)
             return res
         path = '/{0}'.format(objcode)
-        params = {'updates': json.dumps(updates, )}
+        params = {'updates': json.dumps(updates)}
+
         return self._request(path, params, self.PUT, fields)
 
     def bulk_create(self, objcode, updates, fields=None):
@@ -227,8 +253,9 @@ class Workfront(object):
         :param fields: List of field names to return for each object
         :return: The results of the _request as a list of newly created objects
         """
+        max_objs_per_loop = self.get_max_update_obj_size(updates)
         if len(updates) > self._max_bulk:
-            res = self._bulk_segmenter(self.bulk_create, objcode=objcode, updates=updates, fields=fields)
+            res = self._bulk_segmenter(self.bulk_create, objs_per_loop=max_objs_per_loop,  objcode=objcode, updates=updates, fields=fields)
             return res
         path = '/{0}'.format(objcode)
         params = {'updates': json.dumps(updates)}
@@ -477,6 +504,23 @@ class Workfront(object):
         else:
             raise ValueError('Login Failed')
 
+    def share_obj(self, obj_code, obj_id, user_ids, level='view'):
+        # @todo finish and document this
+        path = '/{0}/{1}/share'.format(obj_code, obj_id)
+
+        access_levels = {'view': 'VIEW', 'contribute': 'CREATE', }
+        params = []
+        for user in user_ids:
+            params.append({'accessorID': user,
+                           'accessorObjCode': 'USER',
+                           'coreAction': level})
+
+        return self._request(path, params, self.PUT)['count']
+
+    def get_obj_share(self, obj_code, obj_id):
+        # @todo finish and document this section
+        pass
+
     @staticmethod
     def _parse_parameter_lists(params):
         """
@@ -556,9 +600,16 @@ class Workfront(object):
         :param dest: API URL
         :return: json results of query
         """
-        response = requests.get(dest, data)
-        # except requests.exceptions.RequestException as e:
+        if 'updates' in data:
+            print('The length of the updates query is ' + str(len(data['updates'])) + 'char.')
+        try:
+            response = requests.get(dest, data)
+        except requests.exceptions.HTTPError as e:
+            msg = e.response
+            raise WorkfrontAPIException(e)
+
         if response.ok:
+            print('Response OK - 200. Len of full URL was ',len(response.url),' char.')
             return response.json()
         else:
             raise WorkfrontAPIException(response.text)
@@ -603,6 +654,63 @@ class WorkfrontAPIException(Exception):
 
     def __init__(self, error_msg):
         super().__init__(error_msg)
+
+class StreamNotModifiedException(Exception):
+    "Raised when saving an object that has not been modified"
+
+class StreamClientNotSet(Exception):
+    """Raised when calling an api method on an object without an
+    attached StreamClient object
+    """
+
+# CRUD wrapper for basic modifications
+class AtTaskObject(object):
+    def __init__(self, data, streamclient=None):
+        self.__dict__['streamclient'] = streamclient
+        self.__dict__['data'] = data
+        self.__dict__['_dirty_fields'] = {}
+
+    def __getattr__(self, item):
+        return self.__dict__['data'][item]
+
+    def __setattr__(self, key, value):
+        self._dirty_fields[key] = True
+        self.data[key] = value
+
+    def __str__(self):
+        return json.dumps(self.data, indent=4)
+
+    def save(self):
+        """
+        Persists changes to streamclient instance
+        raises -- StreamClientNotSet if stream client was not passed in constructor
+               -- StreamNotModifiedException if no fields have changed
+               -- StreamAPIException if api call fails
+        """
+        if not self.streamclient:
+            raise StreamClientNotSet()
+
+        params = dict([(key, self.data[key])
+                       for key, val in self._dirty_fields.items() if val])
+        if not len(params):
+            raise StreamNotModifiedException("No fields were modified.")
+
+        if 'ID' in self.data:
+            self.__dict__['data'] = self.streamclient.put(self.objCode, self.ID, params, list(self.data.keys()))
+        else:
+            self.__dict__['data'] = self.streamclient.post(self.objCode, params, list(self.data.keys()))
+
+        self.__dict__['_dirty_fields'] = {}
+
+    def delete(self, streamclient, force=False):
+        """
+        Deletes the current object by id
+        raises -- StreamClientNotSet if stream client was not passed in constructor
+        """
+        if not self.streamclient:
+            raise StreamClientNotSet()
+        return self.streamclient.delete(self.objCode, self.ID, force)
+
 
 
 class ObjCode:
