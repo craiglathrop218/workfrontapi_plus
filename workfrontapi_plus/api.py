@@ -710,6 +710,7 @@ class Note(object):
 
 
 class Task(Note):
+    # TODO: edit available people, name, description, status, etc... possibly change the way we do comments?
 
     def __init__(self, api, task_id, data = None):
         if not data:
@@ -728,7 +729,7 @@ class Task(Note):
         return res
 
 class Issue(Note):
-
+    # TODO: edit available people, name, description, status, etc... possibly change the way we do comments?
     def __init__(self, api, issue_id, data = None):
         if not data:
             data = {}
@@ -746,6 +747,7 @@ class Issue(Note):
         return res
 
 class Project(Note):
+    # TODO: edit available people, name, description, status, etc... possibly change the way we do comments?
 
     def __init__(self, api, project_id, data = None):
         if not data:
