@@ -691,7 +691,61 @@ class wf_objects():
                   "objID":issue_id,
                   "noteObjCode":"OPTASK"}
 '''
-class Project(WorkfrontObject):
+#class Project(WorkfrontObject):
+
+class Note(object):
+    def __init__(self, objcode, objid):
+        self.objcode = objcode
+        self.objid = objid
+
+    def create_note_dictionary(self, comment_text):
+        comment_dict = {}
+        comment_dict['objID'] = self.objid
+        comment_dict['noteText'] = comment_text
+        comment_dict['noteObjCode'] = self.objcode
+
+        return comment_dict
+
+
+
+
+class Task(Note):
+
+    def __init__(self, api, task_id, data = None):
+        if not data:
+            data = {}
+        self.params = {'ID': task_id}
+        # params = params
+        #super().__init__(data, api)
+        #self.workfront_instance = workfront_instance
+        self.task_id = task_id
+        self.api = api
+        note = Note.__init__(self, 'TASK', self.task_id)
+        #self.params = {'objID': self.project_id}
+    def add_comment(self, comment_text):
+        comment = self.create_note_dictionary(comment_text)
+        res = self.api.post('NOTE', comment)
+        return res
+
+class Issue(Note):
+
+    def __init__(self, api, issue_id, data = None):
+        if not data:
+            data = {}
+        self.params = {'ID': issue_id}
+        # params = params
+        #super().__init__(data, api)
+        #self.workfront_instance = workfront_instance
+        self.issue_id = issue_id
+        self.api = api
+        note = Note.__init__(self, 'OPTASK', self.issue_id)
+        #self.params = {'objID': self.project_id}
+    def add_comment(self, comment_text):
+        comment = self.create_note_dictionary(comment_text)
+        res = self.api.post('NOTE', comment)
+        return res
+
+class Project(Note):
 
     def __init__(self, api, project_id, data = None):
         if not data:
@@ -700,22 +754,17 @@ class Project(WorkfrontObject):
         # params = params
         #super().__init__(data, api)
         #self.workfront_instance = workfront_instance
-        self.project_id = project_id
+        self.objid = project_id
+        self.objcode = 'PROJ'
         self.api = api
+        note = Note.__init__(self, self.objcode, self.objid)
         #self.params = {'objID': self.project_id}
     def add_comment(self, comment_text):
-        self.params['noteText'] = comment_text
-        self.params['noteObjCode'] = 'PROJ'
-        data = {'data': self.params}
-        #wf_prj_comment = WorkfrontObject(self.params, self.workfront_instance)
-        self.api.put('NOTE', self.project_id, self.params)
+        comment = self.create_note_dictionary(comment_text)
+        res = self.api.post('NOTE', comment)
+        return res
 
 
-class Task():
-    pass
-
-class Issue():
-    pass
 
 
 
