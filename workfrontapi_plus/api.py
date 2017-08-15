@@ -40,9 +40,11 @@ SOFTWARE.
 import requests
 import math
 import json
+from workfrontapi_plus.objects.core_wf_object import WorkfrontObject, WorkfrontAPIException, StreamNotModifiedException, StreamClientNotSet
+from wfconfig import WorkfrontConfig
+# import WorkfrontObject
 
-
-class Workfront(object):
+class Api(object):
     GET = 'GET'
     POST = 'POST'
     PUT = 'PUT'
@@ -664,68 +666,47 @@ class Workfront(object):
 
         return params
 
+class get_obj_id(object):
+    def _find_obj_id(self):
+        pass
 
-class WorkfrontAPIException(Exception):
-    """Raised when a _request fails"""
 
-    def __init__(self, error_msg):
-        super().__init__(error_msg)
 
-class StreamNotModifiedException(Exception):
-    "Raised when saving an object that has not been modified"
+class wf_objects():
+    pass
 
-class StreamClientNotSet(Exception):
-    """Raised when calling an api method on an object without an
-    attached StreamClient object
-    """
+'''
+{"noteText":comment,
+                  "objID":issue_id,
+                  "noteObjCode":"OPTASK"}
+'''
+class Project(WorkfrontObject):
 
-# CRUD wrapper for basic modifications
-class AtTaskObject(object):
-    def __init__(self, data, streamclient=None):
-        self.__dict__['streamclient'] = streamclient
-        self.__dict__['data'] = data
-        self.__dict__['_dirty_fields'] = {}
+    def __init__(self, api, project_id, data = None):
+        if not data:
+            data = {}
+        self.params = {'ID': project_id}
+        # params = params
+        #super().__init__(data, api)
+        #self.workfront_instance = workfront_instance
+        self.project_id = project_id
+        self.api = api
+        #self.params = {'objID': self.project_id}
+    def add_comment(self, comment_text):
+        self.params['noteText'] = comment_text
+        self.params['noteObjCode'] = 'PROJ'
+        data = {'data': self.params}
+        #wf_prj_comment = WorkfrontObject(self.params, self.workfront_instance)
+        self.api.put('NOTE', self.project_id, self.params)
 
-    def __getattr__(self, item):
-        return self.__dict__['data'][item]
 
-    def __setattr__(self, key, value):
-        self._dirty_fields[key] = True
-        self.data[key] = value
+class Task():
+    pass
 
-    def __str__(self):
-        return json.dumps(self.data, indent=4)
+class Issue():
+    pass
 
-    def save(self):
-        """
-        Persists changes to streamclient instance
-        raises -- StreamClientNotSet if stream client was not passed in constructor
-               -- StreamNotModifiedException if no fields have changed
-               -- StreamAPIException if api call fails
-        """
-        if not self.streamclient:
-            raise StreamClientNotSet()
 
-        params = dict([(key, self.data[key])
-                       for key, val in self._dirty_fields.items() if val])
-        if not len(params):
-            raise StreamNotModifiedException("No fields were modified.")
-
-        if 'ID' in self.data:
-            self.__dict__['data'] = self.streamclient.put(self.objCode, self.ID, params, list(self.data.keys()))
-        else:
-            self.__dict__['data'] = self.streamclient.post(self.objCode, params, list(self.data.keys()))
-
-        self.__dict__['_dirty_fields'] = {}
-
-    def delete(self, streamclient, force=False):
-        """
-        Deletes the current object by id
-        raises -- StreamClientNotSet if stream client was not passed in constructor
-        """
-        if not self.streamclient:
-            raise StreamClientNotSet()
-        return self.streamclient.delete(self.objCode, self.ID, force)
 
 
 
