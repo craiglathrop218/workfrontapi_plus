@@ -115,7 +115,8 @@ class Api(object):
         if password:
             params['password'] = password
 
-        data = self._request(self.LOGIN_PATH, params, self.GET)
+        # Login method required to use POST
+        data = self._request(self.LOGIN_PATH, params, self.POST)
 
         if 'sessionID' in data:
             self.session_id = data['sessionID']
@@ -620,8 +621,14 @@ class Api(object):
         """
         if 'updates' in data:
             print('The length of the updates query is ' + str(len(data['updates'])) + 'char.')
+
         try:
-            response = requests.get(dest, data)
+            # Request should default ambiguous as WF_API+ should handle methods (GET, POST etc.)
+            if 'method' in data:
+                response = requests.request(data['method'], dest, params=data)
+            else:
+                # Use requests.get as fallback
+                response = requests.get(dest, data)
         except requests.exceptions.HTTPError as e:
             msg = e.response
             raise WorkfrontAPIException(e)
@@ -639,6 +646,10 @@ class Api(object):
         params = params if params else {}
         params['method'] = method
         params = self._set_authentication(params)
+
+        # Params can skip authentication if the request is to login (no apiKey and no sessionID until after login)
+        if not params.keys() & {'password', 'username'}:
+            params = self._set_authentication(params)
 
         if fields:
             params['fields'] = ','.join(fields)
