@@ -4,16 +4,19 @@ import json
 
 # CRUD wrapper for basic modifications
 class WorkfrontObject(object):
-    def __init__(self, data, api=None):
+    def __init__(self, data, api=None, objCode=None, ID=None):
         self.__dict__['api'] = api
         self.__dict__['data'] = data
-        self.__dict__['_dirty_fields'] = {}
+        self.__dict__['_dirty_fields'] = []
+        self.__dict__['data']['objCode'] = objCode
+        self.__dict__['data']['ID'] = ID
+
 
     def __getattr__(self, item):
         return self.__dict__['data'][item]
 
     def __setattr__(self, key, value):
-        self._dirty_fields[key] = True
+        self._dirty_fields.append(key)
         self.data[key] = value
 
     def __str__(self):
@@ -26,7 +29,7 @@ class WorkfrontObject(object):
                -- StreamNotModifiedException if no fields have changed
                -- StreamAPIException if api call fails
         """
-        if not self.streamclient:
+        if not self.api:
             raise StreamClientNotSet()
 
         '''
@@ -34,17 +37,26 @@ class WorkfrontObject(object):
         meaning there is something to put in params. sets key of this param to be key of the
         dirty_fields dict which is the field that is going to be changed
         '''
-        params = dict([(key, self.data[key])
-                       for key, val in self._dirty_fields.items() if val])
+        params = {}
+        for item in self._dirty_fields:
+            params[item] = self.data[item]
+
+
+        # params = dict([(key, self.data[key])
+        #                 for key, val in self._dirty_fields.items() if val])
+
+        #params = dict(self.data)
         if not len(params):
             raise StreamNotModifiedException("No fields were modified.")
 
-        if 'ID' in self.data:
-            self.__dict__['data'] = self.streamclient.put(self.objCode, self.ID, params, list(self.data.keys()))
-        else:
-            self.__dict__['data'] = self.streamclient.post(self.objCode, params, list(self.data.keys()))
+        if self.data['ID']:
+            res = self.api.put(self.objCode, self.ID, params, list(self.data.keys()))
 
-        self.__dict__['_dirty_fields'] = {}
+        else:
+            res = self.api.post(self.objCode, params, list(self.data.keys()))
+
+        self.__dict__['data'] = res
+        self.__dict__['_dirty_fields'] = []
 
     def delete(self, streamclient, force=False):
         """
@@ -55,7 +67,12 @@ class WorkfrontObject(object):
             raise StreamClientNotSet()
         return self.streamclient.delete(self.objCode, self.ID, force)
 
+    def share(self,user_ids, level='view'):
+        return self.api.share_obj(self.objCode, self.ID, user_ids, level)
 
+
+    def get_share(self):
+        return self.api.get_
 
 class WorkfrontAPIException(Exception):
     """Raised when a _request fails"""

@@ -1,15 +1,15 @@
 
-from workfrontapi_plus import Workfront
+from workfrontapi_plus import Api
 
 from wfconfig import WorkfrontConfig
 
 class BreakBulkUpdates(object):
 
-    api = Workfront(subdomain=WorkfrontConfig.subdomain,
-                    api_key=WorkfrontConfig.api_key,
-                    env='sb01',
-                    api_version='6.0',
-                    test_mode=True)
+    api = Api(subdomain=WorkfrontConfig.subdomain,
+              api_key=WorkfrontConfig.api_key,
+              env='sb01',
+              api_version='6.0',
+              test_mode=True)
 
     def start(self):
         self.api._request = self.api._make_request

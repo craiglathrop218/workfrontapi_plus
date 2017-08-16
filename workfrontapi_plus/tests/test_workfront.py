@@ -1,5 +1,5 @@
 from unittest import TestCase
-from workfrontapi_plus import Workfront
+from workfrontapi_plus import Api
 
 from wfconfig import WorkfrontConfig
 
@@ -11,7 +11,7 @@ from nose.tools import assert_true
 
 class TestWorkfront(TestCase):
 
-    api = Workfront(WorkfrontConfig.subdomain, 'preview', api_key=WorkfrontConfig.api_key, test_mode=True)
+    api = Api(WorkfrontConfig.subdomain, 'preview', api_key=WorkfrontConfig.api_key, test_mode=True)
 
 
 ######## UTILITY METHODS ##########

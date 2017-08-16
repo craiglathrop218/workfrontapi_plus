@@ -23,7 +23,7 @@ SOFTWARE.
 
 """
 
-from workfrontapi_plus.api import Workfront
+from workfrontapi_plus.api import Api
 
 __doc__ = """
 workfrontapi_plus is an upgraded version of the Python API distributed by Workfront.

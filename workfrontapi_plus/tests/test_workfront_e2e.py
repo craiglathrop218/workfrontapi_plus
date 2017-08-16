@@ -1,5 +1,5 @@
 from unittest import TestCase
-from workfrontapi_plus import Workfront
+from workfrontapi_plus import Api
 
 from wfconfig import WorkfrontConfig
 
@@ -12,11 +12,11 @@ import random
 
 class TestWorkfrontE2E(TestCase):
 
-    api = Workfront(WorkfrontConfig.subdomain,
+    api = Api(WorkfrontConfig.subdomain,
                     'preview',
-                    api_version='6.0',
-                    api_key=WorkfrontConfig.api_key,
-                    test_mode=True)
+              api_version='6.0',
+              api_key=WorkfrontConfig.api_key,
+              test_mode=True)
 
 ########  LIVE E2E TESTS #############
 
@@ -32,12 +32,12 @@ class TestWorkfrontE2E(TestCase):
         print('Created project: ', project['name'])
 
         # Make a task
-        # task = self.make_a_task(project['ID'])
-        # print('Created task: ', task['name'])
+        task = self.make_a_task(project['ID'])
+        print('Created task: ', task['name'])
         #
         # # Delete a task
-        # del_res = self.delete_a_task(task['ID'])
-        # print('Deleted task: ', del_res['success'])
+        del_res = self.delete_a_task(task['ID'])
+        print('Deleted task: ', del_res['success'])
 
         # Make a lot of tasks
         tasks = self.make_bulk_tasks(project['ID'])

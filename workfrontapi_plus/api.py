@@ -89,6 +89,7 @@ class Api(object):
         self._request = self._make_request
         self._count = self.count
         self._open_api_connection = self._p_open_api_connection
+        self._upload_file = self._request_upload_file
 
 
 
@@ -468,6 +469,12 @@ class Api(object):
 
         return self._request(path, params, self.GET)
 
+    def make_document(self, file, obj_code, obj_id, version=1):
+        path = "/upload"
+        handle = self._upload_file(file, path)
+        a = 0
+
+
     def make_update_as_user(self, user_email, exec_method, objcode, params, objid=None, action=None, objids=None,
                             fields=None, logout=False):
         """
@@ -639,6 +646,22 @@ class Api(object):
         else:
             raise WorkfrontAPIException(response.text)
 
+    def _request_upload_file(self, file, url):
+        api_path = self.api_base_url + "/upload"
+        data = self._p_upload_file(file, api_path)
+        return data['data']['handle']
+
+    def _p_upload_file(self, file, url):
+        file = {'uploadedFile': file}
+        params = {}
+        params = self._set_authentication(params)
+        #r = requests.post(url, files=params, apiKey = '1q2tz2xgsgf2y44mvz78vxn1y0jhqc7h')
+        r = requests.request('post', url, files=file, params=params)
+        return r.json()
+
+
+
+
 
     def _prepare_params(self, method, params, fields):
 
@@ -709,62 +732,106 @@ class Note(object):
 
 
 
-class Task(Note):
+class Task(WorkfrontObject, Note):
     # TODO: edit available people, name, description, status, etc... possibly change the way we do comments?
 
-    def __init__(self, api, task_id, data = None):
+    def __init__(self, api, name=None, task_id=None, data = None):
         if not data:
             data = {}
-        self.params = {'ID': task_id}
         # params = params
-        #super().__init__(data, api)
+
+        super().__init__(data, api, objCode='TASK',ID=task_id)
+        if name:
+            self.name = name
         #self.workfront_instance = workfront_instance
-        self.task_id = task_id
-        self.api = api
-        note = Note.__init__(self, 'TASK', self.task_id)
+        # self.objid = project_id
+        # self.objCode = 'PROJ'
+        # self.api = api
+
         #self.params = {'objID': self.project_id}
+    def change_status(self, new_status):
+        self.params['status'] = new_status
+        return self.params
+
     def add_comment(self, comment_text):
         comment = self.create_note_dictionary(comment_text)
         res = self.api.post('NOTE', comment)
         return res
 
-class Issue(Note):
+    def create_note_dictionary(self, comment_text):
+        comment_dict = {}
+        comment_dict['objID'] = self.ID
+        comment_dict['noteText'] = comment_text
+        comment_dict['noteObjCode'] = self.objCode
+        return comment_dict
+
+class Issue(WorkfrontObject, Note):
     # TODO: edit available people, name, description, status, etc... possibly change the way we do comments?
-    def __init__(self, api, issue_id, data = None):
+
+    def __init__(self, api, name=None, issue_id=None, data = None):
         if not data:
             data = {}
-        self.params = {'ID': issue_id}
         # params = params
-        #super().__init__(data, api)
+
+        super().__init__(data, api, objCode='OPTASK',ID=issue_id)
+        if name:
+            self.name = name
         #self.workfront_instance = workfront_instance
-        self.issue_id = issue_id
-        self.api = api
-        note = Note.__init__(self, 'OPTASK', self.issue_id)
+        # self.objid = project_id
+        # self.objCode = 'PROJ'
+        # self.api = api
+
         #self.params = {'objID': self.project_id}
+    def change_status(self, new_status):
+        self.params['status'] = new_status
+        return self.params
+
     def add_comment(self, comment_text):
         comment = self.create_note_dictionary(comment_text)
         res = self.api.post('NOTE', comment)
         return res
 
-class Project(Note):
+    def create_note_dictionary(self, comment_text):
+        comment_dict = {}
+        comment_dict['objID'] = self.ID
+        comment_dict['noteText'] = comment_text
+        comment_dict['noteObjCode'] = self.objCode
+        return comment_dict
+
+
+class Project(WorkfrontObject, Note):
     # TODO: edit available people, name, description, status, etc... possibly change the way we do comments?
 
-    def __init__(self, api, project_id, data = None):
+    def __init__(self, api, name=None, project_id=None, data = None):
         if not data:
             data = {}
-        self.params = {'ID': project_id}
         # params = params
-        #super().__init__(data, api)
+
+        super().__init__(data, api, objCode='PROJ',ID=project_id)
+
+        if name:
+            self.name = name
         #self.workfront_instance = workfront_instance
-        self.objid = project_id
-        self.objcode = 'PROJ'
-        self.api = api
-        note = Note.__init__(self, self.objcode, self.objid)
+        # self.objid = project_id
+        # self.objCode = 'PROJ'
+        # self.api = api
+
         #self.params = {'objID': self.project_id}
+    def change_status(self, new_status):
+        self.params['status'] = new_status
+        return self.params
+
     def add_comment(self, comment_text):
         comment = self.create_note_dictionary(comment_text)
         res = self.api.post('NOTE', comment)
         return res
+
+    def create_note_dictionary(self, comment_text):
+        comment_dict = {}
+        comment_dict['objID'] = self.ID
+        comment_dict['noteText'] = comment_text
+        comment_dict['noteObjCode'] = self.objCode
+        return comment_dict
 
 
 
