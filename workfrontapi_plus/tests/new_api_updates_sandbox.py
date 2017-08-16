@@ -1,4 +1,4 @@
-from workfrontapi_plus.api import Api, Project, Task, Issue
+from workfrontapi_plus import Api, Project, Task, Issue
 from wfconfig import WorkfrontConfig
 import requests
 from workfrontapi_plus.objects.core_wf_object import WorkfrontObject
