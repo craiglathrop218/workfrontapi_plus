@@ -614,19 +614,22 @@ class Api(object):
 
         # If no params passed in set a blank dict.
         params = params if params else {}
-
-        if method == self.GET and params:
-            params = self._parse_parameter_lists(params)
-
         params['method'] = method
-        params = self._set_authentication(params)
 
-        # Params can skip authentication if the request is to login (no apiKey and no sessionID until after login)
+        # Check that fields exist before attempting join to avoid error.
+        if fields:
+            params['fields'] = ','.join(fields)
+
+        # Params *must* skip be able skip auth if the request is to login (no apiKey and no sessionID until after login)
         if not params.keys() & {'password', 'username'}:
             params = self._set_authentication(params)
 
-        if fields:
-            params['fields'] = ','.join(fields)
+        # Must come after method/login checks, otherwise: AttributeError: 'str' object has no attribute 'keys'
+        if method == self.GET and params:
+            params = self._parse_parameter_lists(params)
+
+        # Cannot set auth if not logged in yet.
+        # params = self._set_authentication(params)
 
         # @todo Check if we need to convert to ascii here. Might be able to just return data.
         return params
