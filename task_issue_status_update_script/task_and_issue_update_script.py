@@ -25,14 +25,16 @@ class Controller(object):
 class StatusUpdates(object):
     def search_for_task_items(self):
         params = {'objectCategoriesMM:ID': '59938d71004361ba93ea1c9104898d2b',
-                  'objectCategoriesMM:ID_Mod': 'in'}
+                  'objectCategoriesMM:ID_Mod': 'in',
+                  'DE:Status Update_Mod': 'notblank'}
         fields = ['DE:Status Update']
         res = api.search('TASK', params, fields)
         return res
 
     def search_for_issue_items(self):
         params = {'objectCategoriesMM:ID': '59938d41004356ca81bb12a678230b6d',
-                  'objectCategoriesMM:ID_Mod': 'in'}
+                  'objectCategoriesMM:ID_Mod': 'in',
+                  'DE:Status Update_Mod': 'notblank'}
         fields = ['DE:Status Update']
         res = api.search('OPTASK', params, fields)
         return res
@@ -53,34 +55,13 @@ class StatusUpdates(object):
 
     def deal_with_results(self, objcode, results):
         for item in results:
-            if isinstance(item['DE:Status Update'], str):
-                a = item['DE:Status Update']
-                self.write_update(objcode, item['ID'], item['DE:Status Update'])
-                self.clear_status_update(objcode, item['ID'])
+            self.write_update(objcode, item['ID'], item['DE:Status Update'])
+            self.clear_status_update(objcode, item['ID'])
 # params = {'objectCategoriesMM:ID': '59938d71004361ba93ea1c9104898d2b',
 #           'objectCategoriesMM:ID_Mod':'in'}
 
 
 
-# dict = {'status': ['CUR', 'PLN', 'APP'],
-#          'status_Mod': 'in'}
-#
-# res = api._parse_parameter_lists(dict)
-
-def search_for_task_items():
-    params = {'objectCategoriesMM:ID': '59938d71004361ba93ea1c9104898d2b',
-              'objectCategoriesMM:ID_Mod': 'in'}
-    fields = ['DE:Status Update']
-    res = api.search('TASK', params, fields)
-    return res
-
-def write_update(objcode, objid, comment_text):
-    comment_dict = {'objID': objid,
-                    'noteText': comment_text,
-                    'noteObjCode': objcode}
-    res = api.post('NOTE', comment_dict)
-
-    return res
 
 #a = search_for_task_items()
 #write_update('TASK', '598b7754018ab55188def1b15b2f98eb', 'comment jtwwktjghkj')
