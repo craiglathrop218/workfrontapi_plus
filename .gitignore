@@ -18,7 +18,16 @@ typings
 
 .idea
 
-# Python cache
+# WF_API+ auto-gen files/dirs
+develop-eggs/
+eggs/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Python
+*.py[cod]
+__pycache__/
 __pycache__
 .pyc
 
