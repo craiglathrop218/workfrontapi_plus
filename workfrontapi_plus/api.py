@@ -582,7 +582,8 @@ class Api(object):
 
         try:
             # Request should default ambiguous as WF_API+ should handle methods (GET, POST etc.)
-            if 'method' in data:
+            # FIXME: Breaking changes now require type-check. Type-check should be refactored out
+            if isinstance(data, dict) and 'method' in data:
                 response = requests.request(data['method'], dest, params=data)
             else:
                 # Use requests.get as fallback
