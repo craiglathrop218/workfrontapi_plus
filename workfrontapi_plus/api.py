@@ -182,53 +182,6 @@ class Api(object):
 
         return self._request(path, params, self.PUT, fields)
 
-    @staticmethod
-    def _bulk_segmenter(bulk_method, objs_per_loop, **kwargs):
-        """
-        Breaks a list of items up into chunks for processing.
-
-        :param bulk_method: An instance of the method (self.bulk, self.bulk_delete, self.bulk_create)
-        :param kwargs: The various parameters
-        :return: The output of the update from API
-        """
-        output = []
-        if 'updates' in kwargs:
-            data = kwargs['updates']
-            key = 'updates'
-        else:
-            data = kwargs['objids']
-            key = 'objids'
-        for i in range(0, len(data), objs_per_loop):
-
-            sliced_update_list = list(data[i:i + objs_per_loop])
-            kwargs[key] = sliced_update_list
-            output += bulk_method(**kwargs)
-
-        return output
-
-    def get_max_update_obj_size(self, updates):
-        """
-        Gets the total len of the updates when converted to JSON.
-
-        There appears to be a char limit of ~6800 when making a bulk request. This seems related to total
-        char len only, not number of elements.
-
-        This method checks the size of the JSON converted "updates" and calculates a safe self._max_bulk
-        value.
-        :param updates: A dict containing updates
-        :return: A safe value for self._max_bulk
-        """
-        # Actual limit seems to be ~6894 but errors are seen sometime at numbers down to 5000. It's possible that
-        # the problem is not related to overall char size, but is something to do with some other field length or
-        # attempting to add or modify so many objects at once. This issue isn't well understood at the moment.
-        api_char_limit = 3000
-        updates_len = len(updates)
-        json_len = len(json.dumps(updates))
-        char_per_update_element = int(math.ceil(json_len/updates_len))
-        safe_elements_per_loop = int(math.floor(api_char_limit / char_per_update_element))
-        print('Safe number of update elements per loop is {0}'.format(safe_elements_per_loop))
-        return safe_elements_per_loop if safe_elements_per_loop < self._max_bulk else self._max_bulk
-
     def bulk(self, objcode, updates, fields=None):
         """
         Makes bulk updates to existing objects
@@ -238,7 +191,7 @@ class Api(object):
         :param fields: A list of fields to return - Optional
         :return: The results of the _request as a list of updated objects
         """
-        max_objs_per_loop = self.get_max_update_obj_size(updates)
+        max_objs_per_loop = self._get_max_update_obj_size(updates)
         res = []
         if len(updates) > max_objs_per_loop:
             res = self._bulk_segmenter(self.bulk,
@@ -262,7 +215,7 @@ class Api(object):
         :param fields: List of field names to return for each object
         :return: The results of the _request as a list of newly created objects
         """
-        max_objs_per_loop = self.get_max_update_obj_size(updates)
+        max_objs_per_loop = self._get_max_update_obj_size(updates)
         res = []
         if len(updates) > self._max_bulk:
             res = self._bulk_segmenter(self.bulk_create,
@@ -659,14 +612,14 @@ class Api(object):
         r = requests.request('post', url, files=file, params=params)
         return r.json()
 
-
-
-
-
     def _prepare_params(self, method, params, fields):
 
         # If no params passed in set a blank dict.
         params = params if params else {}
+
+        if method == self.GET and params:
+            params = self._parse_parameter_lists(params)
+
         params['method'] = method
         params = self._set_authentication(params)
 
@@ -676,9 +629,6 @@ class Api(object):
 
         if fields:
             params['fields'] = ','.join(fields)
-
-        if method == self.GET and params:
-            params = self._parse_parameter_lists(params)
 
         # @todo Check if we need to convert to ascii here. Might be able to just return data.
         return params
@@ -700,143 +650,52 @@ class Api(object):
 
         return params
 
-class get_obj_id(object):
-    def _find_obj_id(self):
-        pass
+    @staticmethod
+    def _bulk_segmenter(bulk_method, objs_per_loop, **kwargs):
+        """
+        Breaks a list of items up into chunks for processing.
 
+        :param bulk_method: An instance of the method (self.bulk, self.bulk_delete, self.bulk_create)
+        :param kwargs: The various parameters
+        :return: The output of the update from API
+        """
+        output = []
+        if 'updates' in kwargs:
+            data = kwargs['updates']
+            key = 'updates'
+        else:
+            data = kwargs['objids']
+            key = 'objids'
+        for i in range(0, len(data), objs_per_loop):
 
+            sliced_update_list = list(data[i:i + objs_per_loop])
+            kwargs[key] = sliced_update_list
+            output += bulk_method(**kwargs)
 
-class wf_objects():
-    pass
+        return output
 
-'''
-{"noteText":comment,
-                  "objID":issue_id,
-                  "noteObjCode":"OPTASK"}
-'''
-#class Project(WorkfrontObject):
+    def _get_max_update_obj_size(self, updates):
+        """
+        Gets the total len of the updates when converted to JSON.
 
-class Note(object):
-    def __init__(self, objcode, objid):
-        self.objcode = objcode
-        self.objid = objid
+        There appears to be a char limit of ~6800 when making a bulk request. This seems related to total
+        char len only, not number of elements.
 
-    def create_note_dictionary(self, comment_text):
-        comment_dict = {}
-        comment_dict['objID'] = self.objid
-        comment_dict['noteText'] = comment_text
-        comment_dict['noteObjCode'] = self.objcode
-
-        return comment_dict
-
-
-
-
-class Task(WorkfrontObject, Note):
-    # TODO: edit available people, name, description, status, etc... possibly change the way we do comments?
-
-    def __init__(self, api, name=None, task_id=None, data = None):
-        if not data:
-            data = {}
-        # params = params
-
-        super().__init__(data, api, objCode='TASK',ID=task_id)
-        if name:
-            self.name = name
-        #self.workfront_instance = workfront_instance
-        # self.objid = project_id
-        # self.objCode = 'PROJ'
-        # self.api = api
-
-        #self.params = {'objID': self.project_id}
-    def change_status(self, new_status):
-        self.params['status'] = new_status
-        return self.params
-
-    def add_comment(self, comment_text):
-        comment = self.create_note_dictionary(comment_text)
-        res = self.api.post('NOTE', comment)
-        return res
-
-    def create_note_dictionary(self, comment_text):
-        comment_dict = {}
-        comment_dict['objID'] = self.ID
-        comment_dict['noteText'] = comment_text
-        comment_dict['noteObjCode'] = self.objCode
-        return comment_dict
-
-class Issue(WorkfrontObject, Note):
-    # TODO: edit available people, name, description, status, etc... possibly change the way we do comments?
-
-    def __init__(self, api, name=None, issue_id=None, data = None):
-        if not data:
-            data = {}
-        # params = params
-
-        super().__init__(data, api, objCode='OPTASK',ID=issue_id)
-        if name:
-            self.name = name
-        #self.workfront_instance = workfront_instance
-        # self.objid = project_id
-        # self.objCode = 'PROJ'
-        # self.api = api
-
-        #self.params = {'objID': self.project_id}
-    def change_status(self, new_status):
-        self.params['status'] = new_status
-        return self.params
-
-    def add_comment(self, comment_text):
-        comment = self.create_note_dictionary(comment_text)
-        res = self.api.post('NOTE', comment)
-        return res
-
-    def create_note_dictionary(self, comment_text):
-        comment_dict = {}
-        comment_dict['objID'] = self.ID
-        comment_dict['noteText'] = comment_text
-        comment_dict['noteObjCode'] = self.objCode
-        return comment_dict
-
-
-class Project(WorkfrontObject, Note):
-    # TODO: edit available people, name, description, status, etc... possibly change the way we do comments?
-
-    def __init__(self, api, name=None, project_id=None, data = None):
-        if not data:
-            data = {}
-        # params = params
-
-        super().__init__(data, api, objCode='PROJ',ID=project_id)
-
-        if name:
-            self.name = name
-        #self.workfront_instance = workfront_instance
-        # self.objid = project_id
-        # self.objCode = 'PROJ'
-        # self.api = api
-
-        #self.params = {'objID': self.project_id}
-    def change_status(self, new_status):
-        self.params['status'] = new_status
-        return self.params
-
-    def add_comment(self, comment_text):
-        comment = self.create_note_dictionary(comment_text)
-        res = self.api.post('NOTE', comment)
-        return res
-
-    def create_note_dictionary(self, comment_text):
-        comment_dict = {}
-        comment_dict['objID'] = self.ID
-        comment_dict['noteText'] = comment_text
-        comment_dict['noteObjCode'] = self.objCode
-        return comment_dict
-
-
-
-
-
+        This method checks the size of the JSON converted "updates" and calculates a safe self._max_bulk
+        value.
+        :param updates: A dict containing updates
+        :return: A safe value for self._max_bulk
+        """
+        # Actual limit seems to be ~6894 but errors are seen sometime at numbers down to 5000. It's possible that
+        # the problem is not related to overall char size, but is something to do with some other field length or
+        # attempting to add or modify so many objects at once. This issue isn't well understood at the moment.
+        api_char_limit = 3000
+        updates_len = len(updates)
+        json_len = len(json.dumps(updates))
+        char_per_update_element = int(math.ceil(json_len/updates_len))
+        safe_elements_per_loop = int(math.floor(api_char_limit / char_per_update_element))
+        print('Safe number of update elements per loop is {0}'.format(safe_elements_per_loop))
+        return safe_elements_per_loop if safe_elements_per_loop < self._max_bulk else self._max_bulk
 
 
 class ObjCode:

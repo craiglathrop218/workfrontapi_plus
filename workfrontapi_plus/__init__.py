@@ -23,7 +23,7 @@ SOFTWARE.
 
 """
 
-from workfrontapi_plus.api import Api
+
 
 __doc__ = """
 workfrontapi_plus is an upgraded version of the Python API distributed by Workfront.
@@ -61,3 +61,6 @@ example.
 
 Authors: Roshan Bal, Craig Lathrop
 """
+
+from workfrontapi_plus.api import Api
+from workfrontapi_plus.objects import *

@@ -6,10 +6,15 @@ import json
 class WorkfrontObject(object):
     def __init__(self, data, api=None, objCode=None, ID=None):
         self.__dict__['api'] = api
-        self.__dict__['data'] = data
         self.__dict__['_dirty_fields'] = []
-        self.__dict__['data']['objCode'] = objCode
-        self.__dict__['data']['ID'] = ID
+        self.__dict__['data'] = data
+
+        if objCode:
+            self.__dict__['data']['objCode'] = objCode
+
+        if ID:
+            self.__dict__['data']['ID'] = ID
+
 
 
     def __getattr__(self, item):
