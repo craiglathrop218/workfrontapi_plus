@@ -9,6 +9,7 @@ api = Api(WorkfrontConfig.subdomain,
           api_key=WorkfrontConfig.api_key,
           test_mode=True)
 
+
 f = open('C:/Users/robal/Documents/testdocumentPDF.pdf', 'rb')
 url = 'https://idt.preview.workfront.com/attask/api/v7.0/upload?apiKey=1q2tz2xgsgf2y44mvz78vxn1y0jhqc7h'
 file = open('C:/Users/robal/Documents/testdocumentPDF.pdf', 'rb')
