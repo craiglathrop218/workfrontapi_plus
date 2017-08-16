@@ -4,23 +4,21 @@ import requests
 from workfrontapi_plus.objects.core_wf_object import WorkfrontObject
 
 api = Api(WorkfrontConfig.subdomain,
-                    'preview',
+          'preview',
           api_version='6.0',
           api_key=WorkfrontConfig.api_key,
           test_mode=True)
-
-
 
 f = open('C:/Users/robal/Documents/testdocumentPDF.pdf', 'rb')
 url = 'https://idt.preview.workfront.com/attask/api/v7.0/upload?apiKey=1q2tz2xgsgf2y44mvz78vxn1y0jhqc7h'
 file = open('C:/Users/robal/Documents/testdocumentPDF.pdf', 'rb')
 # files = {'uploadedFile': file}
-#values = {'author': 'John Smith'}
-#r = requests.post(url, files=files)
+# values = {'author': 'John Smith'}
+# r = requests.post(url, files=files)
 # r = requests.post(url, files=files)
 # val = r.json()
 api.make_document(file, 'PROJ', '58a250c5000227f75154615d375388ba', 1)
-a=0
+a = 0
 # res = api.upload_file(f)
 # print(res)
 # issu = Issue(api, issue_id='59936d1800295eacc7f69885696ebcdd')
@@ -33,7 +31,7 @@ a=0
 # tsk.name = 'NEW ISSUE NAME!'
 # tsk.save()
 # tsk.add_comment('new issue comment')
-#test = WorkfrontObject('data', api)
+# test = WorkfrontObject('data', api)
 # proj = Project(api, project_id='58a250c5000227f75154615d375388ba')
 #
 # res = proj.status = 'PLN'

@@ -2,6 +2,7 @@ import requests
 import math
 import json
 
+
 # CRUD wrapper for basic modifications
 class WorkfrontObject(object):
     def __init__(self, data, api=None, objCode=None, ID=None):
@@ -14,8 +15,6 @@ class WorkfrontObject(object):
 
         if ID:
             self.__dict__['data']['ID'] = ID
-
-
 
     def __getattr__(self, item):
         return self.__dict__['data'][item]
@@ -46,11 +45,10 @@ class WorkfrontObject(object):
         for item in self._dirty_fields:
             params[item] = self.data[item]
 
-
         # params = dict([(key, self.data[key])
         #                 for key, val in self._dirty_fields.items() if val])
 
-        #params = dict(self.data)
+        # params = dict(self.data)
         if not len(params):
             raise StreamNotModifiedException("No fields were modified.")
 
@@ -72,12 +70,12 @@ class WorkfrontObject(object):
             raise StreamClientNotSet()
         return self.streamclient.delete(self.objCode, self.ID, force)
 
-    def share(self,user_ids, level='view'):
+    def share(self, user_ids, level='view'):
         return self.api.share_obj(self.objCode, self.ID, user_ids, level)
-
 
     def get_share(self):
         return self.api.get_
+
 
 class WorkfrontAPIException(Exception):
     """Raised when a _request fails"""
@@ -85,8 +83,10 @@ class WorkfrontAPIException(Exception):
     def __init__(self, error_msg):
         super().__init__(error_msg)
 
+
 class StreamNotModifiedException(Exception):
     "Raised when saving an object that has not been modified"
+
 
 class StreamClientNotSet(Exception):
     """Raised when calling an api method on an object without an

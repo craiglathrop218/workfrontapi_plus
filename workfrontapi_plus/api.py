@@ -37,12 +37,13 @@ SOFTWARE.
 #  COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 #  OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import requests
-import math
 import json
-from workfrontapi_plus.objects.core_wf_object import WorkfrontObject, WorkfrontAPIException, StreamNotModifiedException, StreamClientNotSet
-from wfconfig import WorkfrontConfig
-# import WorkfrontObject
+import math
+
+import requests
+
+from workfrontapi_plus.objects.core_wf_object import WorkfrontAPIException
+
 
 class Api(object):
     GET = 'GET'
@@ -90,8 +91,6 @@ class Api(object):
         self._count = self.count
         self._open_api_connection = self._p_open_api_connection
         self._upload_file = self._request_upload_file
-
-
 
     @staticmethod
     def test_mode_make_request(*args):
@@ -195,10 +194,10 @@ class Api(object):
         res = []
         if len(updates) > max_objs_per_loop:
             res = self._bulk_segmenter(self.bulk,
-                                      objs_per_loop=max_objs_per_loop,
-                                      objcode=objcode,
-                                      updates=updates,
-                                      fields=fields)
+                                       objs_per_loop=max_objs_per_loop,
+                                       objcode=objcode,
+                                       updates=updates,
+                                       fields=fields)
             return res
         path = '/{0}'.format(objcode)
         params = {'updates': json.dumps(updates)}
@@ -427,7 +426,6 @@ class Api(object):
         handle = self._upload_file(file, path)
         a = 0
 
-
     def make_update_as_user(self, user_email, exec_method, objcode, params, objid=None, action=None, objids=None,
                             fields=None, logout=False):
         """
@@ -594,7 +592,7 @@ class Api(object):
             raise WorkfrontAPIException(e)
 
         if response.ok:
-            print('Response OK - 200. Len of full URL was ',len(response.url),' char.')
+            print('Response OK - 200. Len of full URL was ', len(response.url), ' char.')
             return response.json()
         else:
             raise WorkfrontAPIException(response.text)
@@ -608,7 +606,7 @@ class Api(object):
         file = {'uploadedFile': file}
         params = {}
         params = self._set_authentication(params)
-        #r = requests.post(url, files=params, apiKey = '1q2tz2xgsgf2y44mvz78vxn1y0jhqc7h')
+        # r = requests.post(url, files=params, apiKey = '1q2tz2xgsgf2y44mvz78vxn1y0jhqc7h')
         r = requests.request('post', url, files=file, params=params)
         return r.json()
 
@@ -667,7 +665,6 @@ class Api(object):
             data = kwargs['objids']
             key = 'objids'
         for i in range(0, len(data), objs_per_loop):
-
             sliced_update_list = list(data[i:i + objs_per_loop])
             kwargs[key] = sliced_update_list
             output += bulk_method(**kwargs)
@@ -692,7 +689,7 @@ class Api(object):
         api_char_limit = 3000
         updates_len = len(updates)
         json_len = len(json.dumps(updates))
-        char_per_update_element = int(math.ceil(json_len/updates_len))
+        char_per_update_element = int(math.ceil(json_len / updates_len))
         safe_elements_per_loop = int(math.floor(api_char_limit / char_per_update_element))
         print('Safe number of update elements per loop is {0}'.format(safe_elements_per_loop))
         return safe_elements_per_loop if safe_elements_per_loop < self._max_bulk else self._max_bulk

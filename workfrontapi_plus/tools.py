@@ -1,7 +1,7 @@
 from datetime import datetime
 
-class Tools(object):
 
+class Tools(object):
     @staticmethod
     def parse_workfront_date(date_string):
         """

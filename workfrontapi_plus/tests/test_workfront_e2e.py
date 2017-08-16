@@ -7,18 +7,17 @@ import hashlib, json, requests
 from nose.tools import assert_true
 import random
 
-
 '''https://realpython.com/blog/python/testing-third-party-apis-with-mocks/'''
 
-class TestWorkfrontE2E(TestCase):
 
+class TestWorkfrontE2E(TestCase):
     api = Api(WorkfrontConfig.subdomain,
-                    'preview',
+              'preview',
               api_version='6.0',
               api_key=WorkfrontConfig.api_key,
               test_mode=True)
 
-########  LIVE E2E TESTS #############
+    ########  LIVE E2E TESTS #############
 
     def test_e2e_controller(self):
         self.api._request = self.api._make_request
@@ -56,8 +55,6 @@ class TestWorkfrontE2E(TestCase):
 
         self.delete_a_proj(project['id'])
 
-
-
     def make_proj(self):
         return self.api.post('proj', {'name': 'Test Project', 'status': 'PLN'})
 
@@ -70,8 +67,8 @@ class TestWorkfrontE2E(TestCase):
     def make_bulk_tasks(self, proj_id):
         tasks = []
         for x in range(50):
-            tasks.append({'name': 'This is the First Task',
-                          'projectID': proj_id,
+            tasks.append({'name'            : 'This is the First Task',
+                          'projectID'       : proj_id,
                           'plannedStartDate': '2017-12-01'
                           })
         return self.api.bulk_create('task', tasks)
@@ -79,8 +76,8 @@ class TestWorkfrontE2E(TestCase):
     def bulk_update_tasks(self, task_ids, hash):
         updates = []
         for t_id in task_ids:
-            updates.append({'name': 'Hash: {0}'.format(hash),
-                            'ID': t_id,
+            updates.append({'name'       : 'Hash: {0}'.format(hash),
+                            'ID'         : t_id,
                             'description': '''object_hook is an optional function that will be called with the result 
                              of any object literal decoded (a dict). The return value of object_hook will be used instead
                              of the dict. This feature can be used to implement custom decoders (e.g. JSON-RPC class 
@@ -93,7 +90,6 @@ class TestWorkfrontE2E(TestCase):
 
     def live_search(self, hash):
         return self.api.search('task', {'name': 'Updated name {0}'.format(hash), 'name_Mod': 'cicontains'}, ['name'])
-
 
     def make_error(self):
 

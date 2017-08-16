@@ -19,6 +19,7 @@ class _WorkTypeObject(WorkfrontObject):
     """
     A class that shares common traits with issues, tasks, and projects
     """
+
     def __init__(self, data=None, api=None, objCode=None, ID=None, name=None):
 
         super().__init__(data, api, objCode=objCode, ID=ID)
@@ -32,7 +33,8 @@ class _WorkTypeObject(WorkfrontObject):
     def add_comment(self, comment_text, author_email=None):
         if author_email:
             if not self.api.api_key:
-                raise ValueError('To post comment on behalf of a user, an admin API key must be used for authentication.')
+                raise ValueError(
+                    'To post comment on behalf of a user, an admin API key must be used for authentication.')
             else:
                 self.api.login(author_email)
 
@@ -49,10 +51,11 @@ class _WorkTypeObject(WorkfrontObject):
 
         return comment_dict
 
+
 class Task(_WorkTypeObject):
     # TODO: edit available people, name, description, status, etc... possibly change the way we do comments?
 
-    def __init__(self,data=None, api=None, name=None, task_id=None):
+    def __init__(self, data=None, api=None, name=None, task_id=None):
         if not data:
             data = {}
         # params = params
@@ -79,6 +82,7 @@ class Project(_WorkTypeObject):
     """
     Class for the project object type.
     """
+
     # TODO: edit available people, name, description, status, etc... possibly change the way we do comments?
 
     def __init__(self, data=None, api=None, name=None, project_id=None):
