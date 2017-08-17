@@ -421,10 +421,25 @@ class Api(object):
 
         return self._request(path, params, self.GET)
 
+
+    def upload_document(self, file, name, obj_code, obj_id, version=1):
+        handle = self.make_document(file, obj_code, obj_id, version)
+        post_doc = self.post_document(name, handle, obj_code, obj_id, version)
+
     def make_document(self, file, obj_code, obj_id, version=1):
         path = "/upload"
         handle = self._upload_file(file, path)
         return handle
+
+    def post_document(self, name, handle, obj_code, obj_id, version):
+        updates = {'name': name,
+                   'handle': handle,
+                   'docObjCode': obj_code,
+                   'objID': obj_id
+                   #'currentVersion': "{'version':'v1.0','fileName':name}"
+                  }
+
+        return self.post('docu', updates)
 
 
     def make_update_as_user(self, user_email, exec_method, objcode, params, objid=None, action=None, objids=None,
