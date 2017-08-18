@@ -1,5 +1,5 @@
 from datetime import datetime
-
+import os
 
 class Tools(object):
     @staticmethod
@@ -71,3 +71,40 @@ class Tools(object):
             else:
                 output[key] = value
         return output
+
+    @staticmethod
+    def make_config_file():
+        """
+        Makes a config file to hold sub domain and API Key
+        """
+        code = '''
+class WorkfrontConfig(object):
+    """
+    This file holds path and credential information for the workfront API
+
+    This file is designed to help keep your authentication data safe and out of your 
+    repository. To use this file when instantiating the Workfront Api:
+    
+    
+    1 from wfconfig import WorkfrontConfig
+    2
+    3 api = Api(subdomain=WorkfrontConfig.subdomain,
+    4           api_key=WorkfrontConfig.api_key,
+    5           env='preview',
+    6           api_version='6.0')
+    
+    """
+    # Enter your API key here. This can be found in the Workfront interface under 
+    # setup->Customer Info.
+    api_key = '{api_key}'
+    
+    # The sub domain is the prefix to the URL you use to access Workfront. For example
+    # https://xxx.my.workfront.com, xxx would be the sub domain.
+    subdomain = '{sub_domain}'
+'''
+        api_key = input("Enter your API key: ")
+        sub_domain = input("Enter your subdomain: ")
+        output = code.format(api_key=api_key, sub_domain=sub_domain)
+        config_file = open("wfconfig_t.py", "w")
+        config_file.write(output)
+        config_file.close()
