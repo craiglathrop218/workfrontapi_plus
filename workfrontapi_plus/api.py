@@ -609,9 +609,10 @@ class Api(object):
 
         try:
             # Request should default ambiguous as WF_API+ should handle methods (GET, POST etc.)
-            if method:
-                #response = requests.request(data['method'], dest, params=data)
-                response = requests.request(method, dest, params=data)
+
+            # FIXME: Breaking changes now require type-check. Type-check should be refactored out
+            if isinstance(data, dict) and 'method' in data:
+                response = requests.request(data['method'], dest, params=data)
             else:
                 # Use requests.get as fallback
                 response = requests.get(dest, data)
@@ -643,19 +644,17 @@ class Api(object):
         # If no params passed in set a blank dict.
         params = params if params else {}
 
-        # if method == self.GET and params:
-        #     params = self._parse_parameter_lists(params)
+        params['method'] = method
 
-        #params['method'] = method
-        params = self._set_authentication(params)
-
-        # Params can skip authentication if the request is to login (no apiKey and no sessionID until after login)
-        if not params.keys() & {'password', 'username'}:
-            params = self._set_authentication(params)
-
+        # Check that fields exist before attempting join to avoid error.
         if fields:
             params['fields'] = ','.join(fields)
 
+        # Params *must* skip be able skip auth if the request is to login (no apiKey and no sessionID until after login)
+        if not params.keys() & {'password', 'username'}:
+            params = self._set_authentication(params)
+
+        # Must come after method/login checks, otherwise: AttributeError: 'str' object has no attribute 'keys'
         if method == self.GET and params:
             params = self._parse_parameter_lists(params)
 
