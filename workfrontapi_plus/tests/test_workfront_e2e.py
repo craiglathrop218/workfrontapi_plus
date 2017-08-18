@@ -22,17 +22,24 @@ class TestWorkfrontE2E(TestCase):
     def test_e2e_controller(self):
         self.api._request = self.api._make_request
         self.api.debug = True
-        random.seed(4)
-        rnd = str(random.randint(2, 90) * 54)
+        rnd = str(random.randint(2, 900) * 54)
         rnd = rnd.encode('ascii')
         hash_str = hashlib.sha224(rnd).hexdigest()
-        # Make a project
-        project = self.make_proj()
-        print('Created project: ', project['name'])
+        # Make some projects
+        project_list = []
+        for x in range(3):
+            project_list.append(self.make_proj(hash_str))
+
+        proj_id_list = [d['ID'] for d in project_list]
+
+        print('Created project: ', project_list[0]['name'])
 
         # Make a task
-        task = self.make_a_task(project['ID'])
+        task = self.make_a_task(project_list[0]['ID'])
         print('Created task: ', task['name'])
+
+        # Test get_list
+        res = self.api.get_list('proj', proj_id_list)
 
         # Test Action by Assigning User
         params = {'objID': WorkfrontConfig.test_user_id,
@@ -63,10 +70,12 @@ class TestWorkfrontE2E(TestCase):
         # print('Updated task name to {0}.'.format(t_updates[0]['name']))
 
         # Test search
-        params = {'name': 'Testing Project 1'}
+        params = {'name': hash_str, 'name_Mod': 'cicontains'}
         search_res = self.search('PROJ', params)
 
-        self.assertEqual(search_res[0]['ID'], '58a250c5000227f75154615d375388ba')
+        search_res_id_list = [d['ID'] for d in search_res]
+
+        self.assertCountEqual(search_res_id_list, proj_id_list)
         print('Successfully searched for and found project: ', search_res[0]['ID'])
         a = 0
         # self.assertEqual(len(search_res), len(task_ids))
@@ -77,11 +86,11 @@ class TestWorkfrontE2E(TestCase):
         #self.delete_a_proj(project['id'])
 
         # Test Document Uploading
-        file = open('C:/Users/robal/Documents/testdocumentPDF.pdf', 'rb')
-        made_doc = self.make_doc(file, 'PROJ', project['ID'], 1)
+        file = open('../../test_doc.pdf', 'rb')
+        made_doc = self.make_doc(file, 'PROJ', project_list[0]['ID'], 1)
         print('Got handle ', made_doc)
 
-        posted_doc = self.post_doc('document.pdf', made_doc, 'PROJ', project['ID'], 1)
+        posted_doc = self.post_doc('document.pdf', made_doc, 'PROJ', project_list[0]['ID'], 1)
 
         print('Posted document named, ', '"document.pdf"')
 
@@ -115,13 +124,13 @@ class TestWorkfrontE2E(TestCase):
 
 
         # Test Login
-        res = self.login_tst(WorkfrontConfig.test_login_email)
+        res = self.login_tst(WorkfrontConfig.test_login_email, WorkfrontConfig.test_pass)
         self.assertEqual(res['userID'], WorkfrontConfig.test_user_id)
         print('Logged into user ', res['userID'])
         a = 0
 
         # Test Make Update as User
-        params = {'objID': project['ID'],
+        params = {'objID': project_list[0]['ID'],
                         'noteText': 'Comment coming from workfront',
                         'noteObjCode': 'PROJ'}
         made_comment = self.make_update_by_user(WorkfrontConfig.test_login_email, 'post', 'NOTE', params)
@@ -134,8 +143,8 @@ class TestWorkfrontE2E(TestCase):
         # self.assertEqual(logout_res['user_id'], None)
 
         # Delete a Project
-        p_id = project['ID']
-        self.delete_a_proj(project['ID'])
+        p_id = project_list[0]['ID']
+        self.delete_a_proj(project_list[0]['ID'])
 
         print('Deleted the project ', p_id)
 
@@ -174,8 +183,8 @@ class TestWorkfrontE2E(TestCase):
         res = self.api.make_update_as_user(user_email, exec_method, objcode, params, objid, fields, logout)
         return res
 
-    def make_proj(self):
-        return self.api.post('proj', {'name': 'Test Project', 'status': 'PLN'})
+    def make_proj(self, hash_str):
+        return self.api.post('proj', {'name': 'e2e Test Project {0}'.format(hash_str), 'status': 'PLN'})
 
     def make_a_task(self, proj_id):
         return self.api.post('task', {'name': 'First Task', 'projectID': proj_id})
@@ -192,10 +201,10 @@ class TestWorkfrontE2E(TestCase):
                           })
         return self.api.bulk_create('task', tasks)
 
-    def bulk_update_tasks(self, task_ids, hash):
+    def bulk_update_tasks(self, task_ids, hash_str):
         updates = []
         for t_id in task_ids:
-            updates.append({'name'       : 'Hash: {0}'.format(hash),
+            updates.append({'name'       : 'Hash: {0}'.format(hash_str),
                             'ID'         : t_id,
                             'description': '''object_hook is an optional function that will be called with the result 
                              of any object literal decoded (a dict). The return value of object_hook will be used instead
@@ -207,11 +216,12 @@ class TestWorkfrontE2E(TestCase):
     def bulk_delete_tasks(self, task_ids):
         return self.api.bulk_delete('task', task_ids)
 
-    def live_search(self, hash):
-        return self.api.search('task', {'name': 'Updated name {0}'.format(hash), 'name_Mod': 'cicontains'}, ['name'])
+    def live_search(self, hash_str):
+        return self.api.search('task', {'name': 'Updated name {0}'.format(hash_str), 'name_Mod': 'cicontains'}, ['name'])
 
     def search(self,objcode, params, fields=None, get_all=False, limit=None):
         return self.api.search(objcode, params, fields, get_all,limit)
+
     def make_error(self):
 
         with self.assertRaises(Exception) as context:
