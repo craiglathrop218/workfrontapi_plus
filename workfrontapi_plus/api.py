@@ -146,7 +146,7 @@ class Api(object):
         :return: Data from Workfront
         """
         path = '/{0}'.format(objcode)
-        return self._request(path, {'ids': ','.join(ids)}, fields)
+        return self._request(path, {'id': ','.join(ids)}, self.GET, fields)
 
     def put(self, objcode, objid, params, fields=None):
         """
