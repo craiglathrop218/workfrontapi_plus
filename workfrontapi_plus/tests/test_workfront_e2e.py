@@ -33,27 +33,146 @@ class TestWorkfrontE2E(TestCase):
         # Make a task
         task = self.make_a_task(project['ID'])
         print('Created task: ', task['name'])
-        #
-        # # Delete a task
+
+        # Test Action by Assigning User
+        params = {'objID': WorkfrontConfig.test_user_id,
+                  'objCode': 'USER'}
+        assign_action = self.do_action('TASK', 'assign', params, objid=task['ID'])
+        print('Assigned task to ', WorkfrontConfig.test_user_id)
+
+        # Test Put
+
+        params = {'status': 'INP'}
+
+        res = self.tst_put('TASK', task['ID'], params)
+
+        print('Updated task ', task['ID'], ' to have a status of in progress')
+
+        # Delete a task
         del_res = self.delete_a_task(task['ID'])
         print('Deleted task: ', del_res['success'])
 
+
+
         # Make a lot of tasks
-        tasks = self.make_bulk_tasks(project['ID'])
-        print('Created {0} tasks'.format(len(tasks)))
-        task_ids = [x['ID'] for x in tasks]
-        # Update a lot of tasks
-        t_updates = self.bulk_update_tasks(task_ids, hash_str)
-        print('Updated task name to {0}.'.format(t_updates[0]['name']))
+        # tasks = self.make_bulk_tasks(project['ID'])
+        # print('Created {0} tasks'.format(len(tasks)))
+        # task_ids = [x['ID'] for x in tasks]
+        # # Update a lot of tasks
+        # t_updates = self.bulk_update_tasks(task_ids, hash_str)
+        # print('Updated task name to {0}.'.format(t_updates[0]['name']))
 
         # Test search
-        search_res = self.live_search(hash_str)
-        self.assertEqual(len(search_res), len(task_ids))
+        params = {'name': 'Testing Project 1'}
+        search_res = self.search('PROJ', params)
 
-        del_res = self.bulk_delete_tasks(task_ids)
-        print('Deleted task: ', del_res['success'])
+        self.assertEqual(search_res[0]['ID'], '58a250c5000227f75154615d375388ba')
+        print('Successfully searched for and found project: ', search_res[0]['ID'])
+        a = 0
+        # self.assertEqual(len(search_res), len(task_ids))
+        #
+        # del_res = self.bulk_delete_tasks(task_ids)
+        # print('Deleted task: ', del_res['success'])
 
-        self.delete_a_proj(project['id'])
+        #self.delete_a_proj(project['id'])
+
+        # Test Document Uploading
+        file = open('C:/Users/robal/Documents/testdocumentPDF.pdf', 'rb')
+        made_doc = self.make_doc(file, 'PROJ', project['ID'], 1)
+        print('Got handle ', made_doc)
+
+        posted_doc = self.post_doc('document.pdf', made_doc, 'PROJ', project['ID'], 1)
+
+        print('Posted document named, ', '"document.pdf"')
+
+        # Test Report
+        # params = {'DE:JIRA Project ID=CTP',
+        #          'DE:JIRA Project ID_Mod=cieq'}
+        #
+        # report = self.report_tst('PROJ', params)
+
+
+        # Test Count
+
+        params = {'status': 'CUR'}
+
+        count_res = self.get_count('TASK', params)
+        print('Got count of ', count_res)
+
+
+
+
+
+
+        # Test Get List
+        # ids = ['599636f70000b26a0d9032d3f3dc7eb6', '59934a0e00068fc9ab14ef083d54962f',
+        #        '56d8b69f0077e4db6bdb89c9288ec11c']
+        # fields = ['name', 'status']
+        # list = self.get_the_list('PROJ', ids, fields)
+        #
+        # print('Got the list ', list)
+
+
+
+        # Test Login
+        res = self.login_tst(WorkfrontConfig.test_login_email)
+        self.assertEqual(res['userID'], WorkfrontConfig.test_user_id)
+        print('Logged into user ', res['userID'])
+        a = 0
+
+        # Test Make Update as User
+        params = {'objID': project['ID'],
+                        'noteText': 'Comment coming from workfront',
+                        'noteObjCode': 'PROJ'}
+        made_comment = self.make_update_by_user(WorkfrontConfig.test_login_email, 'post', 'NOTE', params)
+        print('Created comment: ', made_comment['noteText'], ' on behalf of ', WorkfrontConfig.test_login_email)
+
+        # Test Logout
+        logout_res = self.logout_tst()
+        self.assertEqual(logout_res['success'], True)
+        # self.assertEqual(logout_res['session_id'], None)
+        # self.assertEqual(logout_res['user_id'], None)
+
+        # Delete a Project
+        p_id = project['ID']
+        self.delete_a_proj(project['ID'])
+
+        print('Deleted the project ', p_id)
+
+
+    def login_tst(self, username, password=None):
+        return self.api.login(username, password)
+
+    def logout_tst(self):
+        res = self.api.logout()
+        return res
+
+    def get_count(self, objcode, params):
+        return self.api.count(objcode, params)
+
+    def make_doc(self, file, obj_code, obj_id, version=1):
+        return self.api.make_document(file, obj_code, obj_id, version)
+
+    def post_doc(self, name, handle, obj_code, obj_id, version):
+        self.api.post_document(name, handle, obj_code, obj_id, version)
+
+    def get_the_list(self, objcode, ids, fields=None):
+        return self.api.get_list(objcode, ids, fields)
+
+    def do_action(self, objcode, action, params, fields=None, objid=None):
+        return self.api.action(objcode, action, params, fields, objid)
+
+    def report_tst(self, objcode, params, agg_field=None, agg_func=None, group_by_field=None, rollup=False):
+        return self.api.report(objcode, params, agg_field, agg_func, group_by_field, rollup)
+
+    def tst_put(self, objcode, objid, params, fields=None):
+        return self.api.put(objcode, objid, params, fields)
+
+
+    def make_update_by_user(self, user_email, exec_method, objcode, params, objid=None, action=None, objids=None,
+                            fields=None, logout=False):
+        res = self.api.make_update_as_user(user_email, exec_method, objcode, params, objid, fields, logout)
+        return res
 
     def make_proj(self):
         return self.api.post('proj', {'name': 'Test Project', 'status': 'PLN'})
@@ -91,6 +210,8 @@ class TestWorkfrontE2E(TestCase):
     def live_search(self, hash):
         return self.api.search('task', {'name': 'Updated name {0}'.format(hash), 'name_Mod': 'cicontains'}, ['name'])
 
+    def search(self,objcode, params, fields=None, get_all=False, limit=None):
+        return self.api.search(objcode, params, fields, get_all,limit)
     def make_error(self):
 
         with self.assertRaises(Exception) as context:

@@ -421,10 +421,26 @@ class Api(object):
 
         return self._request(path, params, self.GET)
 
+
+    def upload_document(self, file, name, obj_code, obj_id, version=1):
+        handle = self.make_document(file, obj_code, obj_id, version)
+        post_doc = self.post_document(name, handle, obj_code, obj_id, version)
+
     def make_document(self, file, obj_code, obj_id, version=1):
         path = "/upload"
         handle = self._upload_file(file, path)
-        a = 0
+        return handle
+
+    def post_document(self, name, handle, obj_code, obj_id, version):
+        updates = {'name': name,
+                   'handle': handle,
+                   'docObjCode': obj_code,
+                   'objID': obj_id
+                   #'currentVersion': "{'version':'v1.0','fileName':name}"
+                  }
+
+        return self.post('docu', updates)
+
 
     def make_update_as_user(self, user_email, exec_method, objcode, params, objid=None, action=None, objids=None,
                             fields=None, logout=False):
@@ -536,6 +552,16 @@ class Api(object):
         # There will be an & on the far left. Strip that off
         return output_string[1:]
 
+    @staticmethod
+    def _parse_post_param_list(params):
+        output_string = ""
+
+        if 'apiKey' in params:
+            api_string = '&apiKey=' + params['apiKey']
+        params.pop('apiKey', None)
+        output_string += "updates=" + str(params) + '&method=post' + api_string
+        return output_string
+
     def _make_request(self, path, params, method, fields=None, raw=False):
         """
         Makes the request to Workfront API
@@ -565,11 +591,11 @@ class Api(object):
         api_param_string = self._prepare_params(method, params, fields)
 
         api_path = self.api_base_url + path
-        data = self._open_api_connection(api_param_string, api_path)
+        data = self._open_api_connection(api_param_string, api_path, method)
 
         return data if raw else data['data']
 
-    def _p_open_api_connection(self, data, dest):
+    def _p_open_api_connection(self, data, dest, method=None):
         """
         Makes the request to the Workfront API
 
@@ -578,10 +604,12 @@ class Api(object):
         :return: json results of query
         """
         if 'updates' in data:
-            print('The length of the updates query is ' + str(len(data['updates'])) + 'char.')
+            pass
+            #print('The length of the updates query is ' + str(len(data['updates'])) + 'char.')
 
         try:
             # Request should default ambiguous as WF_API+ should handle methods (GET, POST etc.)
+
             # FIXME: Breaking changes now require type-check. Type-check should be refactored out
             if isinstance(data, dict) and 'method' in data:
                 response = requests.request(data['method'], dest, params=data)
@@ -615,6 +643,7 @@ class Api(object):
 
         # If no params passed in set a blank dict.
         params = params if params else {}
+
         params['method'] = method
 
         # Check that fields exist before attempting join to avoid error.
@@ -629,10 +658,12 @@ class Api(object):
         if method == self.GET and params:
             params = self._parse_parameter_lists(params)
 
-        # Cannot set auth if not logged in yet.
-        # params = self._set_authentication(params)
-
+        # if method == self.PUT and params:
+        #     params = self._parse_parameter_lists(params)
         # @todo Check if we need to convert to ascii here. Might be able to just return data.
+
+        # if method == 'POST':
+        #     params = self._parse_post_param_list(params)
         return params
 
     def _set_authentication(self, params):
