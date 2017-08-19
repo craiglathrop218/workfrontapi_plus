@@ -1,7 +1,5 @@
 """
-MIT License
-
-Copyright (c) 2017 Craig Lathrop & Roshan Bal
+Copyright 2017, Integrated Device Technologies, Inc.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +19,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
+Authors: Roshan Bal, Craig Lathrop
+
 """
+
 
 
 
@@ -64,3 +65,5 @@ Authors: Roshan Bal, Craig Lathrop
 
 from workfrontapi_plus.api import Api
 from workfrontapi_plus.objects import *
+from workfrontapi_plus.core_wf_object import *
+from workfrontapi_plus.tools import *

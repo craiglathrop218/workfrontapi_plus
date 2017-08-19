@@ -1,4 +1,28 @@
-from workfrontapi_plus.objects import WorkfrontObject
+"""Copyright 2017, Integrated Device Technologies, Inc.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+Authors: Roshan Bal, Craig Lathrop
+
+"""
+
+from workfrontapi_plus.core_wf_object import WorkfrontObject
 
 
 # class Note(object):
@@ -20,9 +44,9 @@ class _WorkTypeObject(WorkfrontObject):
     A class that shares common traits with issues, tasks, and projects
     """
 
-    def __init__(self, data=None, api=None, objCode=None, ID=None, name=None):
+    def __init__(self, data=None, api=None, obj_code=None, id=None, name=None):
 
-        super().__init__(data, api, objCode=objCode, ID=ID)
+        super().__init__(data, api, obj_code=obj_code, id=id)
         if name:
             self.name = name
 
@@ -60,7 +84,7 @@ class Task(_WorkTypeObject):
             data = {}
         # params = params
 
-        super().__init__(api=api, objCode='TASK', ID=task_id, name=name, data=data)
+        super().__init__(api=api, obj_code='TASK', id=task_id, name=name, data=data)
         if name:
             self.name = name
 
@@ -73,7 +97,7 @@ class Issue(_WorkTypeObject):
             data = {}
         # params = params
 
-        super().__init__(api=api, objCode='OPTASK', ID=issue_id, name=name, data=data)
+        super().__init__(api=api, obj_code='OPTASK', id=issue_id, name=name, data=data)
         if name:
             self.name = name
 
@@ -90,7 +114,7 @@ class Project(_WorkTypeObject):
             data = {}
         # params = params
 
-        super().__init__(api=api, objCode='PROJ', ID=project_id, name=name, data=data)
+        super().__init__(api=api, obj_code='PROJ', id=project_id, name=name, data=data)
 
         if name:
             self.name = name

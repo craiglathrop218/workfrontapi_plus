@@ -16,21 +16,21 @@ setup(
     author='Craig Lathrop',
     author_email='none@none.com',
 
-    license='Apache License 2.0',
+    license='MIT',
 
     classifiers=[
         # How mature is this project? Common values are
         #   3 - Alpha
         #   4 - Beta
         #   5 - Production/Stable
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
 
         # Indicate who your project is intended for
         'Intended Audience :: Developers',
         'Topic :: Software Development :: API Tools',
 
         # Pick your license as you wish (should match "license" above)
-        'License :: OSI Approved :: Apache License 2.0',
+        'License :: OSI Approved :: MIT',
 
         # Supported versions
         'Programming Language :: Python :: 3',
@@ -55,7 +55,7 @@ setup(
     # your project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    # install_requires=['requests', 'json'],
+    install_requires=['requests'],
 
     # List additional groups of dependencies here (e.g. development
     # dependencies). You can install these using the following syntax,

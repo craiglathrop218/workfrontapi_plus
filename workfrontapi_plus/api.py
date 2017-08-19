@@ -1,5 +1,4 @@
-"""
-Copyright 2017, Integrated Device Technologies, Inc.
+"""Copyright 2017, Integrated Device Technologies, Inc.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -18,31 +17,17 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-"""
 
-#  Original copyright notice from Workfront Version of this API
-#
-#  Copyright (c) 2010 AtTask, Inc.
-#
-#  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-#  documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
-#  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-#  permit persons to whom the Software is furnished to do so, subject to the following conditions:
-#
-#  The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
-#  Software.
-#
-#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
-#  WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-#  COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-#  OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+Authors: Roshan Bal, Craig Lathrop
+
+"""
 
 import json
 import math
 
 import requests
 
-from workfrontapi_plus.objects.core_wf_object import WorkfrontAPIException
+from workfrontapi_plus.core_wf_object import WorkfrontAPIException
 
 
 class Api(object):
@@ -60,15 +45,15 @@ class Api(object):
 
     def __init__(self, subdomain, env, api_version='7.0', api_key=None, session_id=None, user_id=None, debug=False,
                  test_mode=False):
-        """
-        Setup class
-        
+        """Setup class
+
         :param subdomain: The sub domain for your account
         :param env: {'live', 'sandbox', or 'preview'} default 'sandbox'
         :param api_version: The full version number for the API. Example '7.0'. Default 7.0
         :param api_key: The API key for authentication. Default None.
         :param session_id: An optional session ID for authentication
         :param user_id: The ID of the authenticated user
+
         """
         self.subdomain = subdomain
         api_base_url = self.CORE_URL.format(subdomain=subdomain,
@@ -97,8 +82,7 @@ class Api(object):
         return args
 
     def login(self, username, password=None):
-        """
-        Login to Workfront using username and optionally password.
+        """Login to Workfront using username and optionally password.
         
         This method will make a login _request and set the lession ID.
         
@@ -110,6 +94,7 @@ class Api(object):
         :param username: The Workfront username, typically an email address
         :param password: The Workfront password
         :return: The results of the login.
+
         """
         params = {'username': username}
         if password:
@@ -131,148 +116,148 @@ class Api(object):
         Logout method.
 
         Clears the class session_id and user_id fields.
+
         """
         self._request(self.LOGOUT_PATH, None, self.GET)
         self.session_id = None
         self.user_id = None
 
-    def get_list(self, objcode, ids, fields=None):
-        """
-        Returns each object by id, similar to calling get for each id individually
+    def get_list(self, obj_code, ids, fields=None):
+        """Returns each object by id, similar to calling get for each id individually
 
-        :param objcode: object type (i.e. 'PROJECT')
+        :param obj_code: object type (i.e. 'PROJECT')
         :param ids: list of ids to lookup
         :param fields: list of field names to return for each object
         :return: Data from Workfront
+
         """
-        path = '/{0}'.format(objcode)
+        path = '/{0}'.format(obj_code)
         return self._request(path, {'id': ','.join(ids)}, self.GET, fields)
 
-    def put(self, objcode, objid, params, fields=None):
-        """
-        Updates an existing object, returns the updated object.
+    def put(self, obj_code, obj_id, params, fields=None):
+        """Updates an existing object, returns the updated object.
 
         https://developers.workfront.com/api-docs/#PUT
 
-        :param objcode: object type (i.e. 'PROJECT')
-        :param objid: The ID of the object to act on
+        :param obj_code: object type (i.e. 'PROJECT')
+        :param obj_id: The ID of the object to act on
         :param params: A dict of parameters to filter on
         :param fields: List of field names to return for each object
         :return: Data from Workfront
+
         """
-        path = '/{0}/{1}'.format(objcode, objid)
+        path = '/{0}/{1}'.format(obj_code, obj_id)
         return self._request(path, params, self.PUT, fields)
 
-    def action(self, objcode, action, params, fields=None, objid=None):
-        """
-        Updates an existing object, returns the updated object
-        :param objcode: object type (i.e. 'PROJECT')
-        :param objid: Object ID to operate on
+    def action(self, obj_code, action, params, fields=None, obj_id=None):
+        """Updates an existing object, returns the updated object
+        :param obj_code: object type (i.e. 'PROJECT')
+        :param obj_id: Object ID to operate on
         :param action: action to execute
         :param params: A dict of parameters to filter on
         :param fields: A list of fields to return - Optional
+
         """
-        if objid:
-            path = '/{objcode}/{objid}'.format(objcode=objcode, objid=objid, action=action)
+        if obj_id:
+            path = '/{obj_code}/{objid}'.format(obj_code=obj_code, objid=obj_id, action=action)
         else:  # for some bulk operations you don't want to pass an obj ID in
-            path = '/{objcode}'.format(objcode=objcode, action=action)
+            path = '/{obj_code}'.format(obj_code=obj_code, action=action)
 
         params['action'] = action
 
         return self._request(path, params, self.PUT, fields)
 
-    def bulk(self, objcode, updates, fields=None):
-        """
-        Makes bulk updates to existing objects
+    def bulk(self, obj_code, updates, fields=None):
+        """Makes bulk updates to existing objects
 
-        :param objcode: object type (i.e. 'PROJECT')
+        :param obj_code: object type (i.e. 'PROJECT')
         :param updates: A list of dicts contining the updates
         :param fields: A list of fields to return - Optional
         :return: The results of the _request as a list of updated objects
+
         """
         max_objs_per_loop = self._get_max_update_obj_size(updates)
         res = []
         if len(updates) > max_objs_per_loop:
             res = self._bulk_segmenter(self.bulk,
                                        objs_per_loop=max_objs_per_loop,
-                                       objcode=objcode,
+                                       obj_code=obj_code,
                                        updates=updates,
                                        fields=fields)
             return res
-        path = '/{0}'.format(objcode)
+        path = '/{0}'.format(obj_code)
         params = {'updates': json.dumps(updates)}
 
         return self._request(path, params, self.PUT, fields)
 
-    def bulk_create(self, objcode, updates, fields=None):
-        """
-        Bulk creation of objects such as tasks, issues, other.
+    def bulk_create(self, obj_code, updates, fields=None):
+        """Bulk creation of objects such as tasks, issues, other.
 
         This method differs from bulk in that it uses the POST operation, not PUT
-        :param objcode: object type (i.e. 'PROJECT')
+        :param obj_code: object type (i.e. 'PROJECT')
         :param updates: A list of dicts containing the updates
         :param fields: List of field names to return for each object
         :return: The results of the _request as a list of newly created objects
+
         """
         max_objs_per_loop = self._get_max_update_obj_size(updates)
         res = []
         if len(updates) > self._max_bulk:
             res = self._bulk_segmenter(self.bulk_create,
                                        objs_per_loop=max_objs_per_loop,
-                                       objcode=objcode,
+                                       obj_code=obj_code,
                                        updates=updates,
                                        fields=fields)
             return res
-        path = '/{0}'.format(objcode)
+        path = '/{0}'.format(obj_code)
         params = {'updates': json.dumps(updates)}
         return self._request(path, params, self.POST, fields)
 
-    def post(self, objcode, params, fields=None):
-        """
-        Creates a new object, returns the new object
+    def post(self, obj_code, params, fields=None):
+        """Creates a new object, returns the new object
 
         https://developers.workfront.com/api-docs/#POST
 
-        :param objcode: object type (i.e. 'PROJECT')
+        :param obj_code: object type (i.e. 'PROJECT')
         :param params: A dict of parameters to filter on.
         :param fields: List of field names to return for each object.
         :return: The results of the updated object.
+
         """
-        path = '/{0}'.format(objcode)
+        path = '/{0}'.format(obj_code)
         return self._request(path, params, self.POST, fields)
 
-    def get(self, objcode, objid, fields=None):
-        """
-        Lookup an object by id
+    def get(self, obj_code, obj_id, fields=None):
+        """Lookup an single object by id
 
-        :param objcode: object type (i.e. 'PROJECT')
-        :param objid: Object ID to operate on
+        :param obj_code: object type (i.e. 'PROJECT')
+        :param obj_id: Object ID to operate on
         :param fields:
         :return: The requested object with requested fields
+
         """
-        path = '/{0}/{1}'.format(objcode, objid)
+        path = '/{0}/{1}'.format(obj_code, obj_id)
         return self._request(path, None, self.GET, fields)
 
-    def delete(self, objcode, objid, force=True):
-        """
-        Delete by object ID
+    def delete(self, obj_code, obj_id, force=True):
+        """Delete an object by ID
 
-        :param objcode: object type (i.e. 'PROJECT')
-        :param objid: Object ID to operate on
+        :param obj_code: object type (i.e. 'PROJECT')
+        :param obj_id: Object ID to operate on
         :param force: Force deletion of the object with relationships. For example
                       if a task is deleted with force "False" associated expenses will
                       not be removed.
         :return: The results of the deletion
+
         """
-        path = '/{0}/{1}'.format(objcode, objid)
+        path = '/{0}/{1}'.format(obj_code, obj_id)
         return self._request(path, {'force': force}, self.DELETE)
 
-    def bulk_delete(self, objcode, objids, force=True, atomic=True):
-        """
-        Delete by object ID
+    def bulk_delete(self, obj_code, obj_ids, force=True, atomic=True):
+        """Delete by object ID
 
-        :param objcode: object type (i.e. 'PROJECT')
-        :param objids: A list of object IDs to be deleted
+        :param obj_code: object type (i.e. 'PROJECT')
+        :param obj_ids: A list of object IDs to be deleted
         :param force: True by default. Force deletion of the object with relationships. For example
                       if a task is deleted with force "False" associated expenses will
                       not be removed.
@@ -287,37 +272,41 @@ class Api(object):
                        not specify atomic=True and the ID's for Task B and C are in the list of ID's to be deleted it
                        will throw an error as it will not be able to find those ID's.
         :return: The results of the deletion
+
         """
         res = []
-        if len(objids) > self._max_bulk:
+        if len(obj_ids) > self._max_bulk:
             res = self._bulk_segmenter(self.bulk_delete,
                                        objs_per_loop=self._max_bulk,
-                                       objcode=objcode,
-                                       objids=objids,
+                                       obj_code=obj_code,
+                                       obj_ids=obj_ids,
                                        force=True,
                                        atomic=True)
             return res
-        path = '/{0}'.format(objcode)
+        path = '/{0}'.format(obj_code)
 
-        params = {"ID": objids, "force": force}
+        params = {"ID": obj_ids, "force": force}
         if atomic:
             params['atomic'] = 'true'
         return self._request(path, params, self.DELETE)
 
-    def search(self, objcode, params, fields=None, get_all=False, limit=None):
-        """
-        Search for objects against a given set of filters (params).
+    def search(self, obj_code, params, fields=None, get_all=False, limit=None):
+        """Search for objects against a given set of filters (params).
 
-        :param objcode: Object code to search for.
-        :param params:
-        :param fields:
+        :param obj_code: Object code to search for.
+        :param params: Search parameters
+        :param fields: List of fields to search for
+        :param get_all: The get_all flag will return all search results, looping as many times as
+                        necessary to return all results.
+        :param limit:
         :return:
+
         """
-        path = '/{0}/search'.format(objcode)
+        path = '/{0}/search'.format(obj_code)
         if get_all or limit:
             output = []
             first = 0
-            count = self._count(objcode, params)
+            count = self._count(obj_code, params)
             if limit:
                 count = count if count < limit else limit
                 limit = self._max_results if limit > self._max_results else limit
@@ -336,27 +325,26 @@ class Api(object):
 
         return self._request(path, params, self.GET, fields)
 
-    def count(self, objcode, params):
-        """
-        Count objects for a given set of filters (params).
+    def count(self, obj_code, params):
+        """Count objects for a given set of filters (params).
 
-        :param objcode: Object code to count.
+        :param obj_code: Object code to count.
         :param params:  Dict of criteria to use as filter
                         {'name': 'example task',
                          'name_Mod: 'cicontains'}
         :return:
+
         """
 
-        path = '/{0}/count'.format(objcode)
+        path = '/{0}/count'.format(obj_code)
         return self._request(path, params, self.GET)['count']
 
-    def report(self, objcode, params, agg_field, agg_func, group_by_field=None, rollup=False):
-        """
-        Create aggregate reports.
+    def report(self, obj_code, params, agg_field, agg_func, group_by_field=None, rollup=False):
+        """Create aggregate reports.
 
         This method will return an aggregate for the fields specified in an object. For example:
 
-        objcode = 'TASK', agg_func='duration'
+        obj_code = 'TASK', agg_func='duration'
         {
             "data": {
                 "durationMinutes": 24468636,
@@ -364,7 +352,7 @@ class Api(object):
             }
         }
 
-        :param objcode: Object type
+        :param obj_code: Object type
         :param params:  Dict of criteria to use as filter
                         {'name': 'example task',
                          'name_Mod: 'cicontains'}
@@ -405,9 +393,10 @@ class Api(object):
                             }
 
         :return: dict with the results
+
         """
 
-        path = "/{objCode}/report".format(objCode=objcode)
+        path = "/{objCode}/report".format(objCode=obj_code)
 
         if group_by_field:
             gb_key = "{field}_1_GroupBy".format(field=group_by_field)
@@ -442,10 +431,9 @@ class Api(object):
         return self.post('docu', updates)
 
 
-    def make_update_as_user(self, user_email, exec_method, objcode, params, objid=None, action=None, objids=None,
+    def make_update_as_user(self, user_email, exec_method, obj_code, params, obj_id=None, action=None, obj_ids=None,
                             fields=None, logout=False):
-        """
-        Performs an action on behalf of another user.
+        """Performs an action on behalf of another user.
 
         This method will login on behalf of another user by passing in the users ID (email) and the API key to the login
         method. This will set a session ID. While the session ID is set all actions performed or taken will show as if
@@ -457,12 +445,13 @@ class Api(object):
         :param exec_method: Method within Workfront class to execute on behalf of user
                             Options: ('post', 'put', 'action', 'search')
         :param action: Action to take ('post', 'put', 'action', 'search', 'report', 'bulk')
-        :param objcode: The object code to act on
+        :param obj_code: The object code to act on
         :param params: A list of parameters
-        :param objid: Optional. Object ID to act on. This is required for put, and certain action commands.
-        :param objids: Optional. Object ID list to act on. This is required for bulk commands.
+        :param obj_id: Optional. Object ID to act on. This is required for put, and certain action commands.
+        :param obj_ids: Optional. Object ID list to act on. This is required for bulk commands.
         :param fields: Optional. List of fields to return
         :return: The results of the query
+
         """
         res = self.login(user_email)
 
@@ -475,22 +464,22 @@ class Api(object):
 
         if res:
             if exec_method == 'post':
-                return self.post(objcode, params, fields)
+                return self.post(obj_code, params, fields)
 
             elif exec_method == 'put':
-                if objid:
-                    return self.put(objcode, objid, params, fields)
+                if obj_id:
+                    return self.put(obj_code, obj_id, params, fields)
                 else:
                     raise ValueError('Must Pass object id if using put method')
 
             elif exec_method == 'action':
                 if action:
-                    return self.action(objcode, action, params, fields, objid)
+                    return self.action(obj_code, action, params, fields, obj_id)
                 else:
                     raise ValueError('Must Pass action parameter if calling action method')
 
             elif exec_method == 'search':
-                return self.search(objcode, params, fields)
+                return self.search(obj_code, params, fields)
 
             else:
                 raise ValueError('Login failed. No Session ID')
@@ -516,8 +505,7 @@ class Api(object):
 
     @staticmethod
     def _parse_parameter_lists(params):
-        """
-        Searches params and converts lists to comma sep strings
+        """Searches params and converts lists to comma sep strings
 
         The workfront API will reject the ['something','somethingelse'] format if sent as a parameter value. This
         method looks through the params for lists and converts them to simple comma separated values in a string. For
@@ -535,6 +523,7 @@ class Api(object):
 
         :param params: A dict of the filter parameters
         :return: The filters params converted to a string
+
         """
         output_string = ""
 
@@ -563,8 +552,7 @@ class Api(object):
         return output_string
 
     def _make_request(self, path, params, method, fields=None, raw=False):
-        """
-        Makes the request to Workfront API
+        """Makes the request to Workfront API
 
         :param path: The API Path (i.e. http://domain.my.workfront.com/attask/api/v7.0/{action}/{obj})
         :param params: A dict of filter parameters
@@ -587,6 +575,7 @@ class Api(object):
                      'name': 'proj 2'}]
 
         :return: The query results
+
         """
         api_param_string = self._prepare_params(method, params, fields)
 
@@ -596,12 +585,12 @@ class Api(object):
         return data if raw else data['data']
 
     def _p_open_api_connection(self, data, dest, method=None):
-        """
-        Makes the request to the Workfront API
+        """Makes the request to the Workfront API
 
         :param data: The URL parameters string
         :param dest: API URL
         :return: json results of query
+
         """
         if 'updates' in data:
             pass
@@ -667,11 +656,11 @@ class Api(object):
         return params
 
     def _set_authentication(self, params):
-        """
-        Adds the authentication into params.
+        """Adds the authentication into params.
 
         :param params:
         :return:
+
         """
         # Added a check to see if a session ID is being used instead of API Key - CL 8/4
         if self.session_id:
@@ -685,20 +674,20 @@ class Api(object):
 
     @staticmethod
     def _bulk_segmenter(bulk_method, objs_per_loop, **kwargs):
-        """
-        Breaks a list of items up into chunks for processing.
+        """Breaks a list of items up into chunks for processing.
 
         :param bulk_method: An instance of the method (self.bulk, self.bulk_delete, self.bulk_create)
         :param kwargs: The various parameters
         :return: The output of the update from API
+
         """
         output = []
         if 'updates' in kwargs:
             data = kwargs['updates']
             key = 'updates'
         else:
-            data = kwargs['objids']
-            key = 'objids'
+            data = kwargs['obj_ids']
+            key = 'obj_ids'
         for i in range(0, len(data), objs_per_loop):
             sliced_update_list = list(data[i:i + objs_per_loop])
             kwargs[key] = sliced_update_list
@@ -707,8 +696,7 @@ class Api(object):
         return output
 
     def _get_max_update_obj_size(self, updates):
-        """
-        Gets the total len of the updates when converted to JSON.
+        """Gets the total len of the updates when converted to JSON.
 
         There appears to be a char limit of ~6800 when making a bulk request. This seems related to total
         char len only, not number of elements.
@@ -717,6 +705,7 @@ class Api(object):
         value.
         :param updates: A dict containing updates
         :return: A safe value for self._max_bulk
+
         """
         # Actual limit seems to be ~6894 but errors are seen sometime at numbers down to 5000. It's possible that
         # the problem is not related to overall char size, but is something to do with some other field length or

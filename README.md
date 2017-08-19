@@ -50,7 +50,15 @@ In `workfrontapo_plus.Tools` `parse_workfront_date(date)` converts from the Work
 
 ### Authentication 
 If using the API key, it is highly recommended that you store the key in a separate class or config file that 
-is not part of your repository. Here is an example configuration file:
+is not part of your repository. The tools class contains a tool to help build a config file:
+
+```python
+from workfrontapi_plus.tools import Tools
+
+Tools.make_config_file()
+```
+
+Here is an example configuration file:
 
 ```python
 class WorkfrontConfig(object):
@@ -59,14 +67,15 @@ class WorkfrontConfig(object):
 
     Replace the xxxxx below with your API key.
     """
-    api_key = 'abcd21vo9n6ft3osd5548ym7m23dn7wwv'
+    api_key = 'abcd21vo9n6ft3osd5548ym7m23dn7abc'
     subdomain = 'xyz'
 ```
 
 When instantiating the Workfront API class:
 
 ```python
-from workfrontapi_plus import Workfront, Tools
+from workfrontapi_plus import Workfront
+from workfrontapi_plus.tools import Tools
 from wfconfig import WorkfrontConfig
 
 api = Workfront(WorkfrontConfig.subdomain, 'preview', api_key=WorkfrontConfig.api_key)
