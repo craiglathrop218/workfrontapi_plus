@@ -89,6 +89,72 @@ class Task(_WorkTypeObject):
             self.name = name
 
 
+    def accept_work(self):
+        # acceptWork
+        pass
+
+    def approve_approval(self):
+        # approveApproval
+        pass
+
+    def assign(self):
+        # assign
+        pass
+
+    def bulk_copy(self):
+        # bulkCopy
+        pass
+
+    def bulk_move(self):
+        # bulkMove
+        pass
+
+    def calculate_data_extension(self):
+        # calculateDataExtension
+        pass
+
+    def calculate_data_extensions(self):
+        # calculateDataExtensions
+        pass
+
+    def mark_done(self):
+        # markDone
+        pass
+
+    def mark_not_done(self):
+        # markNotDone
+        pass
+
+    def move(self):
+        # move
+        pass
+
+    def recall_approval(self):
+        # recallApproval
+        pass
+
+    def reject_approval(self):
+        # rejectApproval
+        pass
+
+    def reply_to_assignment(self):
+        # replyToAssignment
+        pass
+
+    def unaccept_work(self):
+        # unacceptWork
+        pass
+
+    def unassign(self):
+        # unassign
+        pass
+
+    def unassign_occurrences(self):
+        # unassignOccurrences
+        pass
+
+
+
 class Issue(_WorkTypeObject):
     # TODO: edit available people, name, description, status, etc... possibly change the way we do comments?
 
@@ -100,6 +166,47 @@ class Issue(_WorkTypeObject):
         super().__init__(api=api, obj_code='OPTASK', id=issue_id, name=name, data=data)
         if name:
             self.name = name
+
+    def accept_work(self):
+        # acceptWork
+        pass
+
+    def approve_approval(self):
+        # approveApproval
+        pass
+
+    def assign(self):
+        # assign
+        pass
+
+    def calculate_data_extension(self):
+        # calculateDataExtension
+        pass
+
+    def mark_done(self):
+        # markDone
+        pass
+
+    def mark_not_done(self):
+        # markNotDone
+        pass
+
+    def move(self):
+        # move
+        pass
+
+    def move_to_task(self):
+        # moveToTask
+        pass
+
+
+
+
+
+
+
+
+
 
 
 class Project(_WorkTypeObject):
@@ -142,3 +249,36 @@ class Project(_WorkTypeObject):
                   'excludeTemplateTask_IDs': exclude_templateTask_ids,
                   'options': options}
         return self.api.action('PROJ', 'attachTemplate', params, fields, self.ID)
+
+
+    def approve_approval(self):
+        # approveApproval
+        pass
+
+    # def attach_template(self):
+    #     # attachTemplate
+    #     pass
+
+    def calculate_data_extension(self):
+        # calculateDataExtension
+        pass
+
+    def calculate_finance(self):
+        # calculateFinance
+        pass
+
+    def calculate_timeline(self):
+        # calculateTimeline
+        pass
+
+    def recall_approval(self):
+        # recallApproval
+        pass
+
+    def reject_approval(self):
+        # rejectApproval
+        pass
+
+    def set_budget_to_schedule(self):
+        # setBudgetToSchedule
+        pass
