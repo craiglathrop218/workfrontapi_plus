@@ -1,5 +1,5 @@
 """
-Copyright (c) 2017 Craig Lathrop & Roshan Bal
+Copyright 2017, Integrated Device Technologies, Inc.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -730,30 +730,3 @@ class Api(object):
         return safe_elements_per_loop if safe_elements_per_loop < self._max_bulk else self._max_bulk
 
 
-class ObjCode:
-    """
-    Constants for Workfront objCode's
-    """
-    PROJECT = 'proj'
-    TASK = 'task'
-    ISSUE = 'optask'
-    TEAM = 'team'
-    HOUR = 'hour'
-    TIMESHEET = 'tshet'
-    USER = 'user'
-    ASSIGNMENT = 'assgn'
-    USER_PREF = 'userpf'
-    CATEGORY = 'ctgy'
-    CATEGORY_PARAMETER = 'ctgypa'
-    PARAMETER = 'param'
-    PARAMETER_GROUP = 'pgrp'
-    PARAMETER_OPTION = 'popt'
-    PARAMETER_VALUE = 'pval'
-    ROLE = 'role'
-    GROUP = 'group'
-    NOTE = 'note'
-    DOCUMENT = 'docu'
-    DOCUMENT_VERSION = 'docv'
-    EXPENSE = 'expns'
-    CUSTOM_ENUM = 'custem'
-    PROGRAM = 'prgm'
