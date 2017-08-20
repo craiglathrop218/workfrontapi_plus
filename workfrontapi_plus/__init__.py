@@ -23,9 +23,6 @@ Authors: Roshan Bal, Craig Lathrop
 
 """
 
-
-
-
 __doc__ = """
 workfrontapi_plus is an upgraded version of the Python API distributed by Workfront.
 

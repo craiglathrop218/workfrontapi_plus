@@ -1,10 +1,9 @@
-
 from workfrontapi_plus import Api
 
 from wfconfig import WorkfrontConfig
 
-class BreakBulkUpdates(object):
 
+class BreakBulkUpdates(object):
     api = Api(subdomain=WorkfrontConfig.subdomain,
               api_key=WorkfrontConfig.api_key,
               env='sb01',
@@ -38,6 +37,7 @@ class BreakBulkUpdates(object):
                           'extRefID': 'This is a test',
                           'description': 'This is a longer description test. Test test test.'})
         return self.api.bulk_create('task', tasks)
+
 
 b = BreakBulkUpdates()
 

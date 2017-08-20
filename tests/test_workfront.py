@@ -84,26 +84,26 @@ class TestWorkfront(TestCase):
 
 
 
-        ########  BEGIN UNIT TESTS ###########
+            ########  BEGIN UNIT TESTS ###########
 
     def test_login(self):
         # Test with a password
-        self.api._request = lambda x, y, z: {'sessionID'  : 'test',
-                                             'userID'     : 'craig@test.com',
+        self.api._request = lambda x, y, z: {'sessionID': 'test',
+                                             'userID': 'craig@test.com',
                                              'output_data': [x, y, z]}
         res = self.api.login('craig@test.com', 'abc123')
         golden = {'output_data': ['/login', {'username': 'craig@test.com', 'password': 'abc123'}, 'GET'],
-                  'userID'     : 'craig@test.com', 'sessionID': 'test'}
+                  'userID': 'craig@test.com', 'sessionID': 'test'}
         self.assertEqual(res, golden)
         self.assertEqual(self.api.session_id, 'test')
         self.assertEqual(self.api.user_id, 'craig@test.com')
         # Test without a password
-        self.api._request = lambda x, y, z: {'sessionID'  : 'test',
-                                             'userID'     : y,
+        self.api._request = lambda x, y, z: {'sessionID': 'test',
+                                             'userID': y,
                                              'output_data': [x, y, z]}
         res = self.api.login('craig@test.com')
         golden = {'output_data': ['/login', {'username': 'craig@test.com'}, 'GET'], 'sessionID': 'test',
-                  'userID'     : {'username': 'craig@test.com'}}
+                  'userID': {'username': 'craig@test.com'}}
         self.assertEqual(res, golden)
 
     def test_logout(self):
@@ -298,7 +298,7 @@ class TestWorkfront(TestCase):
 
     def test_search(self):
         # Test without limit or get_all
-        self.api._request = lambda path, params, method, fields: {'path'  : path,
+        self.api._request = lambda path, params, method, fields: {'path': path,
                                                                   'params': params,
                                                                   'method': method,
                                                                   'fields': fields}
@@ -308,7 +308,7 @@ class TestWorkfront(TestCase):
         self.assertEqual(golden, res)
 
         # Test without limit or get_all or fields
-        self.api._request = lambda path, params, method, fields: {'path'  : path,
+        self.api._request = lambda path, params, method, fields: {'path': path,
                                                                   'params': params,
                                                                   'method': method,
                                                                   'fields': fields}
@@ -318,20 +318,20 @@ class TestWorkfront(TestCase):
 
         # Test with get_all - 2500 results
         self.api._count = lambda objcode, params: 2500
-        self.api._request = lambda path, params, method, fields: [{'path'  : path,
+        self.api._request = lambda path, params, method, fields: [{'path': path,
                                                                    'params': params,
                                                                    'method': method,
                                                                    'fields': fields}]
         golden = [
-            {'path'  : '/task/search', 'params': {'b': 'x', '$$FIRST': 2000, '$$LIMIT': 500, 'a': 'x'}, 'method': 'GET',
+            {'path': '/task/search', 'params': {'b': 'x', '$$FIRST': 2000, '$$LIMIT': 500, 'a': 'x'}, 'method': 'GET',
              'fields': ['f1', 'f2']},
-            {'path'  : '/task/search', 'params': {'b': 'x', '$$FIRST': 2000, '$$LIMIT': 500, 'a': 'x'}, 'method': 'GET',
+            {'path': '/task/search', 'params': {'b': 'x', '$$FIRST': 2000, '$$LIMIT': 500, 'a': 'x'}, 'method': 'GET',
              'fields': ['f1', 'f2']},
-            {'path'  : '/task/search', 'params': {'b': 'x', '$$FIRST': 2000, '$$LIMIT': 500, 'a': 'x'}, 'method': 'GET',
+            {'path': '/task/search', 'params': {'b': 'x', '$$FIRST': 2000, '$$LIMIT': 500, 'a': 'x'}, 'method': 'GET',
              'fields': ['f1', 'f2']},
-            {'path'  : '/task/search', 'params': {'b': 'x', '$$FIRST': 2000, '$$LIMIT': 500, 'a': 'x'}, 'method': 'GET',
+            {'path': '/task/search', 'params': {'b': 'x', '$$FIRST': 2000, '$$LIMIT': 500, 'a': 'x'}, 'method': 'GET',
              'fields': ['f1', 'f2']},
-            {'path'  : '/task/search', 'params': {'b': 'x', '$$FIRST': 2000, '$$LIMIT': 500, 'a': 'x'}, 'method': 'GET',
+            {'path': '/task/search', 'params': {'b': 'x', '$$FIRST': 2000, '$$LIMIT': 500, 'a': 'x'}, 'method': 'GET',
              'fields': ['f1', 'f2']}]
         res = self.api.search('task', {'a': 'x', 'b': 'x'}, ['f1', 'f2'], get_all=True)
 
@@ -339,7 +339,7 @@ class TestWorkfront(TestCase):
 
         # Test with get_all - 6120 results
         self.api._count = lambda objcode, params: 6120
-        self.api._request = lambda path, params, method, fields: [{'path'  : path,
+        self.api._request = lambda path, params, method, fields: [{'path': path,
                                                                    'params': params,
                                                                    'method': method,
                                                                    'fields': fields}]
@@ -376,11 +376,11 @@ class TestWorkfront(TestCase):
 
         # Test with get_all - 413 results
         self.api._count = lambda objcode, params: 413
-        self.api._request = lambda path, params, method, fields: [{'path'  : path,
+        self.api._request = lambda path, params, method, fields: [{'path': path,
                                                                    'params': params,
                                                                    'method': method,
                                                                    'fields': fields}]
-        golden = [{'path'  : '/task/search', 'method': 'GET', 'fields': ['f1', 'f2'],
+        golden = [{'path': '/task/search', 'method': 'GET', 'fields': ['f1', 'f2'],
                    'params': {'$$LIMIT': 413, 'b': 'x', 'a': 'x', '$$FIRST': 0}}]
         res = self.api.search('task', {'a': 'x', 'b': 'x'}, ['f1', 'f2'], get_all=True)
 
@@ -388,49 +388,49 @@ class TestWorkfront(TestCase):
 
         # Test with limit count over limit
         self.api._count = lambda objcode, params: 6120
-        self.api._request = lambda path, params, method, fields: [{'path'  : path,
+        self.api._request = lambda path, params, method, fields: [{'path': path,
                                                                    'params': params,
                                                                    'method': method,
                                                                    'fields': fields}]
 
         golden = [{'fields': ['f1', 'f2'], 'params': {'$$FIRST': 4000, 'a': 'x', 'b': 'x', '$$LIMIT': 10},
-                   'path'  : '/task/search', 'method': 'GET'},
+                   'path': '/task/search', 'method': 'GET'},
                   {'fields': ['f1', 'f2'], 'params': {'$$FIRST': 4000, 'a': 'x', 'b': 'x', '$$LIMIT': 10},
-                   'path'  : '/task/search', 'method': 'GET'},
+                   'path': '/task/search', 'method': 'GET'},
                   {'fields': ['f1', 'f2'], 'params': {'$$FIRST': 4000, 'a': 'x', 'b': 'x', '$$LIMIT': 10},
-                   'path'  : '/task/search', 'method': 'GET'},
+                   'path': '/task/search', 'method': 'GET'},
                   {'fields': ['f1', 'f2'], 'params': {'$$FIRST': 4000, 'a': 'x', 'b': 'x', '$$LIMIT': 10},
-                   'path'  : '/task/search', 'method': 'GET'},
+                   'path': '/task/search', 'method': 'GET'},
                   {'fields': ['f1', 'f2'], 'params': {'$$FIRST': 4000, 'a': 'x', 'b': 'x', '$$LIMIT': 10},
-                   'path'  : '/task/search', 'method': 'GET'},
+                   'path': '/task/search', 'method': 'GET'},
                   {'fields': ['f1', 'f2'], 'params': {'$$FIRST': 4000, 'a': 'x', 'b': 'x', '$$LIMIT': 10},
-                   'path'  : '/task/search', 'method': 'GET'},
+                   'path': '/task/search', 'method': 'GET'},
                   {'fields': ['f1', 'f2'], 'params': {'$$FIRST': 4000, 'a': 'x', 'b': 'x', '$$LIMIT': 10},
-                   'path'  : '/task/search', 'method': 'GET'},
+                   'path': '/task/search', 'method': 'GET'},
                   {'fields': ['f1', 'f2'], 'params': {'$$FIRST': 4000, 'a': 'x', 'b': 'x', '$$LIMIT': 10},
-                   'path'  : '/task/search', 'method': 'GET'},
+                   'path': '/task/search', 'method': 'GET'},
                   {'fields': ['f1', 'f2'], 'params': {'$$FIRST': 4000, 'a': 'x', 'b': 'x', '$$LIMIT': 10},
-                   'path'  : '/task/search', 'method': 'GET'}]
+                   'path': '/task/search', 'method': 'GET'}]
         res = self.api.search('task', {'a': 'x', 'b': 'x'}, ['f1', 'f2'], limit=4010)
 
         self.assertEqual(golden, res)
 
         # Test with limit count over limit
         self.api._count = lambda objcode, params: 2100
-        self.api._request = lambda path, params, method, fields: [{'path'  : path,
+        self.api._request = lambda path, params, method, fields: [{'path': path,
                                                                    'params': params,
                                                                    'method': method,
                                                                    'fields': fields}]
         golden = [
-            {'path'  : '/task/search', 'params': {'b': 'x', '$$FIRST': 2000, '$$LIMIT': 100, 'a': 'x'}, 'method': 'GET',
+            {'path': '/task/search', 'params': {'b': 'x', '$$FIRST': 2000, '$$LIMIT': 100, 'a': 'x'}, 'method': 'GET',
              'fields': ['f1', 'f2']},
-            {'path'  : '/task/search', 'params': {'b': 'x', '$$FIRST': 2000, '$$LIMIT': 100, 'a': 'x'}, 'method': 'GET',
+            {'path': '/task/search', 'params': {'b': 'x', '$$FIRST': 2000, '$$LIMIT': 100, 'a': 'x'}, 'method': 'GET',
              'fields': ['f1', 'f2']},
-            {'path'  : '/task/search', 'params': {'b': 'x', '$$FIRST': 2000, '$$LIMIT': 100, 'a': 'x'}, 'method': 'GET',
+            {'path': '/task/search', 'params': {'b': 'x', '$$FIRST': 2000, '$$LIMIT': 100, 'a': 'x'}, 'method': 'GET',
              'fields': ['f1', 'f2']},
-            {'path'  : '/task/search', 'params': {'b': 'x', '$$FIRST': 2000, '$$LIMIT': 100, 'a': 'x'}, 'method': 'GET',
+            {'path': '/task/search', 'params': {'b': 'x', '$$FIRST': 2000, '$$LIMIT': 100, 'a': 'x'}, 'method': 'GET',
              'fields': ['f1', 'f2']},
-            {'path'  : '/task/search', 'params': {'b': 'x', '$$FIRST': 2000, '$$LIMIT': 100, 'a': 'x'}, 'method': 'GET',
+            {'path': '/task/search', 'params': {'b': 'x', '$$FIRST': 2000, '$$LIMIT': 100, 'a': 'x'}, 'method': 'GET',
              'fields': ['f1', 'f2']}]
         res = self.api.search('task', {'a': 'x', 'b': 'x'}, ['f1', 'f2'], limit=4000)
 
@@ -448,7 +448,7 @@ class TestWorkfront(TestCase):
 
     def test__parse_parameter_lists(self):
 
-        params = {'status'    : ['CUR', 'PLN', 'APP'],
+        params = {'status': ['CUR', 'PLN', 'APP'],
                   'status_Mod': 'in'}
         res = self.api._parse_parameter_lists(params)
         # Convert to a list so there can be a stable order to the elements. Without this Python will somewhat

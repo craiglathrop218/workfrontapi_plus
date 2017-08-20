@@ -1,13 +1,11 @@
 from workfrontapi_plus.api import Api
 from wfconfig import WorkfrontConfig
 
-
 api = Api(WorkfrontConfig.subdomain,
-                    'my',
+          'my',
           api_version='7.0',
           api_key=WorkfrontConfig.api_key,
           test_mode=True)
-
 
 
 class Controller(object):
@@ -57,14 +55,16 @@ class StatusUpdates(object):
         for item in results:
             self.write_update(objcode, item['ID'], item['DE:Status Update'])
             self.clear_status_update(objcode, item['ID'])
+
+
 # params = {'objectCategoriesMM:ID': '59938d71004361ba93ea1c9104898d2b',
 #           'objectCategoriesMM:ID_Mod':'in'}
 
 
 
 
-#a = search_for_task_items()
-#write_update('TASK', '598b7754018ab55188def1b15b2f98eb', 'comment jtwwktjghkj')
+# a = search_for_task_items()
+# write_update('TASK', '598b7754018ab55188def1b15b2f98eb', 'comment jtwwktjghkj')
 
 
 C = Controller()

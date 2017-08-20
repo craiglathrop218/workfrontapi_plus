@@ -58,7 +58,7 @@ class _WorkTypeObject(WorkfrontObject):
         if author_email:
             if not self.api.api_key:
                 raise ValueError(
-                    'To post comment on behalf of a user, an admin API key must be used for authentication.')
+                        'To post comment on behalf of a user, an admin API key must be used for authentication.')
             else:
                 self.api.login(author_email)
 
@@ -87,7 +87,6 @@ class Task(_WorkTypeObject):
         super().__init__(api=api, obj_code='TASK', id=task_id, name=name, data=data)
         if name:
             self.name = name
-
 
     def accept_work(self):
         # acceptWork
@@ -154,7 +153,6 @@ class Task(_WorkTypeObject):
         pass
 
 
-
 class Issue(_WorkTypeObject):
     # TODO: edit available people, name, description, status, etc... possibly change the way we do comments?
 
@@ -200,15 +198,6 @@ class Issue(_WorkTypeObject):
         pass
 
 
-
-
-
-
-
-
-
-
-
 class Project(_WorkTypeObject):
     """
     Class for the project object type.
@@ -249,7 +238,6 @@ class Project(_WorkTypeObject):
                   'excludeTemplateTask_IDs': exclude_templateTask_ids,
                   'options': options}
         return self.api.action('PROJ', 'attachTemplate', params, fields, self.ID)
-
 
     def approve_approval(self):
         # approveApproval

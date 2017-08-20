@@ -176,11 +176,9 @@ class Api(object):
         :return: The results of the _request as a list of updated objects
 
         """
-        max_objs_per_loop = self._get_max_update_obj_size(updates)
-        res = []
         if len(updates) > max_objs_per_loop:
             res = self._bulk_segmenter(self.bulk,
-                                       objs_per_loop=max_objs_per_loop,
+                                       objs_per_loop=self._max_bulk,
                                        obj_code=obj_code,
                                        updates=updates,
                                        fields=fields)
@@ -200,11 +198,11 @@ class Api(object):
         :return: The results of the _request as a list of newly created objects
 
         """
-        max_objs_per_loop = self._get_max_update_obj_size(updates)
-        res = []
+        # max_objs_per_loop = self._get_max_update_obj_size(updates)
+
         if len(updates) > self._max_bulk:
             res = self._bulk_segmenter(self.bulk_create,
-                                       objs_per_loop=max_objs_per_loop,
+                                       objs_per_loop=self._max_bulk,
                                        obj_code=obj_code,
                                        updates=updates,
                                        fields=fields)
@@ -410,7 +408,6 @@ class Api(object):
 
         return self._request(path, params, self.GET)
 
-
     def upload_document(self, file, name, obj_code, obj_id, version=1):
         handle = self.make_document(file, obj_code, obj_id, version)
         post_doc = self.post_document(name, handle, obj_code, obj_id, version)
@@ -425,11 +422,10 @@ class Api(object):
                    'handle': handle,
                    'docObjCode': obj_code,
                    'objID': obj_id
-                   #'currentVersion': "{'version':'v1.0','fileName':name}"
-                  }
+                   # 'currentVersion': "{'version':'v1.0','fileName':name}"
+                   }
 
         return self.post('docu', updates)
-
 
     def make_update_as_user(self, user_email, exec_method, obj_code, params, obj_id=None, action=None, obj_ids=None,
                             fields=None, logout=False):
@@ -594,7 +590,7 @@ class Api(object):
         """
         if 'updates' in data:
             pass
-            #print('The length of the updates query is ' + str(len(data['updates'])) + 'char.')
+            # print('The length of the updates query is ' + str(len(data['updates'])) + 'char.')
 
         try:
             # Request should default ambiguous as WF_API+ should handle methods (GET, POST etc.)
@@ -695,27 +691,25 @@ class Api(object):
 
         return output
 
-    def _get_max_update_obj_size(self, updates):
-        """Gets the total len of the updates when converted to JSON.
-
-        There appears to be a char limit of ~6800 when making a bulk request. This seems related to total
-        char len only, not number of elements.
-
-        This method checks the size of the JSON converted "updates" and calculates a safe self._max_bulk
-        value.
-        :param updates: A dict containing updates
-        :return: A safe value for self._max_bulk
-
-        """
-        # Actual limit seems to be ~6894 but errors are seen sometime at numbers down to 5000. It's possible that
-        # the problem is not related to overall char size, but is something to do with some other field length or
-        # attempting to add or modify so many objects at once. This issue isn't well understood at the moment.
-        api_char_limit = 3000
-        updates_len = len(updates)
-        json_len = len(json.dumps(updates))
-        char_per_update_element = int(math.ceil(json_len / updates_len))
-        safe_elements_per_loop = int(math.floor(api_char_limit / char_per_update_element))
-        print('Safe number of update elements per loop is {0}'.format(safe_elements_per_loop))
-        return safe_elements_per_loop if safe_elements_per_loop < self._max_bulk else self._max_bulk
-
-
+    # def _get_max_update_obj_size(self, updates):
+    #     """Gets the total len of the updates when converted to JSON.
+    #
+    #     There appears to be a char limit of ~6800 when making a bulk request. This seems related to total
+    #     char len only, not number of elements.
+    #
+    #     This method checks the size of the JSON converted "updates" and calculates a safe self._max_bulk
+    #     value.
+    #     :param updates: A dict containing updates
+    #     :return: A safe value for self._max_bulk
+    #
+    #     """
+    #     # Actual limit seems to be ~6894 but errors are seen sometime at numbers down to 5000. It's possible that
+    #     # the problem is not related to overall char size, but is something to do with some other field length or
+    #     # attempting to add or modify so many objects at once. This issue isn't well understood at the moment.
+    #     api_char_limit = 3000
+    #     updates_len = len(updates)
+    #     json_len = len(json.dumps(updates))
+    #     char_per_update_element = int(math.ceil(json_len / updates_len))
+    #     safe_elements_per_loop = int(math.floor(api_char_limit / char_per_update_element))
+    #     print('Safe number of update elements per loop is {0}'.format(safe_elements_per_loop))
+    #     return safe_elements_per_loop if safe_elements_per_loop < self._max_bulk else self._max_bulk

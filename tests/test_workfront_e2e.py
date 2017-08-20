@@ -23,8 +23,7 @@ Authors: Roshan Bal, Craig Lathrop
 """
 
 from unittest import TestCase
-from workfrontapi_plus import Api
-from workfrontapi_plus.tools import Tools
+from workfrontapi_plus import Api, Tools
 
 from wfconfig import WorkfrontConfig
 
@@ -33,6 +32,7 @@ from nose.tools import assert_true
 import random
 
 '''https://realpython.com/blog/python/testing-third-party-apis-with-mocks/'''
+
 
 class TestWorkfrontE2E(TestCase):
     api = Api(WorkfrontConfig.subdomain,
@@ -51,12 +51,14 @@ class TestWorkfrontE2E(TestCase):
         hash_str = hashlib.sha224(rnd).hexdigest()
         # Make some projects
         project_list = []
+
+        # Make three projects
         for x in range(3):
             project_list.append(self.make_proj(hash_str))
 
         proj_id_list = [d['ID'] for d in project_list]
 
-        print('Created project: ', project_list[0]['name'])
+        print('Created project: ', project_list[0]['name'], ' with ID: ', project_list[0]['ID'])
 
         # Make a task
         task = self.make_a_task(project_list[0]['ID'])
@@ -64,6 +66,7 @@ class TestWorkfrontE2E(TestCase):
 
         # Test get_list
         res = self.api.get_list('proj', proj_id_list)
+        print('Returned a list of {0} projects'.format(len(res)))
 
         # Test Action by Assigning User
         params = {'objID': WorkfrontConfig.test_user_id,
@@ -83,15 +86,13 @@ class TestWorkfrontE2E(TestCase):
         del_res = self.delete_a_task(task['ID'])
         print('Deleted task: ', del_res['success'])
 
-
-
         # Make a lot of tasks
-        # tasks = self.make_bulk_tasks(project['ID'])
-        # print('Created {0} tasks'.format(len(tasks)))
-        # task_ids = [x['ID'] for x in tasks]
+        tasks = self.make_bulk_tasks(project_list[0]['ID'])
+        print('Created {0} tasks'.format(len(tasks)))
+        task_ids = [x['ID'] for x in tasks]
         # # Update a lot of tasks
-        # t_updates = self.bulk_update_tasks(task_ids, hash_str)
-        # print('Updated task name to {0}.'.format(t_updates[0]['name']))
+        t_updates = self.bulk_update_tasks(task_ids, hash_str)
+        print('Updated task name to {0}.'.format(t_updates[0]['name']))
 
         # Test search
         params = {'name': hash_str, 'name_Mod': 'cicontains'}
@@ -104,13 +105,13 @@ class TestWorkfrontE2E(TestCase):
         a = 0
         # self.assertEqual(len(search_res), len(task_ids))
         #
-        # del_res = self.bulk_delete_tasks(task_ids)
-        # print('Deleted task: ', del_res['success'])
+        del_res = self.bulk_delete_tasks(task_ids)
+        print('Deleted task: ', del_res['success'])
 
-        #self.delete_a_proj(project['id'])
+        # self.delete_a_proj(project['id'])
 
         # Test Document Uploading
-        file = open('../../test_doc.pdf', 'rb')
+        file = open('../test_doc.pdf', 'rb')
         made_doc = self.make_doc(file, 'PROJ', project_list[0]['ID'], 1)
         print('Got handle ', made_doc)
 
@@ -132,11 +133,6 @@ class TestWorkfrontE2E(TestCase):
         count_res = self.get_count('TASK', params)
         print('Got count of ', count_res)
 
-
-
-
-
-
         # Test Get List
         # ids = ['599636f70000b26a0d9032d3f3dc7eb6', '59934a0e00068fc9ab14ef083d54962f',
         #        '56d8b69f0077e4db6bdb89c9288ec11c']
@@ -155,8 +151,8 @@ class TestWorkfrontE2E(TestCase):
 
         # Test Make Update as User
         params = {'objID': project_list[0]['ID'],
-                        'noteText': 'Comment coming from workfront',
-                        'noteObjCode': 'PROJ'}
+                  'noteText': 'Comment coming from workfront',
+                  'noteObjCode': 'PROJ'}
         made_comment = self.make_update_by_user(WorkfrontConfig.test_login_email, 'post', 'NOTE', params)
         print('Created comment: ', made_comment['noteText'], ' on behalf of ', WorkfrontConfig.test_login_email)
 
@@ -171,7 +167,6 @@ class TestWorkfrontE2E(TestCase):
         self.delete_a_proj(project_list[0]['ID'])
 
         print('Deleted the project ', p_id)
-
 
     def login_tst(self, username, password=None):
         return self.api.login(username, password)
@@ -201,7 +196,6 @@ class TestWorkfrontE2E(TestCase):
     def tst_put(self, objcode, objid, params, fields=None):
         return self.api.put(objcode, objid, params, fields)
 
-
     def make_update_by_user(self, user_email, exec_method, objcode, params, objid=None, action=None, objids=None,
                             fields=None, logout=False):
         res = self.api.make_update_as_user(user_email, exec_method, objcode, params, objid, fields, logout)
@@ -218,9 +212,9 @@ class TestWorkfrontE2E(TestCase):
 
     def make_bulk_tasks(self, proj_id):
         tasks = []
-        for x in range(50):
-            tasks.append({'name'            : 'This is the First Task',
-                          'projectID'       : proj_id,
+        for x in range(30):
+            tasks.append({'name': 'This is task number {0}'.format(x),
+                          'projectID': proj_id,
                           'plannedStartDate': '2017-12-01'
                           })
         return self.api.bulk_create('task', tasks)
@@ -228,12 +222,9 @@ class TestWorkfrontE2E(TestCase):
     def bulk_update_tasks(self, task_ids, hash_str):
         updates = []
         for t_id in task_ids:
-            updates.append({'name'       : 'Hash: {0}'.format(hash_str),
-                            'ID'         : t_id,
-                            'description': '''object_hook is an optional function that will be called with the result 
-                             of any object literal decoded (a dict). The return value of object_hook will be used instead
-                             of the dict. This feature can be used to implement custom decoders (e.g. JSON-RPC class 
-                             hinting). '''})
+            updates.append({'name': 'Hash: {0} - {1}'.format(hash_str, t_id[4:]),
+                            'ID': t_id,
+                            'description': '''Description here'''})
 
         return self.api.bulk('task', updates)
 
@@ -241,10 +232,11 @@ class TestWorkfrontE2E(TestCase):
         return self.api.bulk_delete('task', task_ids)
 
     def live_search(self, hash_str):
-        return self.api.search('task', {'name': 'Updated name {0}'.format(hash_str), 'name_Mod': 'cicontains'}, ['name'])
+        return self.api.search('task', {'name': 'Updated name {0}'.format(hash_str), 'name_Mod': 'cicontains'},
+                               ['name'])
 
-    def search(self,objcode, params, fields=None, get_all=False, limit=None):
-        return self.api.search(objcode, params, fields, get_all,limit)
+    def search(self, objcode, params, fields=None, get_all=False, limit=None):
+        return self.api.search(objcode, params, fields, get_all, limit)
 
     def make_error(self):
 
