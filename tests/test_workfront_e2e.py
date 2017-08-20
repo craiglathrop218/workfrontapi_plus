@@ -51,9 +51,10 @@ class TestWorkfrontE2E(TestCase):
         hash_str = hashlib.sha224(rnd).hexdigest()
         # Make some projects
         project_list = []
+        test_proj_num = 3
 
         # Make three projects
-        for x in range(3):
+        for x in range(test_proj_num):
             project_list.append(self.make_proj(hash_str))
 
         proj_id_list = [d['ID'] for d in project_list]
@@ -145,7 +146,7 @@ class TestWorkfrontE2E(TestCase):
 
         # Test Login
         res = self.login_tst(WorkfrontConfig.test_login_email, WorkfrontConfig.test_pass)
-        self.assertEqual(res['userID'], WorkfrontConfig.test_user_id)
+        self.assertEqual(res['userID'], WorkfrontConfig.test_user_id, WorkfrontConfig.test_pass)
         print('Logged into user ', res['userID'])
         a = 0
 
@@ -153,7 +154,7 @@ class TestWorkfrontE2E(TestCase):
         params = {'objID': project_list[0]['ID'],
                   'noteText': 'Comment coming from workfront',
                   'noteObjCode': 'PROJ'}
-        made_comment = self.make_update_by_user(WorkfrontConfig.test_login_email, 'post', 'NOTE', params)
+        made_comment = self.make_update_by_user(WorkfrontConfig.test_make_update_email, 'post', 'NOTE', params)
         print('Created comment: ', made_comment['noteText'], ' on behalf of ', WorkfrontConfig.test_login_email)
 
         # Test Logout
@@ -162,11 +163,12 @@ class TestWorkfrontE2E(TestCase):
         # self.assertEqual(logout_res['session_id'], None)
         # self.assertEqual(logout_res['user_id'], None)
 
-        # Delete a Project
-        p_id = project_list[0]['ID']
-        self.delete_a_proj(project_list[0]['ID'])
+        # Delete the test projects
+        for x in range(test_proj_num):
+            p_id = project_list[x]['ID']
+            self.delete_a_proj(p_id)
 
-        print('Deleted the project ', p_id)
+            print('Deleted the project ', p_id)
 
     def login_tst(self, username, password=None):
         return self.api.login(username, password)
