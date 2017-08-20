@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
         name='workfrontapi_plus',
 
-        version='1.0.0',
+        version='1.0.1',
 
         description='A Python 3 compatible package for working with the Workfront API',
         long_description='This packages is designed to help interface with the Workfront API with features such as making '
@@ -11,8 +11,9 @@ setup(
                          'items in a search.',
 
         url='https://github.com/craiglathrop218/workfrontapi_plus',
+        download_url='https://github.com/craiglathrop218/workfrontapi_plus/archive/v1.0.1.tar.gz',
 
-        author='Craig Lathrop',
+        author='Roshan Bal, Craig Lathrop',
         author_email='none@none.com',
 
         license='MIT',
@@ -24,9 +25,8 @@ setup(
             'Development Status :: 5 - Production/Stable',
 
             'Intended Audience :: Developers',
-            'Topic :: Software Development :: API Tools',
 
-            'License :: OSI Approved :: MIT',
+            'License :: OSI Approved :: MIT License',
 
             # Supported versions
             'Programming Language :: Python :: 3',
