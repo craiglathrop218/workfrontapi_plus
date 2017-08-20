@@ -176,7 +176,7 @@ class Api(object):
         :return: The results of the _request as a list of updated objects
 
         """
-        if len(updates) > max_objs_per_loop:
+        if len(updates) > self._max_bulk:
             res = self._bulk_segmenter(self.bulk,
                                        objs_per_loop=self._max_bulk,
                                        obj_code=obj_code,
