@@ -636,7 +636,7 @@ class Api(object):
             params['fields'] = ','.join(fields)
 
         # Params *must* skip be able skip auth if the request is to login (no apiKey and no sessionID until after login)
-        if not params.keys() & {'password', 'username'}:
+        if not params.keys() & {'password'}:
             params = self._set_authentication(params)
 
         # Must come after method/login checks, otherwise: AttributeError: 'str' object has no attribute 'keys'
