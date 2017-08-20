@@ -117,10 +117,12 @@ class Api(object):
 
         Clears the class session_id and user_id fields.
 
+        :return: The results of the logout request
         """
-        self._request(self.LOGOUT_PATH, None, self.GET)
+        res = self._request(self.LOGOUT_PATH, None, self.GET)
         self.session_id = None
         self.user_id = None
+        return res
 
     def get_list(self, obj_code, ids, fields=None):
         """Returns each object by id, similar to calling get for each id individually
