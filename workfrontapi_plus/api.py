@@ -22,6 +22,8 @@ Authors: Roshan Bal, Craig Lathrop
 
 """
 
+# https://blog.jetbrains.com/pycharm/2017/05/how-to-publish-your-package-on-pypi/
+
 import json
 import math
 
