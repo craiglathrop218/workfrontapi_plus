@@ -23,7 +23,8 @@ Authors: Roshan Bal, Craig Lathrop
 """
 
 from datetime import datetime
-
+import collections
+import re
 
 class Tools(object):
     @staticmethod
@@ -36,8 +37,7 @@ class Tools(object):
         """
         return datetime.strptime(date_string, "%Y-%m-%dT%H:%M:%S:%f%z")
 
-    @staticmethod
-    def flatten_response(data, skip_keys=None, use_keys=None, pretty=False):
+    def flatten_response(self, data, sep=":", pretty=False):
         """
         Flattens out nested dict
 
@@ -68,8 +68,33 @@ class Tools(object):
                   }]
         :return: A processed list or dict
         """
-        # @todo build flatten response method
-        pass
+        output = []
+        for item in data:
+            output.append(self.flatten_dict(item, sep=sep, pretty=pretty))
+        return output
+
+    def flatten_dict(self, data, parent_key='', sep=":", pretty=False):
+        items = []
+        for key, value in data.items():
+            new_key = parent_key + sep + key if parent_key else key
+            if pretty:
+                new_key = self.pretty_keys(new_key)
+            if isinstance(value, collections.MutableMapping):
+                items.extend(self.flatten_dict(data=value, parent_key=new_key, sep=sep, pretty=pretty).items())
+            else:
+                items.append((new_key, value))
+
+        return dict(items)
+
+    def pretty_keys(self, key):
+        # todo Finish this, still a bit buggy.
+        key = key[:1].title()+key[1:]
+        res = re.findall('[A-Z][^A-Z]*', key)
+        output = ''
+        for item in res:
+            output = '{0} {1}'.format(output, item)
+
+        return output.strip()
 
     @staticmethod
     def text_mode(text):
