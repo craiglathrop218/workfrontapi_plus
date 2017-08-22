@@ -129,6 +129,6 @@ class WorkfrontConfig(object):
         api_key = input("Enter your API key: ")
         sub_domain = input("Enter your subdomain: ")
         output = code.format(api_key=api_key, sub_domain=sub_domain)
-        config_file = open("wfconfig_t.py", "w")
+        config_file = open("wfconfig.py", "w")
         config_file.write(output)
         config_file.close()
