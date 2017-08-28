@@ -25,6 +25,8 @@ Authors: Roshan Bal, Craig Lathrop
 from datetime import datetime
 import collections
 import re
+import hashlib
+import hmac
 
 class Tools(object):
     @staticmethod
@@ -157,3 +159,15 @@ class WorkfrontConfig(object):
         config_file = open("wfconfig.py", "w")
         config_file.write(output)
         config_file.close()
+
+
+    @staticmethod
+    def make_signature(message, key):
+
+        key = bytes(key, 'UTF-8')
+        message = bytes(message, 'UTF-8')
+
+        digester = hmac.new(key, message, hashlib.sha1)
+        signature1 = digester.hexdigest()
+
+        return signature1

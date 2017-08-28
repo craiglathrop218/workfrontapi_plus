@@ -695,25 +695,25 @@ class Api(object):
 
         return output
 
-    # def _get_max_update_obj_size(self, updates):
-    #     """Gets the total len of the updates when converted to JSON.
-    #
-    #     There appears to be a char limit of ~6800 when making a bulk request. This seems related to total
-    #     char len only, not number of elements.
-    #
-    #     This method checks the size of the JSON converted "updates" and calculates a safe self._max_bulk
-    #     value.
-    #     :param updates: A dict containing updates
-    #     :return: A safe value for self._max_bulk
-    #
-    #     """
-    #     # Actual limit seems to be ~6894 but errors are seen sometime at numbers down to 5000. It's possible that
-    #     # the problem is not related to overall char size, but is something to do with some other field length or
-    #     # attempting to add or modify so many objects at once. This issue isn't well understood at the moment.
-    #     api_char_limit = 3000
-    #     updates_len = len(updates)
-    #     json_len = len(json.dumps(updates))
-    #     char_per_update_element = int(math.ceil(json_len / updates_len))
-    #     safe_elements_per_loop = int(math.floor(api_char_limit / char_per_update_element))
-    #     print('Safe number of update elements per loop is {0}'.format(safe_elements_per_loop))
-    #     return safe_elements_per_loop if safe_elements_per_loop < self._max_bulk else self._max_bulk
+        # def _get_max_update_obj_size(self, updates):
+        #     """Gets the total len of the updates when converted to JSON.
+        #
+        #     There appears to be a char limit of ~6800 when making a bulk request. This seems related to total
+        #     char len only, not number of elements.
+        #
+        #     This method checks the size of the JSON converted "updates" and calculates a safe self._max_bulk
+        #     value.
+        #     :param updates: A dict containing updates
+        #     :return: A safe value for self._max_bulk
+        #
+        #     """
+        #     # Actual limit seems to be ~6894 but errors are seen sometime at numbers down to 5000. It's possible that
+        #     # the problem is not related to overall char size, but is something to do with some other field length or
+        #     # attempting to add or modify so many objects at once. This issue isn't well understood at the moment.
+        #     api_char_limit = 3000
+        #     updates_len = len(updates)
+        #     json_len = len(json.dumps(updates))
+        #     char_per_update_element = int(math.ceil(json_len / updates_len))
+        #     safe_elements_per_loop = int(math.floor(api_char_limit / char_per_update_element))
+        #     print('Safe number of update elements per loop is {0}'.format(safe_elements_per_loop))
+        #     return safe_elements_per_loop if safe_elements_per_loop < self._max_bulk else self._max_bulk
