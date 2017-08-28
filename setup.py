@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
         name='workfrontapi_plus',
 
-        version='1.0.4',
+        version='1.0.5',
 
         description='A Python 3 compatible package for working with the Workfront API',
         long_description='This packages is designed to help interface with the Workfront API with features such as making '
