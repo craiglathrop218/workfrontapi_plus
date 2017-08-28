@@ -11,7 +11,7 @@ setup(
                          'items in a search.',
 
         url='https://github.com/craiglathrop218/workfrontapi_plus',
-        download_url='https://github.com/craiglathrop218/workfrontapi_plus/archive/1.0.3_release.tar.gz',
+        download_url='https://github.com/craiglathrop218/workfrontapi_plus/archive/1.0.5.tar.gz',
 
         author='Roshan Bal, Craig Lathrop',
         author_email='none@none.com',
