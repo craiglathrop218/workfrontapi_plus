@@ -639,7 +639,7 @@ class Api(object):
         if fields:
             params['fields'] = ','.join(fields)
 
-        # If the request is login must bypass authentication 
+        # If the request is login must bypass authentication
         if path != '/login/':
             params = self._set_authentication(params)
 
