@@ -577,7 +577,7 @@ class Api(object):
         :return: The query results
 
         """
-        api_param_string = self._prepare_params(method, params, fields)
+        api_param_string = self._prepare_params(method, params, fields, path)
 
         api_path = self.api_base_url + path
         data = self._open_api_connection(api_param_string, api_path, method)
@@ -628,7 +628,7 @@ class Api(object):
         r = requests.request('post', url, files=file, params=params)
         return r.json()
 
-    def _prepare_params(self, method, params, fields):
+    def _prepare_params(self, method, params, fields, path):
 
         # If no params passed in set a blank dict.
         params = params if params else {}
@@ -639,8 +639,8 @@ class Api(object):
         if fields:
             params['fields'] = ','.join(fields)
 
-        # Params *must* skip be able skip auth if the request is to login (no apiKey and no sessionID until after login)
-        if not params.keys() & {'password'}:
+        # If the request is login must bypass authentication 
+        if path != '/login/':
             params = self._set_authentication(params)
 
         # Must come after method/login checks, otherwise: AttributeError: 'str' object has no attribute 'keys'
