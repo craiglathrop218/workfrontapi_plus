@@ -530,8 +530,6 @@ class Api(object):
         for key, value in params.items():
             if isinstance(value, list):
                 # Convert list to multiple instances of same key.
-                # Sort to make unit testing easier
-                value = sorted(value)
                 for list_item in value:
                     output_string = "{output_string}&{key}={value}".format(output_string=output_string,
                                                                            key=key, value=list_item)
