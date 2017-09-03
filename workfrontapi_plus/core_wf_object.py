@@ -94,6 +94,9 @@ class WorkfrontObject(object):
         else:
             res = self.__dict__['api'].post(self.objCode, params, list(self.data.keys()))
 
+        if self.__dict__['convert_dates']:
+            self._convert_dates(res)
+
         self.__dict__['data'] = res
         self.__dict__['_dirty_fields'] = []
 
