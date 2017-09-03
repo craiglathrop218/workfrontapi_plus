@@ -23,11 +23,15 @@ Authors: Roshan Bal, Craig Lathrop
 """
 
 import json
-
+from workfrontapi_plus.tools import Tools
 
 class WorkfrontObject(object):
-    def __init__(self, data, api=None, obj_code=None, obj_id=None):
+    def __init__(self, data, api=None, obj_code=None, obj_id=None, convert_dates=False):
         self.__dict__['api'] = api
+        self.__dict__['convert_dates'] = convert_dates
+
+        if convert_dates:
+            self._convert_dates(data)
 
         # Set a blank list to record field changes
         self.__dict__['_dirty_fields'] = []
@@ -51,6 +55,15 @@ class WorkfrontObject(object):
 
     def __str__(self):
         return json.dumps(self.data, indent=4)
+
+    @staticmethod
+    def _convert_dates(data):
+        t = Tools()
+        for key, item in data.items():
+            if 'date' in key.lower():
+                data[key] = t.parse_workfront_date(item)
+        return data
+
 
     def save(self):
         """Save updated fields
@@ -83,6 +96,8 @@ class WorkfrontObject(object):
 
         self.__dict__['data'] = res
         self.__dict__['_dirty_fields'] = []
+
+        return res
 
 
 
