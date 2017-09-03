@@ -25,6 +25,7 @@ Authors: Roshan Bal, Craig Lathrop
 import json
 from workfrontapi_plus.tools import Tools
 
+
 class WorkfrontObject(object):
     def __init__(self, data, api=None, obj_code=None, obj_id=None, convert_dates=False):
         self.__dict__['api'] = api
@@ -64,7 +65,6 @@ class WorkfrontObject(object):
                 data[key] = t.parse_workfront_date(item)
         return data
 
-
     def save(self):
         """Save updated fields
 
@@ -101,8 +101,6 @@ class WorkfrontObject(object):
         self.__dict__['_dirty_fields'] = []
 
         return res
-
-
 
     def delete(self, force=False):
         """ Deletes the current object by id
