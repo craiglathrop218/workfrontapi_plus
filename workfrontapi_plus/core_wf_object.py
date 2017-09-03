@@ -53,7 +53,7 @@ class WorkfrontObject(object):
         """Save updated fields
 
         """
-        if not self.api:
+        if not self.data['api']:
             raise ValueError('API must be set to save.')
 
         '''
@@ -80,6 +80,8 @@ class WorkfrontObject(object):
 
         self.__dict__['data'] = res
         self.__dict__['_dirty_fields'] = []
+
+
 
     def delete(self, force=False):
         """ Deletes the current object by id
