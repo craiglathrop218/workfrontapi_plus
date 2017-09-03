@@ -44,9 +44,9 @@ class _WorkTypeObject(WorkfrontObject):
     A class that shares common traits with issues, tasks, and projects
     """
 
-    def __init__(self, data=None, api=None, obj_code=None, id=None, name=None):
+    def __init__(self, data=None, api=None, obj_code=None, obj_id=None, name=None):
 
-        super().__init__(data, api, obj_code=obj_code, id=id)
+        super().__init__(data, api, obj_code=obj_code, obj_id=obj_id)
         if name:
             self.name = name
 
@@ -84,7 +84,7 @@ class Task(_WorkTypeObject):
             data = {}
         # params = params
 
-        super().__init__(api=api, obj_code='TASK', id=task_id, name=name, data=data)
+        super().__init__(api=api, obj_code='TASK', obj_id=task_id, name=name, data=data)
         if name:
             self.name = name
 
@@ -161,7 +161,7 @@ class Issue(_WorkTypeObject):
             data = {}
         # params = params
 
-        super().__init__(api=api, obj_code='OPTASK', id=issue_id, name=name, data=data)
+        super().__init__(api=api, obj_code='OPTASK', obj_id=issue_id, name=name, data=data)
         if name:
             self.name = name
 
@@ -205,12 +205,12 @@ class Project(_WorkTypeObject):
 
     # TODO: edit available people, name, description, status, etc... possibly change the way we do comments?
 
-    def __init__(self, data=None, api=None, name=None, project_id=None):
+    def __init__(self, data=None, api=None, name=None, proj_id=None):
         if not data:
             data = {}
         # params = params
 
-        super().__init__(api=api, obj_code='PROJ', id=project_id, name=name, data=data)
+        super().__init__(api=api, obj_code='PROJ', obj_id=proj_id, name=name, data=data)
 
         if name:
             self.name = name
@@ -219,7 +219,7 @@ class Project(_WorkTypeObject):
                         fields=None,
                         predecessor_task_id=None,
                         parent_task_id=None,
-                        exclude_templateTask_ids=None,
+                        exclude_template_task_ids=None,
                         options=None):
         """
         Attaches a template to a project with options.
@@ -228,14 +228,14 @@ class Project(_WorkTypeObject):
         :param fields:
         :param predecessor_task_id:
         :param parent_task_id:
-        :param exclude_templateTask_ids:
+        :param exclude_template_task_ids:
         :param options:
         :return:
         """
         params = {'templateID': template_id,
                   'predecessorTaskID': predecessor_task_id,
                   'parentTaskID': parent_task_id,
-                  'excludeTemplateTask_IDs': exclude_templateTask_ids,
+                  'excludeTemplateTask_IDs': exclude_template_task_ids,
                   'options': options}
         return self.api.action('PROJ', 'attachTemplate', params, fields, self.ID)
 

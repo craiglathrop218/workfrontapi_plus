@@ -26,7 +26,7 @@ import json
 
 
 class WorkfrontObject(object):
-    def __init__(self, data, api=None, obj_code=None, id=None):
+    def __init__(self, data, api=None, obj_code=None, obj_id=None):
         self.__dict__['api'] = api
 
         # Set a blank list to record field changes
@@ -36,15 +36,18 @@ class WorkfrontObject(object):
         if obj_code:
             self.__dict__['data']['objCode'] = obj_code
 
-        if id:
-            self.__dict__['data']['ID'] = id
+        if obj_id:
+            self.__dict__['data']['ID'] = obj_id
 
     def __getattr__(self, item):
         return self.__dict__['data'][item]
 
     def __setattr__(self, key, value):
-        self._dirty_fields.append(key)
-        self.data[key] = value
+        if key == 'api':
+            self.__dict__['api'] = value
+        else:
+            self._dirty_fields.append(key)
+            self.data[key] = value
 
     def __str__(self):
         return json.dumps(self.data, indent=4)
@@ -53,7 +56,7 @@ class WorkfrontObject(object):
         """Save updated fields
 
         """
-        if not self.data['api']:
+        if not self.__dict__['api']:
             raise ValueError('API must be set to save.')
 
         '''
@@ -73,10 +76,10 @@ class WorkfrontObject(object):
             raise ValueError("No parameters were modified.")
 
         if self.data['ID']:
-            res = self.api.put(self.objCode, self.ID, params, list(self.data.keys()))
+            res = self.__dict__['api'].put(self.objCode, self.data['ID'], params, list(self.data.keys()))
 
         else:
-            res = self.api.post(self.objCode, params, list(self.data.keys()))
+            res = self.__dict__['api'].post(self.objCode, params, list(self.data.keys()))
 
         self.__dict__['data'] = res
         self.__dict__['_dirty_fields'] = []
@@ -87,15 +90,15 @@ class WorkfrontObject(object):
         """ Deletes the current object by id
 
         """
-        if not self.api:
+        if not self.__dict__['api']:
             raise ValueError('API must be set to save.')
-        return self.api.delete(self.objCode, self.ID, force)
+        return self.__dict__['api'].delete(self.objCode, self.ID, force)
 
     def share(self, user_ids, level='view'):
-        return self.api.share_obj(self.objCode, self.ID, user_ids, level)
+        return self.__dict__['api'].share_obj(self.objCode, self.ID, user_ids, level)
 
     def get_share(self):
-        return self.api.get_
+        return self.__dict__['api'].get_
 
 
 class WorkfrontAPIException(Exception):
