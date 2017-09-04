@@ -59,12 +59,26 @@ class WorkfrontObject(object):
     def __str__(self):
         return json.dumps(self.data, indent=4)
 
-    @staticmethod
-    def _convert_dates(data):
+    def _convert_dates(self, data):
         t = Tools()
         for key, item in data.items():
-            if 'date' in key.lower():
-                data[key] = t.parse_workfront_date(item)
+            if 'date' in key.lower():  # A full date will be 28 char. Avoids dates w/o time.
+                try:
+                    data[key] = t.parse_workfront_date(item)
+                except:
+                    #print('{0} could not be converted'.format(data[key]))
+                    # There was a key with Date but didn't contain a Workfront formatted date.
+                    pass
+
+            if isinstance(item, dict):
+                data[key] = self._convert_dates(data[key])
+
+            if isinstance(item, list):
+                for i in range(len(item)):
+                    if isinstance(data[key][i], dict):
+                        # Check to see if the list is a dict. Not all lists contain dicts, some are simple lists that
+                        # should be skipped.
+                        data[key][i] = self._convert_dates(data[key][i])
         return data
 
     def save(self):
