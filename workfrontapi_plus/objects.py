@@ -44,9 +44,9 @@ class _WorkTypeObject(WorkfrontObject):
     A class that shares common traits with issues, tasks, and projects
     """
 
-    def __init__(self, data=None, api=None, obj_code=None, obj_id=None, name=None, convert_dates=False):
+    def __init__(self, data=None, api=None, obj_code=None, obj_id=None, name=None, convert_dates=False, fields=None):
 
-        super().__init__(data, api, obj_code=obj_code, obj_id=obj_id, convert_dates=convert_dates)
+        super().__init__(data, api, obj_code=obj_code, obj_id=obj_id, convert_dates=convert_dates, fields=fields)
         if name:
             self.name = name
 
@@ -79,12 +79,13 @@ class _WorkTypeObject(WorkfrontObject):
 class Task(_WorkTypeObject):
     # TODO: edit available people, name, description, status, etc... possibly change the way we do comments?
 
-    def __init__(self, data=None, api=None, name=None, task_id=None, convert_dates=False):
+    def __init__(self, data=None, api=None, name=None, task_id=None, convert_dates=False, fields=None):
         if not data:
             data = {}
         # params = params
 
-        super().__init__(api=api, obj_code='TASK', obj_id=task_id, name=name, data=data, convert_dates=convert_dates)
+        super().__init__(api=api, obj_code='TASK', obj_id=task_id, name=name, data=data, convert_dates=convert_dates,
+                         fields=fields)
         if name:
             self.name = name
 
@@ -156,12 +157,13 @@ class Task(_WorkTypeObject):
 class Issue(_WorkTypeObject):
     # TODO: edit available people, name, description, status, etc... possibly change the way we do comments?
 
-    def __init__(self, data=None, api=None, name=None, issue_id=None, convert_dates=False):
+    def __init__(self, data=None, api=None, name=None, issue_id=None, convert_dates=False, fields=None):
         if not data:
             data = {}
         # params = params
 
-        super().__init__(api=api, obj_code='OPTASK', obj_id=issue_id, name=name, data=data, convert_dates=convert_dates)
+        super().__init__(api=api, obj_code='OPTASK', obj_id=issue_id, name=name, data=data, convert_dates=convert_dates,
+                         fields=fields)
         if name:
             self.name = name
 
@@ -205,12 +207,13 @@ class Project(_WorkTypeObject):
 
     # TODO: edit available people, name, description, status, etc... possibly change the way we do comments?
 
-    def __init__(self, data=None, api=None, name=None, proj_id=None, convert_dates=False):
+    def __init__(self, data=None, api=None, name=None, proj_id=None, convert_dates=False, fields=None):
         if not data:
             data = {}
         # params = params
 
-        super().__init__(api=api, obj_code='PROJ', obj_id=proj_id, name=name, data=data, convert_dates=convert_dates)
+        super().__init__(api=api, obj_code='PROJ', obj_id=proj_id, name=name, data=data, convert_dates=convert_dates,
+                         fields=fields)
 
         if name:
             self.name = name
