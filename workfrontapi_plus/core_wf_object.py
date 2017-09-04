@@ -27,7 +27,7 @@ from workfrontapi_plus.tools import Tools
 
 
 class WorkfrontObject(object):
-    def __init__(self, data, api=None, obj_code=None, obj_id=None, convert_dates=False):
+    def __init__(self, data, api=None, obj_code=None, obj_id=None, convert_dates=False, fields=None):
         self.__dict__['api'] = api
         self.__dict__['convert_dates'] = convert_dates
 
@@ -43,6 +43,8 @@ class WorkfrontObject(object):
 
         if obj_id:
             self.__dict__['data']['ID'] = obj_id
+
+        self.__dict__['fields'] = fields
 
     def __getattr__(self, item):
         return self.__dict__['data'][item]
@@ -88,8 +90,11 @@ class WorkfrontObject(object):
         if not len(params):
             raise ValueError("No parameters were modified.")
 
+        # Get the fields if not set during import
+        local_fields = list(self.data.keys()) if not self.fields else self.fields
+
         if self.data['ID']:
-            res = self.__dict__['api'].put(self.objCode, self.data['ID'], params, list(self.data.keys()))
+            res = self.__dict__['api'].put(self.objCode, self.data['ID'], params, local_fields)
 
         else:
             res = self.__dict__['api'].post(self.objCode, params, list(self.data.keys()))
