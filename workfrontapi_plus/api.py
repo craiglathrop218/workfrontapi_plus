@@ -151,6 +151,9 @@ class Api(object):
 
         """
         path = '/{0}/{1}'.format(obj_code, obj_id)
+        # The requests package has a problem with nested lists in JSON. We just pre-convert this to
+        # JSON to avoid.
+        params = {'updates': json.dumps(params)}
         return self._request(path, params, self.PUT, fields)
 
     def action(self, obj_code, action, params, fields=None, obj_id=None):
