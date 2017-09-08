@@ -641,7 +641,7 @@ class Api(object):
             params['fields'] = ','.join(fields)
 
         # If the request is login must bypass authentication
-        if path != '/login':
+        if path is not '/login' and 'password' not in params:
             params = self._set_authentication(params)
 
         # Must come after method/login checks, otherwise: AttributeError: 'str' object has no attribute 'keys'
