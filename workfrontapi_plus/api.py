@@ -595,7 +595,11 @@ class Api(object):
         api_path = self.api_base_url + path
         data = self._open_api_connection(api_param_string, api_path)
 
-        return data if raw else data['data']
+        if 'data' in data:
+            return data if raw else data['data']
+        else:
+            # This condition will occur if there is an error being returned.
+            return data
 
     def _p_open_api_connection(self, data, dest):
         """Makes the request to the Workfront API
