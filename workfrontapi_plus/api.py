@@ -597,9 +597,11 @@ class Api(object):
 
         if 'data' in data:
             return data if raw else data['data']
-        else:
+        elif 'error' in data:
             # This condition will occur if there is an error being returned.
-            return data
+            return data['error']['message']
+        else:
+            raise WorkfrontAPIException(data)
 
     def _p_open_api_connection(self, data, dest):
         """Makes the request to the Workfront API

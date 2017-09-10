@@ -53,6 +53,12 @@ class TestWorkfrontE2E(TestCase):
         project_list = []
         test_proj_num = 3
 
+        # Make the API return an error
+        self.api.return_api_errors = True
+        error_res = self.api.search('task', {}, fields=['booobooobooooboooboo'])
+        self.assertEqual('APIModel V6_0 does not support field booobooobooooboooboo (Task)', error_res)
+        print('Proper Error '+error_res)
+
         # Make three projects
         for x in range(test_proj_num):
             project_list.append(self.make_proj(hash_str))
