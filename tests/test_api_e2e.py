@@ -39,7 +39,7 @@ class TestWorkfrontE2E(TestCase):
               'preview',
               api_version='6.0',
               api_key=WorkfrontConfig.api_key,
-              test_mode=True)
+              )
 
     ########  LIVE E2E TESTS #############
 

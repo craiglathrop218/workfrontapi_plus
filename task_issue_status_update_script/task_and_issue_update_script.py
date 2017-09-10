@@ -5,7 +5,7 @@ api = Api(WorkfrontConfig.subdomain,
           'my',
           api_version='7.0',
           api_key=WorkfrontConfig.api_key,
-          test_mode=True)
+          )
 
 
 class Controller(object):

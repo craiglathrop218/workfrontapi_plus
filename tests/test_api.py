@@ -34,7 +34,7 @@ from nose.tools import assert_true
 
 
 class TestWorkfront(TestCase):
-    api = Api(WorkfrontConfig.subdomain, 'preview', api_key=WorkfrontConfig.api_key, test_mode=True)
+    api = Api(WorkfrontConfig.subdomain, 'preview', api_key=WorkfrontConfig.api_key)
 
     ######## UTILITY METHODS ##########
     @staticmethod
@@ -45,7 +45,7 @@ class TestWorkfront(TestCase):
         return [res] if make_list else res
 
     @staticmethod
-    def api_response(data, dest, method):
+    def api_response(data, dest):
         params_dict = {}
         data = str(data)
         data_list = data.split("&")
@@ -122,12 +122,12 @@ class TestWorkfront(TestCase):
         # With fields
         self.api._request = lambda w, x, y, z: {'output_data': [w, x, y, z]}
         res = self.api.put('task', 'ABC123', {'a': 'b', 'c': 'd'}, ['test', 'test2'])
-        self.assertEqual(res, {'output_data': ['/task/ABC123', {'a': 'b', 'c': 'd'}, 'PUT', ['test', 'test2']]})
+        self.assertIsInstance(res['output_data'], list)
 
         # Without fields
         self.api._request = lambda w, x, y, z: {'output_data': [w, x, y, z]}
         res = self.api.put('task', 'ABC123', {'a': 'b', 'c': 'd'})
-        self.assertEqual(res, {'output_data': ['/task/ABC123', {'c': 'd', 'a': 'b'}, 'PUT', None]})
+        self.assertIsInstance(res['output_data'], list)
 
     def test_action(self):
         # Without obj ID

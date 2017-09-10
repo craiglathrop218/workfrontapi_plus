@@ -7,8 +7,7 @@ class BreakBulkUpdates(object):
     api = Api(subdomain=WorkfrontConfig.subdomain,
               api_key=WorkfrontConfig.api_key,
               env='sb01',
-              api_version='6.0',
-              test_mode=True)
+              api_version='6.0')
 
     def start(self):
         self.api._request = self.api._make_request

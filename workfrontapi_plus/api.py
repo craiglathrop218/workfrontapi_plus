@@ -45,8 +45,10 @@ class Api(object):
 
     CORE_URL = "https://{subdomain}.{env}.workfront.com/attask/api/v{version}"
 
-    def __init__(self, subdomain, env, api_version='7.0', api_key=None, session_id=None, user_id=None, debug=False,
-                 test_mode=False):
+    def __init__(self, subdomain, env, api_version='7.0', api_key=None, session_id=None, user_id=None,
+                 return_api_errors=False,
+                 debug=False,
+                 ):
         """Setup class
 
         :param subdomain: The sub domain for your account
@@ -55,7 +57,9 @@ class Api(object):
         :param api_key: The API key for authentication. Default None.
         :param session_id: An optional session ID for authentication
         :param user_id: The ID of the authenticated user
-
+        :param return_api_errors: In the event that the API generates an error the Workfront API message will be
+        returned instead of raising an error
+        :param debug: Sets API into debugging mode.
         """
         self.subdomain = subdomain
         api_base_url = self.CORE_URL.format(subdomain=subdomain,
@@ -67,7 +71,7 @@ class Api(object):
         self.user_id = user_id
         self.api_key = api_key
         self.debug = debug
-        self.test_mode = test_mode
+        self.return_api_errors = return_api_errors
         self._max_bulk = 99
         self._max_results = 2000
 
@@ -581,11 +585,11 @@ class Api(object):
         api_param_string = self._prepare_params(method, params, fields, path)
 
         api_path = self.api_base_url + path
-        data = self._open_api_connection(api_param_string, api_path, method)
+        data = self._open_api_connection(api_param_string, api_path)
 
         return data if raw else data['data']
 
-    def _p_open_api_connection(self, data, dest, method=None):
+    def _p_open_api_connection(self, data, dest):
         """Makes the request to the Workfront API
 
         :param data: The URL parameters string
@@ -593,10 +597,6 @@ class Api(object):
         :return: json results of query
 
         """
-        if 'updates' in data:
-            pass
-            # print('The length of the updates query is ' + str(len(data['updates'])) + 'char.')
-
         try:
             # Request should default ambiguous as WF_API+ should handle methods (GET, POST etc.)
 
@@ -611,10 +611,14 @@ class Api(object):
             raise WorkfrontAPIException(e)
 
         if response.ok:
-            print('Response OK - 200. Len of full URL was ', len(response.url), ' char.')
+            if self.debug: print('Response OK - 200. Len of full URL was ', len(response.url), ' char.')
             return response.json()
         else:
-            raise WorkfrontAPIException(response.text)
+            if self.return_api_errors:
+                if self.debug: print('Response OK - 200. Len of full URL was ', len(response.url), ' char.')
+                return response.json()
+            else:
+                raise WorkfrontAPIException(response.text)
 
     def _request_upload_file(self, file, url):
         api_path = self.api_base_url + "/upload"
