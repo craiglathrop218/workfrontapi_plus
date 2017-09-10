@@ -493,18 +493,26 @@ class Api(object):
         else:
             raise ValueError('Login Failed')
 
-    def share_obj(self, obj_code, obj_id, user_ids, level='view'):
-        # @todo finish and document this
+    def share_obj(self, obj_code, obj_id, accessor_id, accessor_obj_code, level):
+        """Sets sharing levels for an object with one or more ID numbers
+
+        :param obj_code:
+        :param obj_id:
+        :param ids:
+        :param accessor_obj_code:
+        :param level:
+        :return:
+        """
         path = '/{0}/{1}/share'.format(obj_code, obj_id)
 
-        access_levels = {'view': 'VIEW', 'contribute': 'CREATE', }
-        params = []
-        for user in user_ids:
-            params.append({'accessorID': user,
-                           'accessorObjCode': 'USER',
-                           'coreAction': level})
 
-        return self._request(path, params, self.PUT)['count']
+        access_levels = {'view': 'VIEW', 'contribute': 'CREATE', 'manage': 'DELETE'}
+
+        params = {'accessorID': accessor_id,
+                  'accessorObjCode': accessor_obj_code,
+                  'coreAction': access_levels[level]}
+
+        return self._request(path, params, self.PUT)
 
     def get_obj_share(self, obj_code, obj_id):
         # @todo finish and document this section

@@ -65,6 +65,11 @@ class TestWorkfrontE2E(TestCase):
         task = self.make_a_task(project_list[0]['ID'])
         print('Created task: ', task['name'])
 
+        # Share the task out
+        res = self.share(task['ID'])
+        print('Shared task with: ', task['name'])
+
+
         # Test get_list
         res = self.api.get_list('proj', proj_id_list)
         print('Returned a list of {0} projects'.format(len(res)))
@@ -208,6 +213,10 @@ class TestWorkfrontE2E(TestCase):
 
     def make_a_task(self, proj_id):
         return self.api.post('task', {'name': 'First Task', 'projectID': proj_id})
+
+    def share(self, task_id):
+        share_user = WorkfrontConfig.clover_user_id
+        return self.api.share_obj('task', task_id, share_user, 'USER', 'manage')
 
     def delete_a_task(self, task_id):
         return self.api.delete('task', task_id)
