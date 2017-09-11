@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '1.0.21'
+version = '1.0.22'
 
 setup(
         name='workfrontapi_plus',

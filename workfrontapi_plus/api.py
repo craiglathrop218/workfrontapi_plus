@@ -460,33 +460,45 @@ class Api(object):
         :return: The results of the query
 
         """
-        res = self.login(user_email)
+        login_res = self.login(user_email)
 
-        commands = {'post': self.post,
-                    'put': self.put,
-                    'action': self.action,
-                    'search': self.search,
-                    'report': self.report,
-                    'bulk': self.bulk}
+        # commands = {'post': self.post,
+        #             'put': self.put,
+        #             'action': self.action,
+        #             'search': self.search,
+        #             'report': self.report,
+        #             'bulk': self.bulk}
 
-        if res:
+        if login_res:
             if exec_method == 'post':
-                return self.post(obj_code, params, fields)
+                res = self.post(obj_code, params, fields)
+                if logout:
+                    self.logout()
+                return res
 
             elif exec_method == 'put':
                 if obj_id:
-                    return self.put(obj_code, obj_id, params, fields)
+                    res = self.put(obj_code, obj_id, params, fields)
+                    if logout:
+                        self.logout()
+                    return res
                 else:
                     raise ValueError('Must Pass object id if using put method')
 
             elif exec_method == 'action':
                 if action:
-                    return self.action(obj_code, action, params, fields, obj_id)
+                    res = self.action(obj_code, action, params, fields, obj_id)
+                    if logout:
+                        self.logout()
+                    return res
                 else:
                     raise ValueError('Must Pass action parameter if calling action method')
 
             elif exec_method == 'search':
-                return self.search(obj_code, params, fields)
+                res = self.search(obj_code, params, fields)
+                if logout:
+                    self.logout()
+                return res
 
             else:
                 raise ValueError('Login failed. No Session ID')
