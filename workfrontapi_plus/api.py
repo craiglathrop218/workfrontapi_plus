@@ -234,6 +234,11 @@ class Api(object):
 
         """
         path = '/{0}'.format(obj_code)
+        # The requests package has a problem with nested lists in JSON. We just pre-convert this to
+        # JSON to avoid. While this is less common in a post operation, it is the only way to tag users in
+        # a new note (as example).
+        params = {'updates': json.dumps(params)}
+
         return self._request(path, params, self.POST, fields)
 
     def get(self, obj_code, obj_id, fields=None):
