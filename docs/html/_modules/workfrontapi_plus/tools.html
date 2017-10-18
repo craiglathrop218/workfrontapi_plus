@@ -1,0 +1,277 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>workfrontapi_plus.tools &#8212; workfrontapi_plus Version 1.0.23 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     'Version 1.0.23',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for workfrontapi_plus.tools</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;Copyright 2017, Integrated Device Technologies, Inc.</span>
+
+<span class="sd">Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="sd">of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="sd">in the Software without restriction, including without limitation the rights</span>
+<span class="sd">to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="sd">copies of the Software, and to permit persons to whom the Software is</span>
+<span class="sd">furnished to do so, subject to the following conditions:</span>
+
+<span class="sd">The above copyright notice and this permission notice shall be included in all</span>
+<span class="sd">copies or substantial portions of the Software.</span>
+
+<span class="sd">THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="sd">IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="sd">FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="sd">AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="sd">LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="sd">OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="sd">SOFTWARE.</span>
+
+<span class="sd">Authors: Roshan Bal, Craig Lathrop</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">hashlib</span>
+<span class="kn">import</span> <span class="nn">hmac</span>
+
+<div class="viewcode-block" id="Tools"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.tools.Tools">[docs]</a><span class="k">class</span> <span class="nc">Tools</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Tools.parse_workfront_date"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.tools.Tools.parse_workfront_date">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">parse_workfront_date</span><span class="p">(</span><span class="n">date_string</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts from the Workfront datetime format into a Python datetime object</span>
+
+<span class="sd">        :param date_string: The workfront date string. Example &quot;2017-01-01T01:01:00.000-0800&quot;</span>
+<span class="sd">        :return: A datetime object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">date_string</span><span class="p">,</span> <span class="s">&quot;%Y-%m-%dT%H:%M:%S:%f%z&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Tools.flatten_response"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.tools.Tools.flatten_response">[docs]</a>    <span class="k">def</span> <span class="nf">flatten_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s">&quot;:&quot;</span><span class="p">,</span> <span class="n">pretty</span><span class="o">=</span><span class="k">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Flattens out nested dict</span>
+
+<span class="sd">        This method will take a Workfront API response and &quot;flatten out&quot; certain nested dicts.</span>
+<span class="sd">        For example, here is a response for a task</span>
+<span class="sd">        [{&#39;ID&#39;: &#39;abc123...&#39;,</span>
+<span class="sd">          &#39;name&#39;: &#39;test task&#39;,</span>
+<span class="sd">          &#39;project&#39;: {&#39;ID&#39;: &#39;cde456&#39;,</span>
+<span class="sd">                      &#39;name&#39;: &#39;My Proj&#39;}</span>
+<span class="sd">          }]</span>
+
+<span class="sd">        would be converted to</span>
+<span class="sd">        [{&#39;ID&#39;: &#39;abc123...&#39;,</span>
+<span class="sd">          &#39;name&#39;: &#39;test task&#39;,</span>
+<span class="sd">          &#39;project:ID&#39;: &#39;cde456&#39;,</span>
+<span class="sd">          &#39;project:name&#39;: &#39;My Proj&#39;</span>
+<span class="sd">          }]</span>
+
+<span class="sd">        :param data:</span>
+<span class="sd">        :param skip_keys:</span>
+<span class="sd">        :param use_keys:</span>
+<span class="sd">        :param pretty: Removes the project:name style notation. Example:</span>
+<span class="sd">                with pretty set to true</span>
+<span class="sd">                [{&#39;ID&#39;: &#39;abc123...&#39;,</span>
+<span class="sd">                  &#39;Name&#39;: &#39;test task&#39;,</span>
+<span class="sd">                  &#39;Project ID&#39;: &#39;cde456&#39;,</span>
+<span class="sd">                  &#39;Project Name&#39;: &#39;My Proj&#39;</span>
+<span class="sd">                  }]</span>
+<span class="sd">        :return: A processed list or dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flatten_dict</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">,</span> <span class="n">pretty</span><span class="o">=</span><span class="n">pretty</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">output</span></div>
+
+<div class="viewcode-block" id="Tools.flatten_dict"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.tools.Tools.flatten_dict">[docs]</a>    <span class="k">def</span> <span class="nf">flatten_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">parent_key</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s">&quot;:&quot;</span><span class="p">,</span> <span class="n">pretty</span><span class="o">=</span><span class="k">False</span><span class="p">):</span>
+        <span class="n">items</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">new_key</span> <span class="o">=</span> <span class="n">parent_key</span> <span class="o">+</span> <span class="n">sep</span> <span class="o">+</span> <span class="n">key</span> <span class="k">if</span> <span class="n">parent_key</span> <span class="k">else</span> <span class="n">key</span>
+            <span class="k">if</span> <span class="n">pretty</span><span class="p">:</span>
+                <span class="n">new_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pretty_keys</span><span class="p">(</span><span class="n">new_key</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">MutableMapping</span><span class="p">):</span>
+                <span class="n">items</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flatten_dict</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">parent_key</span><span class="o">=</span><span class="n">new_key</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">,</span> <span class="n">pretty</span><span class="o">=</span><span class="n">pretty</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">new_key</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">items</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Tools.pretty_keys"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.tools.Tools.pretty_keys">[docs]</a>    <span class="k">def</span> <span class="nf">pretty_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="c"># todo Finish this, still a bit buggy.</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">key</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">title</span><span class="p">()</span><span class="o">+</span><span class="n">key</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&#39;[A-Z][^A-Z]*&#39;</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">res</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="s">&#39;{0} {1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">output</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Tools.text_mode"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.tools.Tools.text_mode">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">text_mode</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts Workfront &quot;Text Mode&quot; into a parameter string.</span>
+
+<span class="sd">        :param text: A string containing Workfront text mode parameters</span>
+<span class="sd">        :return: A dict version of the passed in parameters</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">text</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
+
+            <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;=&quot;</span><span class="p">)</span>
+
+            <span class="c"># key = key_pair[0].strip()</span>
+            <span class="c"># value = key_pair[1].strip()</span>
+
+            <span class="k">if</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                <span class="c"># It&#39;s a list</span>
+                <span class="n">value_list</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">)</span>
+                <span class="n">output</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value_list</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">output</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">return</span> <span class="n">output</span></div>
+
+<div class="viewcode-block" id="Tools.make_config_file"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.tools.Tools.make_config_file">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">make_config_file</span><span class="p">():</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Makes a config file to hold sub domain and API Key</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="s">&#39;&#39;&#39;</span>
+<span class="s">class WorkfrontConfig(object):</span>
+<span class="s">    &quot;&quot;&quot;</span>
+<span class="s">    This file holds path and credential information for the workfront API</span>
+
+<span class="s">    This file is designed to help keep your authentication data safe and out of your </span>
+<span class="s">    repository. To use this file when instantiating the Workfront Api:</span>
+<span class="s">    </span>
+<span class="s">    </span>
+<span class="s">    1 from wfconfig import WorkfrontConfig</span>
+<span class="s">    2</span>
+<span class="s">    3 api = Api(subdomain=WorkfrontConfig.subdomain,</span>
+<span class="s">    4           api_key=WorkfrontConfig.api_key,</span>
+<span class="s">    5           env=&#39;preview&#39;,</span>
+<span class="s">    6           api_version=&#39;6.0&#39;)</span>
+<span class="s">    </span>
+<span class="s">    &quot;&quot;&quot;</span>
+<span class="s">    # Enter your API key here. This can be found in the Workfront interface under </span>
+<span class="s">    # setup-&gt;Customer Info.</span>
+<span class="s">    api_key = &#39;{api_key}&#39;</span>
+<span class="s">    </span>
+<span class="s">    # The sub domain is the prefix to the URL you use to access Workfront. For example</span>
+<span class="s">    # https://xxx.my.workfront.com, xxx would be the sub domain.</span>
+<span class="s">    subdomain = &#39;{sub_domain}&#39;</span>
+<span class="s">&#39;&#39;&#39;</span>
+        <span class="n">api_key</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s">&quot;Enter your API key: &quot;</span><span class="p">)</span>
+        <span class="n">sub_domain</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s">&quot;Enter your subdomain: &quot;</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">code</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">,</span> <span class="n">sub_domain</span><span class="o">=</span><span class="n">sub_domain</span><span class="p">)</span>
+        <span class="n">config_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s">&quot;wfconfig.py&quot;</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span>
+        <span class="n">config_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+        <span class="n">config_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Tools.make_signature"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.tools.Tools.make_signature">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">make_signature</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+
+        <span class="n">key</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s">&#39;UTF-8&#39;</span><span class="p">)</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="s">&#39;UTF-8&#39;</span><span class="p">)</span>
+
+        <span class="n">digester</span> <span class="o">=</span> <span class="n">hmac</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha1</span><span class="p">)</span>
+        <span class="n">signature1</span> <span class="o">=</span> <span class="n">digester</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">signature1</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">workfrontapi_plus</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../break_bulk_updates.html">break_bulk_updates module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../setup.html">setup module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tests.html">tests package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../wfconfig.html">wfconfig module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../workfrontapi_plus.html">workfrontapi_plus package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Integrated Device Technology.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,859 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>workfrontapi_plus.api &#8212; workfrontapi_plus Version 1.0.23 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     'Version 1.0.23',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for workfrontapi_plus.api</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;Copyright 2017, Integrated Device Technologies, Inc.</span>
+
+<span class="sd">Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="sd">of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="sd">in the Software without restriction, including without limitation the rights</span>
+<span class="sd">to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="sd">copies of the Software, and to permit persons to whom the Software is</span>
+<span class="sd">furnished to do so, subject to the following conditions:</span>
+
+<span class="sd">The above copyright notice and this permission notice shall be included in all</span>
+<span class="sd">copies or substantial portions of the Software.</span>
+
+<span class="sd">THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="sd">IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="sd">FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="sd">AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="sd">LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="sd">OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="sd">SOFTWARE.</span>
+
+<span class="sd">Authors: Roshan Bal, Craig Lathrop</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c"># https://blog.jetbrains.com/pycharm/2017/05/how-to-publish-your-package-on-pypi/</span>
+
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">math</span>
+
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="kn">from</span> <span class="nn">workfrontapi_plus.core_wf_object</span> <span class="k">import</span> <span class="n">WorkfrontAPIException</span>
+
+
+<div class="viewcode-block" id="Api"><a class="viewcode-back" href="../../workfrontapi_plus.html#tests.test_api.Api">[docs]</a><span class="k">class</span> <span class="nc">Api</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">GET</span> <span class="o">=</span> <span class="s">&#39;GET&#39;</span>
+    <span class="n">POST</span> <span class="o">=</span> <span class="s">&#39;POST&#39;</span>
+    <span class="n">PUT</span> <span class="o">=</span> <span class="s">&#39;PUT&#39;</span>
+    <span class="n">DELETE</span> <span class="o">=</span> <span class="s">&#39;DELETE&#39;</span>
+
+    <span class="n">LOGIN_PATH</span> <span class="o">=</span> <span class="s">&quot;/login&quot;</span>
+    <span class="n">LOGOUT_PATH</span> <span class="o">=</span> <span class="s">&quot;/logout&quot;</span>
+
+    <span class="c"># OBJCODES = ObjCode()</span>
+
+    <span class="n">CORE_URL</span> <span class="o">=</span> <span class="s">&quot;https://{subdomain}.{env}.workfront.com/attask/api/v{version}&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subdomain</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">api_version</span><span class="o">=</span><span class="s">&#39;7.0&#39;</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="k">None</span><span class="p">,</span> <span class="n">session_id</span><span class="o">=</span><span class="k">None</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="k">None</span><span class="p">,</span>
+                 <span class="n">return_api_errors</span><span class="o">=</span><span class="k">False</span><span class="p">,</span>
+                 <span class="n">debug</span><span class="o">=</span><span class="k">False</span><span class="p">,</span>
+                 <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Setup class</span>
+
+<span class="sd">        :param subdomain: The sub domain for your account</span>
+<span class="sd">        :param env: {&#39;live&#39;, &#39;sandbox&#39;, or &#39;preview&#39;} default &#39;sandbox&#39;</span>
+<span class="sd">        :param api_version: The full version number for the API. Example &#39;7.0&#39;. Default 7.0</span>
+<span class="sd">        :param api_key: The API key for authentication. Default None.</span>
+<span class="sd">        :param session_id: An optional session ID for authentication</span>
+<span class="sd">        :param user_id: The ID of the authenticated user</span>
+<span class="sd">        :param return_api_errors: In the event that the API generates an error the Workfront API message will be</span>
+<span class="sd">        returned instead of raising an error</span>
+<span class="sd">        :param debug: Sets API into debugging mode.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subdomain</span> <span class="o">=</span> <span class="n">subdomain</span>
+        <span class="n">api_base_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">CORE_URL</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">subdomain</span><span class="o">=</span><span class="n">subdomain</span><span class="p">,</span>
+                                            <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
+                                            <span class="n">version</span><span class="o">=</span><span class="n">api_version</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">api_base_url</span> <span class="o">=</span> <span class="n">api_base_url</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session_id</span> <span class="o">=</span> <span class="n">session_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_id</span> <span class="o">=</span> <span class="n">user_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="n">api_key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">debug</span> <span class="o">=</span> <span class="n">debug</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">return_api_errors</span> <span class="o">=</span> <span class="n">return_api_errors</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_bulk</span> <span class="o">=</span> <span class="mi">99</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_results</span> <span class="o">=</span> <span class="mi">2000</span>
+
+        <span class="c"># These methods are set as class variables to enable easy re-assignment during unit testing.</span>
+        <span class="c"># These values are typically overwritten by the unit tests with a lambda function simulating the results</span>
+        <span class="c"># of the method.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_request</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_request</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_open_api_connection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_p_open_api_connection</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_upload_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request_upload_file</span>
+
+<div class="viewcode-block" id="Api.test_mode_make_request"><a class="viewcode-back" href="../../workfrontapi_plus.html#tests.test_api.Api.test_mode_make_request">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">test_mode_make_request</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">args</span></div>
+
+<div class="viewcode-block" id="Api.login"><a class="viewcode-back" href="../../workfrontapi_plus.html#tests.test_api.Api.login">[docs]</a>    <span class="k">def</span> <span class="nf">login</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="k">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Login to Workfront using username and optionally password.</span>
+<span class="sd">        </span>
+<span class="sd">        This method will make a login _request and set the lession ID.</span>
+<span class="sd">        </span>
+<span class="sd">        If an API key is set the password is not needed. The resulting sessionID</span>
+<span class="sd">        will allow you to act on behalf of a user.</span>
+
+<span class="sd">        https://developers.workfront.com/api-docs/#Login</span>
+
+<span class="sd">        :param username: The Workfront username, typically an email address</span>
+<span class="sd">        :param password: The Workfront password</span>
+<span class="sd">        :return: The results of the login.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;username&#39;</span><span class="p">:</span> <span class="n">username</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">password</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="s">&#39;password&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">password</span>
+
+        <span class="c"># Login method required to use POST</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">LOGIN_PATH</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">POST</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s">&#39;sessionID&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session_id</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s">&#39;sessionID&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">user_id</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s">&#39;userID&#39;</span><span class="p">]</span>
+            <span class="c"># Just a short cut here. Return script looks for 2.</span>
+            <span class="k">return</span> <span class="n">data</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="Api.logout"><a class="viewcode-back" href="../../workfrontapi_plus.html#tests.test_api.Api.logout">[docs]</a>    <span class="k">def</span> <span class="nf">logout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Logout method.</span>
+
+<span class="sd">        Clears the class session_id and user_id fields.</span>
+
+<span class="sd">        :return: The results of the logout request</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">LOGOUT_PATH</span><span class="p">,</span> <span class="k">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">GET</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session_id</span> <span class="o">=</span> <span class="k">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_id</span> <span class="o">=</span> <span class="k">None</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="Api.get_list"><a class="viewcode-back" href="../../workfrontapi_plus.html#tests.test_api.Api.get_list">[docs]</a>    <span class="k">def</span> <span class="nf">get_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj_code</span><span class="p">,</span> <span class="n">ids</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="k">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns each object by id, similar to calling get for each id individually</span>
+
+<span class="sd">        :param obj_code: object type (i.e. &#39;PROJECT&#39;)</span>
+<span class="sd">        :param ids: list of ids to lookup</span>
+<span class="sd">        :param fields: list of field names to return for each object</span>
+<span class="sd">        :return: Data from Workfront</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/{0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obj_code</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;id&#39;</span><span class="p">:</span> <span class="s">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ids</span><span class="p">)},</span> <span class="bp">self</span><span class="o">.</span><span class="n">GET</span><span class="p">,</span> <span class="n">fields</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Api.put"><a class="viewcode-back" href="../../workfrontapi_plus.html#tests.test_api.Api.put">[docs]</a>    <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj_code</span><span class="p">,</span> <span class="n">obj_id</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="k">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Updates an existing object, returns the updated object.</span>
+
+<span class="sd">        https://developers.workfront.com/api-docs/#PUT</span>
+
+<span class="sd">        :param obj_code: object type (i.e. &#39;PROJECT&#39;)</span>
+<span class="sd">        :param obj_id: The ID of the object to act on</span>
+<span class="sd">        :param params: A dict of parameters to filter on</span>
+<span class="sd">        :param fields: List of field names to return for each object</span>
+<span class="sd">        :return: Data from Workfront</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/{0}/{1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obj_code</span><span class="p">,</span> <span class="n">obj_id</span><span class="p">)</span>
+        <span class="c"># The requests package has a problem with nested lists in JSON. We just pre-convert this to</span>
+        <span class="c"># JSON to avoid.</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;updates&#39;</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">params</span><span class="p">)}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PUT</span><span class="p">,</span> <span class="n">fields</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Api.action"><a class="viewcode-back" href="../../workfrontapi_plus.html#tests.test_api.Api.action">[docs]</a>    <span class="k">def</span> <span class="nf">action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj_code</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="k">None</span><span class="p">,</span> <span class="n">obj_id</span><span class="o">=</span><span class="k">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Updates an existing object, returns the updated object</span>
+<span class="sd">        :param obj_code: object type (i.e. &#39;PROJECT&#39;)</span>
+<span class="sd">        :param obj_id: Object ID to operate on</span>
+<span class="sd">        :param action: action to execute</span>
+<span class="sd">        :param params: A dict of parameters to filter on</span>
+<span class="sd">        :param fields: A list of fields to return - Optional</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">obj_id</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/{obj_code}/{objid}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obj_code</span><span class="o">=</span><span class="n">obj_code</span><span class="p">,</span> <span class="n">objid</span><span class="o">=</span><span class="n">obj_id</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">action</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c"># for some bulk operations you don&#39;t want to pass an obj ID in</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/{obj_code}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obj_code</span><span class="o">=</span><span class="n">obj_code</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">action</span><span class="p">)</span>
+
+        <span class="n">params</span><span class="p">[</span><span class="s">&#39;action&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">action</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PUT</span><span class="p">,</span> <span class="n">fields</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Api.bulk"><a class="viewcode-back" href="../../workfrontapi_plus.html#tests.test_api.Api.bulk">[docs]</a>    <span class="k">def</span> <span class="nf">bulk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj_code</span><span class="p">,</span> <span class="n">updates</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="k">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Makes bulk updates to existing objects</span>
+
+<span class="sd">        :param obj_code: object type (i.e. &#39;PROJECT&#39;)</span>
+<span class="sd">        :param updates: A list of dicts contining the updates</span>
+<span class="sd">        :param fields: A list of fields to return - Optional</span>
+<span class="sd">        :return: The results of the _request as a list of updated objects</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">updates</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_bulk</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bulk_segmenter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bulk</span><span class="p">,</span>
+                                       <span class="n">objs_per_loop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_bulk</span><span class="p">,</span>
+                                       <span class="n">obj_code</span><span class="o">=</span><span class="n">obj_code</span><span class="p">,</span>
+                                       <span class="n">updates</span><span class="o">=</span><span class="n">updates</span><span class="p">,</span>
+                                       <span class="n">fields</span><span class="o">=</span><span class="n">fields</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">res</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/{0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obj_code</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;updates&#39;</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">updates</span><span class="p">)}</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PUT</span><span class="p">,</span> <span class="n">fields</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Api.bulk_create"><a class="viewcode-back" href="../../workfrontapi_plus.html#tests.test_api.Api.bulk_create">[docs]</a>    <span class="k">def</span> <span class="nf">bulk_create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj_code</span><span class="p">,</span> <span class="n">updates</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="k">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Bulk creation of objects such as tasks, issues, other.</span>
+
+<span class="sd">        This method differs from bulk in that it uses the POST operation, not PUT</span>
+<span class="sd">        :param obj_code: object type (i.e. &#39;PROJECT&#39;)</span>
+<span class="sd">        :param updates: A list of dicts containing the updates</span>
+<span class="sd">        :param fields: List of field names to return for each object</span>
+<span class="sd">        :return: The results of the _request as a list of newly created objects</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># max_objs_per_loop = self._get_max_update_obj_size(updates)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">updates</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_bulk</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bulk_segmenter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bulk_create</span><span class="p">,</span>
+                                       <span class="n">objs_per_loop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_bulk</span><span class="p">,</span>
+                                       <span class="n">obj_code</span><span class="o">=</span><span class="n">obj_code</span><span class="p">,</span>
+                                       <span class="n">updates</span><span class="o">=</span><span class="n">updates</span><span class="p">,</span>
+                                       <span class="n">fields</span><span class="o">=</span><span class="n">fields</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">res</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/{0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obj_code</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;updates&#39;</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">updates</span><span class="p">)}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">POST</span><span class="p">,</span> <span class="n">fields</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Api.post"><a class="viewcode-back" href="../../workfrontapi_plus.html#tests.test_api.Api.post">[docs]</a>    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj_code</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="k">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates a new object, returns the new object</span>
+
+<span class="sd">        https://developers.workfront.com/api-docs/#POST</span>
+
+<span class="sd">        :param obj_code: object type (i.e. &#39;PROJECT&#39;)</span>
+<span class="sd">        :param params: A dict of parameters to filter on.</span>
+<span class="sd">        :param fields: List of field names to return for each object.</span>
+<span class="sd">        :return: The results of the updated object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/{0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obj_code</span><span class="p">)</span>
+        <span class="c"># The requests package has a problem with nested lists in JSON. We just pre-convert this to</span>
+        <span class="c"># JSON to avoid. While this is less common in a post operation, it is the only way to tag users in</span>
+        <span class="c"># a new note (as example).</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;updates&#39;</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">params</span><span class="p">)}</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">POST</span><span class="p">,</span> <span class="n">fields</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Api.get"><a class="viewcode-back" href="../../workfrontapi_plus.html#tests.test_api.Api.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj_code</span><span class="p">,</span> <span class="n">obj_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="k">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Lookup an single object by id</span>
+
+<span class="sd">        :param obj_code: object type (i.e. &#39;PROJECT&#39;)</span>
+<span class="sd">        :param obj_id: Object ID to operate on</span>
+<span class="sd">        :param fields:</span>
+<span class="sd">        :return: The requested object with requested fields</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/{0}/{1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obj_code</span><span class="p">,</span> <span class="n">obj_id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="k">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">GET</span><span class="p">,</span> <span class="n">fields</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Api.delete"><a class="viewcode-back" href="../../workfrontapi_plus.html#tests.test_api.Api.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj_code</span><span class="p">,</span> <span class="n">obj_id</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="k">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Delete an object by ID</span>
+
+<span class="sd">        :param obj_code: object type (i.e. &#39;PROJECT&#39;)</span>
+<span class="sd">        :param obj_id: Object ID to operate on</span>
+<span class="sd">        :param force: Force deletion of the object with relationships. For example</span>
+<span class="sd">                      if a task is deleted with force &quot;False&quot; associated expenses will</span>
+<span class="sd">                      not be removed.</span>
+<span class="sd">        :return: The results of the deletion</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/{0}/{1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obj_code</span><span class="p">,</span> <span class="n">obj_id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;force&#39;</span><span class="p">:</span> <span class="n">force</span><span class="p">},</span> <span class="bp">self</span><span class="o">.</span><span class="n">DELETE</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Api.bulk_delete"><a class="viewcode-back" href="../../workfrontapi_plus.html#tests.test_api.Api.bulk_delete">[docs]</a>    <span class="k">def</span> <span class="nf">bulk_delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj_code</span><span class="p">,</span> <span class="n">obj_ids</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="k">True</span><span class="p">,</span> <span class="n">atomic</span><span class="o">=</span><span class="k">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Delete by object ID</span>
+
+<span class="sd">        :param obj_code: object type (i.e. &#39;PROJECT&#39;)</span>
+<span class="sd">        :param obj_ids: A list of object IDs to be deleted</span>
+<span class="sd">        :param force: True by default. Force deletion of the object with relationships. For example</span>
+<span class="sd">                      if a task is deleted with force &quot;False&quot; associated expenses will</span>
+<span class="sd">                      not be removed.</span>
+<span class="sd">        :param atomic: True by default. Removes all objects at the same time. This is useful is situations where you might be deleting</span>
+<span class="sd">                       a parent object with children in the same set of &quot;ids&quot;. For example:</span>
+
+<span class="sd">                       Task A</span>
+<span class="sd">                            Task B</span>
+<span class="sd">                            Task C</span>
+
+<span class="sd">                       If in the above example you delete Task A, Task B and C will be deleted automatically. If you do</span>
+<span class="sd">                       not specify atomic=True and the ID&#39;s for Task B and C are in the list of ID&#39;s to be deleted it</span>
+<span class="sd">                       will throw an error as it will not be able to find those ID&#39;s.</span>
+<span class="sd">        :return: The results of the deletion</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj_ids</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_bulk</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bulk_segmenter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bulk_delete</span><span class="p">,</span>
+                                       <span class="n">objs_per_loop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_bulk</span><span class="p">,</span>
+                                       <span class="n">obj_code</span><span class="o">=</span><span class="n">obj_code</span><span class="p">,</span>
+                                       <span class="n">obj_ids</span><span class="o">=</span><span class="n">obj_ids</span><span class="p">,</span>
+                                       <span class="n">force</span><span class="o">=</span><span class="k">True</span><span class="p">,</span>
+                                       <span class="n">atomic</span><span class="o">=</span><span class="k">True</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">res</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/{0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obj_code</span><span class="p">)</span>
+
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;ID&quot;</span><span class="p">:</span> <span class="n">obj_ids</span><span class="p">,</span> <span class="s">&quot;force&quot;</span><span class="p">:</span> <span class="n">force</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">atomic</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="s">&#39;atomic&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;true&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">DELETE</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Api.search"><a class="viewcode-back" href="../../workfrontapi_plus.html#tests.test_api.Api.search">[docs]</a>    <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj_code</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="k">None</span><span class="p">,</span> <span class="n">get_all</span><span class="o">=</span><span class="k">False</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="k">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Search for objects against a given set of filters (params).</span>
+
+<span class="sd">        :param obj_code: Object code to search for.</span>
+<span class="sd">        :param params: Search parameters</span>
+<span class="sd">        :param fields: List of fields to search for</span>
+<span class="sd">        :param get_all: The get_all flag will return all search results, looping as many times as</span>
+<span class="sd">                        necessary to return all results.</span>
+<span class="sd">        :param limit:</span>
+<span class="sd">        :return:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/{0}/search&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obj_code</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">get_all</span> <span class="ow">or</span> <span class="n">limit</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">first</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_count</span><span class="p">(</span><span class="n">obj_code</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">limit</span><span class="p">:</span>
+                <span class="n">count</span> <span class="o">=</span> <span class="n">count</span> <span class="k">if</span> <span class="n">count</span> <span class="o">&lt;</span> <span class="n">limit</span> <span class="k">else</span> <span class="n">limit</span>
+                <span class="n">limit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_results</span> <span class="k">if</span> <span class="n">limit</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_results</span> <span class="k">else</span> <span class="n">limit</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">limit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_results</span>
+            <span class="n">loop_count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">count</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_results</span><span class="p">))</span>
+            <span class="n">params</span><span class="p">[</span><span class="s">&#39;$$LIMIT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">limit</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">loop_count</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="p">(</span><span class="n">loop_count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+                    <span class="n">params</span><span class="p">[</span><span class="s">&#39;$$LIMIT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">count</span> <span class="o">-</span> <span class="p">((</span><span class="n">loop_count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">limit</span><span class="p">)</span>
+                <span class="n">params</span><span class="p">[</span><span class="s">&#39;$$FIRST&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">first</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">GET</span><span class="p">,</span> <span class="n">fields</span><span class="p">)</span>
+                <span class="n">output</span> <span class="o">+=</span> <span class="n">res</span>
+                <span class="n">first</span> <span class="o">+=</span> <span class="n">limit</span>
+            <span class="k">return</span> <span class="n">output</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">GET</span><span class="p">,</span> <span class="n">fields</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Api.count"><a class="viewcode-back" href="../../workfrontapi_plus.html#tests.test_api.Api.count">[docs]</a>    <span class="k">def</span> <span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj_code</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Count objects for a given set of filters (params).</span>
+
+<span class="sd">        :param obj_code: Object code to count.</span>
+<span class="sd">        :param params:  Dict of criteria to use as filter</span>
+<span class="sd">                        {&#39;name&#39;: &#39;example task&#39;,</span>
+<span class="sd">                         &#39;name_Mod: &#39;cicontains&#39;}</span>
+<span class="sd">        :return:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/{0}/count&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obj_code</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">GET</span><span class="p">)[</span><span class="s">&#39;count&#39;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Api.report"><a class="viewcode-back" href="../../workfrontapi_plus.html#tests.test_api.Api.report">[docs]</a>    <span class="k">def</span> <span class="nf">report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj_code</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">agg_field</span><span class="p">,</span> <span class="n">agg_func</span><span class="p">,</span> <span class="n">group_by_field</span><span class="o">=</span><span class="k">None</span><span class="p">,</span> <span class="n">rollup</span><span class="o">=</span><span class="k">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create aggregate reports.</span>
+
+<span class="sd">        This method will return an aggregate for the fields specified in an object. For example:</span>
+
+<span class="sd">        obj_code = &#39;TASK&#39;, agg_func=&#39;duration&#39;</span>
+<span class="sd">        {</span>
+<span class="sd">            &quot;data&quot;: {</span>
+<span class="sd">                &quot;durationMinutes&quot;: 24468636,</span>
+<span class="sd">                &quot;dcount_ID&quot;: 3062</span>
+<span class="sd">            }</span>
+<span class="sd">        }</span>
+
+<span class="sd">        :param obj_code: Object type</span>
+<span class="sd">        :param params:  Dict of criteria to use as filter</span>
+<span class="sd">                        {&#39;name&#39;: &#39;example task&#39;,</span>
+<span class="sd">                         &#39;name_Mod: &#39;cicontains&#39;}</span>
+
+<span class="sd">        :param agg_field: The field to aggregate on.</span>
+<span class="sd">        :param agg_func: Type of function (sum, avg, etc)</span>
+<span class="sd">        :param group_by_field: Group results by this field</span>
+
+<span class="sd">                        &quot;data&quot;: {</span>
+<span class="sd">                            &quot;Project 1&quot;: {</span>
+<span class="sd">                                &quot;durationMinutes&quot;: 24000,</span>
+<span class="sd">                                &quot;dcount_ID&quot;: 4,</span>
+<span class="sd">                                &quot;project_name&quot;: &quot;Project 1&quot;</span>
+<span class="sd">                            },</span>
+<span class="sd">                            &quot;Project 2&quot;: {</span>
+<span class="sd">                                &quot;durationMinutes&quot;: 3360,</span>
+<span class="sd">                                &quot;dcount_ID&quot;: 1,</span>
+<span class="sd">                                &quot;project_name&quot;: &quot;Project 1&quot;</span>
+<span class="sd">                            }</span>
+<span class="sd">                        }</span>
+
+<span class="sd">        :param rollup: Flag to indicate a roll-up of all groupings.</span>
+
+<span class="sd">                        &quot;data&quot;: {</span>
+<span class="sd">                            &quot;Project 1&quot;: {</span>
+<span class="sd">                                &quot;durationMinutes&quot;: 24000,</span>
+<span class="sd">                                &quot;dcount_ID&quot;: 4,</span>
+<span class="sd">                                &quot;project_name&quot;: &quot;Project 1&quot;</span>
+<span class="sd">                            },</span>
+<span class="sd">                            &quot;Project 2&quot;: {</span>
+<span class="sd">                                &quot;durationMinutes&quot;: 3360,</span>
+<span class="sd">                                &quot;dcount_ID&quot;: 1,</span>
+<span class="sd">                                &quot;project_name&quot;: &quot;Project 1&quot;</span>
+<span class="sd">                            },</span>
+<span class="sd">                            &quot;$$ROLLUP&quot;: {</span>
+<span class="sd">                                &quot;durationMinutes&quot;: 27600,</span>
+<span class="sd">                                &quot;dcount_ID&quot;: 5</span>
+<span class="sd">                            }</span>
+
+<span class="sd">        :return: dict with the results</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">path</span> <span class="o">=</span> <span class="s">&quot;/{objCode}/report&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">objCode</span><span class="o">=</span><span class="n">obj_code</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">group_by_field</span><span class="p">:</span>
+            <span class="n">gb_key</span> <span class="o">=</span> <span class="s">&quot;{field}_1_GroupBy&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">field</span><span class="o">=</span><span class="n">group_by_field</span><span class="p">)</span>
+            <span class="n">params</span><span class="p">[</span><span class="n">gb_key</span><span class="p">]</span> <span class="o">=</span> <span class="k">True</span>
+
+        <span class="k">if</span> <span class="n">rollup</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="s">&#39;$$ROLLUP&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">True</span>
+
+        <span class="n">agg_key</span> <span class="o">=</span> <span class="s">&#39;{field}_AggFunc&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">field</span><span class="o">=</span><span class="n">agg_field</span><span class="p">)</span>
+        <span class="n">params</span><span class="p">[</span><span class="n">agg_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">agg_func</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">GET</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Api.upload_document"><a class="viewcode-back" href="../../workfrontapi_plus.html#tests.test_api.Api.upload_document">[docs]</a>    <span class="k">def</span> <span class="nf">upload_document</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">obj_code</span><span class="p">,</span> <span class="n">obj_id</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">handle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_document</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">obj_code</span><span class="p">,</span> <span class="n">obj_id</span><span class="p">,</span> <span class="n">version</span><span class="p">)</span>
+        <span class="n">post_doc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_document</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">handle</span><span class="p">,</span> <span class="n">obj_code</span><span class="p">,</span> <span class="n">obj_id</span><span class="p">,</span> <span class="n">version</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Api.make_document"><a class="viewcode-back" href="../../workfrontapi_plus.html#tests.test_api.Api.make_document">[docs]</a>    <span class="k">def</span> <span class="nf">make_document</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">obj_code</span><span class="p">,</span> <span class="n">obj_id</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="s">&quot;/upload&quot;</span>
+        <span class="n">handle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_upload_file</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">handle</span></div>
+
+<div class="viewcode-block" id="Api.post_document"><a class="viewcode-back" href="../../workfrontapi_plus.html#tests.test_api.Api.post_document">[docs]</a>    <span class="k">def</span> <span class="nf">post_document</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">handle</span><span class="p">,</span> <span class="n">obj_code</span><span class="p">,</span> <span class="n">obj_id</span><span class="p">,</span> <span class="n">version</span><span class="p">):</span>
+        <span class="n">updates</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+                   <span class="s">&#39;handle&#39;</span><span class="p">:</span> <span class="n">handle</span><span class="p">,</span>
+                   <span class="s">&#39;docObjCode&#39;</span><span class="p">:</span> <span class="n">obj_code</span><span class="p">,</span>
+                   <span class="s">&#39;objID&#39;</span><span class="p">:</span> <span class="n">obj_id</span>
+                   <span class="c"># &#39;currentVersion&#39;: &quot;{&#39;version&#39;:&#39;v1.0&#39;,&#39;fileName&#39;:name}&quot;</span>
+                   <span class="p">}</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s">&#39;docu&#39;</span><span class="p">,</span> <span class="n">updates</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Api.make_update_as_user"><a class="viewcode-back" href="../../workfrontapi_plus.html#tests.test_api.Api.make_update_as_user">[docs]</a>    <span class="k">def</span> <span class="nf">make_update_as_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_email</span><span class="p">,</span> <span class="n">exec_method</span><span class="p">,</span> <span class="n">obj_code</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">obj_id</span><span class="o">=</span><span class="k">None</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="k">None</span><span class="p">,</span> <span class="n">obj_ids</span><span class="o">=</span><span class="k">None</span><span class="p">,</span>
+                            <span class="n">fields</span><span class="o">=</span><span class="k">None</span><span class="p">,</span> <span class="n">logout</span><span class="o">=</span><span class="k">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Performs an action on behalf of another user.</span>
+
+<span class="sd">        This method will login on behalf of another user by passing in the users ID (email) and the API key to the login</span>
+<span class="sd">        method. This will set a session ID. While the session ID is set all actions performed or taken will show as if</span>
+<span class="sd">        done by the users.</span>
+
+<span class="sd">        This is useful for script that might need to write updates on behalf of a user, change a commit date, or</span>
+<span class="sd">        perform other operations that can only be done by a task assignee or owner.</span>
+<span class="sd">        :param user_email: The email address of the users to act on behalf of</span>
+<span class="sd">        :param exec_method: Method within Workfront class to execute on behalf of user</span>
+<span class="sd">                            Options: (&#39;post&#39;, &#39;put&#39;, &#39;action&#39;, &#39;search&#39;)</span>
+<span class="sd">        :param action: Action to take (&#39;post&#39;, &#39;put&#39;, &#39;action&#39;, &#39;search&#39;, &#39;report&#39;, &#39;bulk&#39;)</span>
+<span class="sd">        :param obj_code: The object code to act on</span>
+<span class="sd">        :param params: A list of parameters</span>
+<span class="sd">        :param obj_id: Optional. Object ID to act on. This is required for put, and certain action commands.</span>
+<span class="sd">        :param obj_ids: Optional. Object ID list to act on. This is required for bulk commands.</span>
+<span class="sd">        :param fields: Optional. List of fields to return</span>
+<span class="sd">        :return: The results of the query</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">login_res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">user_email</span><span class="p">)</span>
+
+        <span class="c"># commands = {&#39;post&#39;: self.post,</span>
+        <span class="c">#             &#39;put&#39;: self.put,</span>
+        <span class="c">#             &#39;action&#39;: self.action,</span>
+        <span class="c">#             &#39;search&#39;: self.search,</span>
+        <span class="c">#             &#39;report&#39;: self.report,</span>
+        <span class="c">#             &#39;bulk&#39;: self.bulk}</span>
+
+        <span class="k">if</span> <span class="n">login_res</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">exec_method</span> <span class="o">==</span> <span class="s">&#39;post&#39;</span><span class="p">:</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">obj_code</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">fields</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">logout</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logout</span><span class="p">()</span>
+                <span class="k">return</span> <span class="n">res</span>
+
+            <span class="k">elif</span> <span class="n">exec_method</span> <span class="o">==</span> <span class="s">&#39;put&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">obj_id</span><span class="p">:</span>
+                    <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">obj_code</span><span class="p">,</span> <span class="n">obj_id</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">fields</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">logout</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logout</span><span class="p">()</span>
+                    <span class="k">return</span> <span class="n">res</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Must Pass object id if using put method&#39;</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">exec_method</span> <span class="o">==</span> <span class="s">&#39;action&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">action</span><span class="p">:</span>
+                    <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">action</span><span class="p">(</span><span class="n">obj_code</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">obj_id</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">logout</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logout</span><span class="p">()</span>
+                    <span class="k">return</span> <span class="n">res</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Must Pass action parameter if calling action method&#39;</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">exec_method</span> <span class="o">==</span> <span class="s">&#39;search&#39;</span><span class="p">:</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">obj_code</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">fields</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">logout</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logout</span><span class="p">()</span>
+                <span class="k">return</span> <span class="n">res</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Login failed. No Session ID&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Login Failed&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Api.share_obj"><a class="viewcode-back" href="../../workfrontapi_plus.html#tests.test_api.Api.share_obj">[docs]</a>    <span class="k">def</span> <span class="nf">share_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj_code</span><span class="p">,</span> <span class="n">obj_id</span><span class="p">,</span> <span class="n">accessor_id</span><span class="p">,</span> <span class="n">accessor_obj_code</span><span class="p">,</span> <span class="n">level</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets sharing levels for an object with one or more ID numbers</span>
+
+<span class="sd">        :param obj_code:</span>
+<span class="sd">        :param obj_id:</span>
+<span class="sd">        :param ids:</span>
+<span class="sd">        :param accessor_obj_code:</span>
+<span class="sd">        :param level:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/{0}/{1}/share&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obj_code</span><span class="p">,</span> <span class="n">obj_id</span><span class="p">)</span>
+
+
+        <span class="n">access_levels</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;view&#39;</span><span class="p">:</span> <span class="s">&#39;VIEW&#39;</span><span class="p">,</span> <span class="s">&#39;contribute&#39;</span><span class="p">:</span> <span class="s">&#39;CREATE&#39;</span><span class="p">,</span> <span class="s">&#39;manage&#39;</span><span class="p">:</span> <span class="s">&#39;DELETE&#39;</span><span class="p">}</span>
+
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;accessorID&#39;</span><span class="p">:</span> <span class="n">accessor_id</span><span class="p">,</span>
+                  <span class="s">&#39;accessorObjCode&#39;</span><span class="p">:</span> <span class="n">accessor_obj_code</span><span class="p">,</span>
+                  <span class="s">&#39;coreAction&#39;</span><span class="p">:</span> <span class="n">access_levels</span><span class="p">[</span><span class="n">level</span><span class="p">]}</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PUT</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Api.get_obj_share"><a class="viewcode-back" href="../../workfrontapi_plus.html#tests.test_api.Api.get_obj_share">[docs]</a>    <span class="k">def</span> <span class="nf">get_obj_share</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj_code</span><span class="p">,</span> <span class="n">obj_id</span><span class="p">):</span>
+        <span class="c"># @todo finish and document this section</span>
+        <span class="k">pass</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_parse_parameter_lists</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Searches params and converts lists to comma sep strings</span>
+
+<span class="sd">        The workfront API will reject the [&#39;something&#39;,&#39;somethingelse&#39;] format if sent as a parameter value. This</span>
+<span class="sd">        method looks through the params for lists and converts them to simple comma separated values in a string. For</span>
+<span class="sd">        example.</span>
+
+<span class="sd">        {&#39;status&#39;: [&#39;CUR&#39;, &#39;PLN&#39;, &#39;APP&#39;],</span>
+<span class="sd">         &#39;status_Mod&#39;: &#39;in&#39;}</span>
+
+<span class="sd">         will be converted to</span>
+
+<span class="sd">        {&#39;status&#39;: &#39;CUR&#39;,</span>
+<span class="sd">         &#39;status&#39;: &#39;PLN&#39;,</span>
+<span class="sd">         &#39;status&#39;: &#39;APP&#39;,</span>
+<span class="sd">         &#39;status_Mod&#39;: &#39;in&#39;}</span>
+
+<span class="sd">        :param params: A dict of the filter parameters</span>
+<span class="sd">        :return: The filters params converted to a string</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">output_string</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="c"># Convert list to multiple instances of same key.</span>
+                <span class="k">for</span> <span class="n">list_item</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                    <span class="n">output_string</span> <span class="o">=</span> <span class="s">&quot;{output_string}&amp;{key}={value}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">output_string</span><span class="o">=</span><span class="n">output_string</span><span class="p">,</span>
+                                                                           <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">list_item</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">output_string</span> <span class="o">=</span> <span class="s">&quot;{output_string}&amp;{key}={value}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">output_string</span><span class="o">=</span><span class="n">output_string</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span>
+                                                                       <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
+        <span class="c"># There will be an &amp; on the far left. Strip that off</span>
+        <span class="k">return</span> <span class="n">output_string</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_parse_post_param_list</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+        <span class="n">output_string</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="s">&#39;apiKey&#39;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+            <span class="n">api_string</span> <span class="o">=</span> <span class="s">&#39;&amp;apiKey=&#39;</span> <span class="o">+</span> <span class="n">params</span><span class="p">[</span><span class="s">&#39;apiKey&#39;</span><span class="p">]</span>
+        <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;apiKey&#39;</span><span class="p">,</span> <span class="k">None</span><span class="p">)</span>
+        <span class="n">output_string</span> <span class="o">+=</span> <span class="s">&quot;updates=&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;&amp;method=post&#39;</span> <span class="o">+</span> <span class="n">api_string</span>
+        <span class="k">return</span> <span class="n">output_string</span>
+
+    <span class="k">def</span> <span class="nf">_make_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="k">None</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="k">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Makes the request to Workfront API</span>
+
+<span class="sd">        :param path: The API Path (i.e. http://domain.my.workfront.com/attask/api/v7.0/{action}/{obj})</span>
+<span class="sd">        :param params: A dict of filter parameters</span>
+<span class="sd">        :param method: The method (GET, POST, DELETE, PUT)</span>
+<span class="sd">        :param fields: A list of fields to return</span>
+<span class="sd">        :param raw: Flag to return data exactly as provided by API. The practical effect of this flag is to return</span>
+<span class="sd">                    the value of the &quot;data&quot; key when set to False and the whole object when set to true. Example:</span>
+
+<span class="sd">                    raw = True:</span>
+<span class="sd">                    {&#39;data&#39;: [{&#39;ID&#39;:&#39;ACB123...&#39;,</span>
+<span class="sd">                               &#39;name&#39;: &#39;proj 1&#39;},</span>
+<span class="sd">                               {&#39;ID&#39;:&#39;ACB156...&#39;,</span>
+<span class="sd">                               &#39;name&#39;: &#39;proj 2&#39;}]</span>
+<span class="sd">                    }</span>
+
+<span class="sd">                    raw = False:</span>
+<span class="sd">                    [{&#39;ID&#39;:&#39;ACB123...&#39;,</span>
+<span class="sd">                     &#39;name&#39;: &#39;proj 1&#39;},</span>
+<span class="sd">                     {&#39;ID&#39;:&#39;ACB156...&#39;,</span>
+<span class="sd">                     &#39;name&#39;: &#39;proj 2&#39;}]</span>
+
+<span class="sd">        :return: The query results</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">api_param_string</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_params</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+
+        <span class="n">api_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_base_url</span> <span class="o">+</span> <span class="n">path</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_api_connection</span><span class="p">(</span><span class="n">api_param_string</span><span class="p">,</span> <span class="n">api_path</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s">&#39;data&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">data</span> <span class="k">if</span> <span class="n">raw</span> <span class="k">else</span> <span class="n">data</span><span class="p">[</span><span class="s">&#39;data&#39;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="s">&#39;error&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="c"># This condition will occur if there is an error being returned.</span>
+            <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">][</span><span class="s">&#39;message&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">WorkfrontAPIException</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_p_open_api_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">dest</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Makes the request to the Workfront API</span>
+
+<span class="sd">        :param data: The URL parameters string</span>
+<span class="sd">        :param dest: API URL</span>
+<span class="sd">        :return: json results of query</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c"># Request should default ambiguous as WF_API+ should handle methods (GET, POST etc.)</span>
+
+            <span class="c"># FIXME: Breaking changes now require type-check. Type-check should be refactored out</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s">&#39;method&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;method&#39;</span><span class="p">],</span> <span class="n">dest</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c"># Use requests.get as fallback</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dest</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">HTTPError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">response</span>
+            <span class="k">raise</span> <span class="n">WorkfrontAPIException</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s">&#39;Response OK - 200. Len of full URL was &#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">url</span><span class="p">),</span> <span class="s">&#39; char.&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_api_errors</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s">&#39;Response OK - 200. Len of full URL was &#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">url</span><span class="p">),</span> <span class="s">&#39; char.&#39;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">WorkfrontAPIException</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_request_upload_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
+        <span class="n">api_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_base_url</span> <span class="o">+</span> <span class="s">&quot;/upload&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_p_upload_file</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">api_path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s">&#39;data&#39;</span><span class="p">][</span><span class="s">&#39;handle&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_p_upload_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
+        <span class="n">file</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;uploadedFile&#39;</span><span class="p">:</span> <span class="n">file</span><span class="p">}</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_set_authentication</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="c"># r = requests.post(url, files=params, apiKey = &#39;1q2tz2xgsgf2y44mvz78vxn1y0jhqc7h&#39;)</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s">&#39;post&#39;</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">files</span><span class="o">=</span><span class="n">file</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_prepare_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+
+        <span class="c"># If no params passed in set a blank dict.</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">params</span> <span class="k">if</span> <span class="n">params</span> <span class="k">else</span> <span class="p">{}</span>
+
+        <span class="n">params</span><span class="p">[</span><span class="s">&#39;method&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">method</span>
+
+        <span class="c"># Check that fields exist before attempting join to avoid error.</span>
+        <span class="k">if</span> <span class="n">fields</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="s">&#39;fields&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
+
+        <span class="c"># If the request is login must bypass authentication</span>
+        <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="s">&#39;/login&#39;</span> <span class="ow">and</span> <span class="s">&#39;password&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_set_authentication</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+
+        <span class="c"># Must come after method/login checks, otherwise: AttributeError: &#39;str&#39; object has no attribute &#39;keys&#39;</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">GET</span> <span class="ow">and</span> <span class="n">params</span><span class="p">:</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_parameter_lists</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+
+        <span class="c"># if method == self.PUT and params:</span>
+        <span class="c">#     params = self._parse_parameter_lists(params)</span>
+        <span class="c"># @todo Check if we need to convert to ascii here. Might be able to just return data.</span>
+
+        <span class="c"># if method == &#39;POST&#39;:</span>
+        <span class="c">#     params = self._parse_post_param_list(params)</span>
+        <span class="k">return</span> <span class="n">params</span>
+
+    <span class="k">def</span> <span class="nf">_set_authentication</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds the authentication into params.</span>
+
+<span class="sd">        :param params:</span>
+<span class="sd">        :return:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Added a check to see if a session ID is being used instead of API Key - CL 8/4</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_id</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="s">&#39;sessionID&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_id</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_key</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="s">&#39;apiKey&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_key</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;No valid authentication method provided. You must set either a sessionID or API Key.&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">params</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_bulk_segmenter</span><span class="p">(</span><span class="n">bulk_method</span><span class="p">,</span> <span class="n">objs_per_loop</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Breaks a list of items up into chunks for processing.</span>
+
+<span class="sd">        :param bulk_method: An instance of the method (self.bulk, self.bulk_delete, self.bulk_create)</span>
+<span class="sd">        :param kwargs: The various parameters</span>
+<span class="sd">        :return: The output of the update from API</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="s">&#39;updates&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;updates&#39;</span><span class="p">]</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="s">&#39;updates&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;obj_ids&#39;</span><span class="p">]</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="s">&#39;obj_ids&#39;</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">objs_per_loop</span><span class="p">):</span>
+            <span class="n">sliced_update_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">objs_per_loop</span><span class="p">])</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">sliced_update_list</span>
+            <span class="n">output</span> <span class="o">+=</span> <span class="n">bulk_method</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">output</span></div>
+
+        <span class="c"># def _get_max_update_obj_size(self, updates):</span>
+        <span class="c">#     &quot;&quot;&quot;Gets the total len of the updates when converted to JSON.</span>
+        <span class="c">#</span>
+        <span class="c">#     There appears to be a char limit of ~6800 when making a bulk request. This seems related to total</span>
+        <span class="c">#     char len only, not number of elements.</span>
+        <span class="c">#</span>
+        <span class="c">#     This method checks the size of the JSON converted &quot;updates&quot; and calculates a safe self._max_bulk</span>
+        <span class="c">#     value.</span>
+        <span class="c">#     :param updates: A dict containing updates</span>
+        <span class="c">#     :return: A safe value for self._max_bulk</span>
+        <span class="c">#</span>
+        <span class="c">#     &quot;&quot;&quot;</span>
+        <span class="c">#     # Actual limit seems to be ~6894 but errors are seen sometime at numbers down to 5000. It&#39;s possible that</span>
+        <span class="c">#     # the problem is not related to overall char size, but is something to do with some other field length or</span>
+        <span class="c">#     # attempting to add or modify so many objects at once. This issue isn&#39;t well understood at the moment.</span>
+        <span class="c">#     api_char_limit = 3000</span>
+        <span class="c">#     updates_len = len(updates)</span>
+        <span class="c">#     json_len = len(json.dumps(updates))</span>
+        <span class="c">#     char_per_update_element = int(math.ceil(json_len / updates_len))</span>
+        <span class="c">#     safe_elements_per_loop = int(math.floor(api_char_limit / char_per_update_element))</span>
+        <span class="c">#     print(&#39;Safe number of update elements per loop is {0}&#39;.format(safe_elements_per_loop))</span>
+        <span class="c">#     return safe_elements_per_loop if safe_elements_per_loop &lt; self._max_bulk else self._max_bulk</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">workfrontapi_plus</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../break_bulk_updates.html">break_bulk_updates module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../setup.html">setup module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tests.html">tests package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../wfconfig.html">wfconfig module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../workfrontapi_plus.html">workfrontapi_plus package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Integrated Device Technology.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

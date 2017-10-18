@@ -1,0 +1,1068 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>workfrontapi_plus package &#8212; workfrontapi_plus Version 1.0.23 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     'Version 1.0.23',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="wfconfig module" href="wfconfig.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="workfrontapi-plus-package">
+<h1>workfrontapi_plus package<a class="headerlink" href="#workfrontapi-plus-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-workfrontapi_plus.api">
+<span id="workfrontapi-plus-api-module"></span><h2>workfrontapi_plus.api module<a class="headerlink" href="#module-workfrontapi_plus.api" title="Permalink to this headline">¶</a></h2>
+<p>Copyright 2017, Integrated Device Technologies, Inc.</p>
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the “Software”), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:</p>
+<p>The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.</p>
+<p>THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.</p>
+<p>Authors: Roshan Bal, Craig Lathrop</p>
+<dl class="class">
+<dt id="workfrontapi_plus.api.Api">
+<em class="property">class </em><code class="descclassname">workfrontapi_plus.api.</code><code class="descname">Api</code><span class="sig-paren">(</span><em>subdomain</em>, <em>env</em>, <em>api_version='7.0'</em>, <em>api_key=None</em>, <em>session_id=None</em>, <em>user_id=None</em>, <em>return_api_errors=False</em>, <em>debug=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/api.html#Api"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.api.Api" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="workfrontapi_plus.api.Api.CORE_URL">
+<code class="descname">CORE_URL</code><em class="property"> = 'https://{subdomain}.{env}.workfront.com/attask/api/v{version}'</em><a class="headerlink" href="#workfrontapi_plus.api.Api.CORE_URL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="workfrontapi_plus.api.Api.DELETE">
+<code class="descname">DELETE</code><em class="property"> = 'DELETE'</em><a class="headerlink" href="#workfrontapi_plus.api.Api.DELETE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="workfrontapi_plus.api.Api.GET">
+<code class="descname">GET</code><em class="property"> = 'GET'</em><a class="headerlink" href="#workfrontapi_plus.api.Api.GET" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="workfrontapi_plus.api.Api.LOGIN_PATH">
+<code class="descname">LOGIN_PATH</code><em class="property"> = '/login'</em><a class="headerlink" href="#workfrontapi_plus.api.Api.LOGIN_PATH" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="workfrontapi_plus.api.Api.LOGOUT_PATH">
+<code class="descname">LOGOUT_PATH</code><em class="property"> = '/logout'</em><a class="headerlink" href="#workfrontapi_plus.api.Api.LOGOUT_PATH" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="workfrontapi_plus.api.Api.POST">
+<code class="descname">POST</code><em class="property"> = 'POST'</em><a class="headerlink" href="#workfrontapi_plus.api.Api.POST" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="workfrontapi_plus.api.Api.PUT">
+<code class="descname">PUT</code><em class="property"> = 'PUT'</em><a class="headerlink" href="#workfrontapi_plus.api.Api.PUT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.api.Api.action">
+<code class="descname">action</code><span class="sig-paren">(</span><em>obj_code</em>, <em>action</em>, <em>params</em>, <em>fields=None</em>, <em>obj_id=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/api.html#Api.action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.api.Api.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates an existing object, returns the updated object
+:param obj_code: object type (i.e. ‘PROJECT’)
+:param obj_id: Object ID to operate on
+:param action: action to execute
+:param params: A dict of parameters to filter on
+:param fields: A list of fields to return - Optional</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.api.Api.bulk">
+<code class="descname">bulk</code><span class="sig-paren">(</span><em>obj_code</em>, <em>updates</em>, <em>fields=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/api.html#Api.bulk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.api.Api.bulk" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes bulk updates to existing objects</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>obj_code</strong> – object type (i.e. ‘PROJECT’)</li>
+<li><strong>updates</strong> – A list of dicts contining the updates</li>
+<li><strong>fields</strong> – A list of fields to return - Optional</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The results of the _request as a list of updated objects</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.api.Api.bulk_create">
+<code class="descname">bulk_create</code><span class="sig-paren">(</span><em>obj_code</em>, <em>updates</em>, <em>fields=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/api.html#Api.bulk_create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.api.Api.bulk_create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bulk creation of objects such as tasks, issues, other.</p>
+<p>This method differs from bulk in that it uses the POST operation, not PUT
+:param obj_code: object type (i.e. ‘PROJECT’)
+:param updates: A list of dicts containing the updates
+:param fields: List of field names to return for each object
+:return: The results of the _request as a list of newly created objects</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.api.Api.bulk_delete">
+<code class="descname">bulk_delete</code><span class="sig-paren">(</span><em>obj_code</em>, <em>obj_ids</em>, <em>force=True</em>, <em>atomic=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/api.html#Api.bulk_delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.api.Api.bulk_delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete by object ID</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>obj_code</strong> – object type (i.e. ‘PROJECT’)</li>
+<li><strong>obj_ids</strong> – A list of object IDs to be deleted</li>
+<li><strong>force</strong> – True by default. Force deletion of the object with relationships. For example
+if a task is deleted with force “False” associated expenses will
+not be removed.</li>
+<li><strong>atomic</strong> – <p>True by default. Removes all objects at the same time. This is useful is situations where you might be deleting
+a parent object with children in the same set of “ids”. For example:</p>
+<dl class="docutils">
+<dt>Task A</dt>
+<dd>Task B
+Task C</dd>
+</dl>
+<p>If in the above example you delete Task A, Task B and C will be deleted automatically. If you do
+not specify atomic=True and the ID’s for Task B and C are in the list of ID’s to be deleted it
+will throw an error as it will not be able to find those ID’s.</p>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The results of the deletion</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.api.Api.count">
+<code class="descname">count</code><span class="sig-paren">(</span><em>obj_code</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/api.html#Api.count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.api.Api.count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Count objects for a given set of filters (params).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>obj_code</strong> – Object code to count.</li>
+<li><strong>params</strong> – <p>Dict of criteria to use as filter
+{‘name’: ‘example task’,</p>
+<blockquote>
+<div>’name_Mod: ‘cicontains’}</div></blockquote>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.api.Api.delete">
+<code class="descname">delete</code><span class="sig-paren">(</span><em>obj_code</em>, <em>obj_id</em>, <em>force=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/api.html#Api.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.api.Api.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete an object by ID</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>obj_code</strong> – object type (i.e. ‘PROJECT’)</li>
+<li><strong>obj_id</strong> – Object ID to operate on</li>
+<li><strong>force</strong> – Force deletion of the object with relationships. For example
+if a task is deleted with force “False” associated expenses will
+not be removed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The results of the deletion</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.api.Api.get">
+<code class="descname">get</code><span class="sig-paren">(</span><em>obj_code</em>, <em>obj_id</em>, <em>fields=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/api.html#Api.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.api.Api.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lookup an single object by id</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>obj_code</strong> – object type (i.e. ‘PROJECT’)</li>
+<li><strong>obj_id</strong> – Object ID to operate on</li>
+<li><strong>fields</strong> – </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The requested object with requested fields</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.api.Api.get_list">
+<code class="descname">get_list</code><span class="sig-paren">(</span><em>obj_code</em>, <em>ids</em>, <em>fields=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/api.html#Api.get_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.api.Api.get_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns each object by id, similar to calling get for each id individually</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>obj_code</strong> – object type (i.e. ‘PROJECT’)</li>
+<li><strong>ids</strong> – list of ids to lookup</li>
+<li><strong>fields</strong> – list of field names to return for each object</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Data from Workfront</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.api.Api.get_obj_share">
+<code class="descname">get_obj_share</code><span class="sig-paren">(</span><em>obj_code</em>, <em>obj_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/api.html#Api.get_obj_share"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.api.Api.get_obj_share" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.api.Api.login">
+<code class="descname">login</code><span class="sig-paren">(</span><em>username</em>, <em>password=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/api.html#Api.login"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.api.Api.login" title="Permalink to this definition">¶</a></dt>
+<dd><p>Login to Workfront using username and optionally password.</p>
+<p>This method will make a login _request and set the lession ID.</p>
+<p>If an API key is set the password is not needed. The resulting sessionID
+will allow you to act on behalf of a user.</p>
+<p><a class="reference external" href="https://developers.workfront.com/api-docs/#Login">https://developers.workfront.com/api-docs/#Login</a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>username</strong> – The Workfront username, typically an email address</li>
+<li><strong>password</strong> – The Workfront password</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The results of the login.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.api.Api.logout">
+<code class="descname">logout</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/api.html#Api.logout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.api.Api.logout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Logout method.</p>
+<p>Clears the class session_id and user_id fields.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The results of the logout request</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.api.Api.make_document">
+<code class="descname">make_document</code><span class="sig-paren">(</span><em>file</em>, <em>obj_code</em>, <em>obj_id</em>, <em>version=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/api.html#Api.make_document"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.api.Api.make_document" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.api.Api.make_update_as_user">
+<code class="descname">make_update_as_user</code><span class="sig-paren">(</span><em>user_email</em>, <em>exec_method</em>, <em>obj_code</em>, <em>params</em>, <em>obj_id=None</em>, <em>action=None</em>, <em>obj_ids=None</em>, <em>fields=None</em>, <em>logout=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/api.html#Api.make_update_as_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.api.Api.make_update_as_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs an action on behalf of another user.</p>
+<p>This method will login on behalf of another user by passing in the users ID (email) and the API key to the login
+method. This will set a session ID. While the session ID is set all actions performed or taken will show as if
+done by the users.</p>
+<p>This is useful for script that might need to write updates on behalf of a user, change a commit date, or
+perform other operations that can only be done by a task assignee or owner.
+:param user_email: The email address of the users to act on behalf of
+:param exec_method: Method within Workfront class to execute on behalf of user</p>
+<blockquote>
+<div>Options: (‘post’, ‘put’, ‘action’, ‘search’)</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>action</strong> – Action to take (‘post’, ‘put’, ‘action’, ‘search’, ‘report’, ‘bulk’)</li>
+<li><strong>obj_code</strong> – The object code to act on</li>
+<li><strong>params</strong> – A list of parameters</li>
+<li><strong>obj_id</strong> – Optional. Object ID to act on. This is required for put, and certain action commands.</li>
+<li><strong>obj_ids</strong> – Optional. Object ID list to act on. This is required for bulk commands.</li>
+<li><strong>fields</strong> – Optional. List of fields to return</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The results of the query</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.api.Api.post">
+<code class="descname">post</code><span class="sig-paren">(</span><em>obj_code</em>, <em>params</em>, <em>fields=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/api.html#Api.post"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.api.Api.post" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new object, returns the new object</p>
+<p><a class="reference external" href="https://developers.workfront.com/api-docs/#POST">https://developers.workfront.com/api-docs/#POST</a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>obj_code</strong> – object type (i.e. ‘PROJECT’)</li>
+<li><strong>params</strong> – A dict of parameters to filter on.</li>
+<li><strong>fields</strong> – List of field names to return for each object.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The results of the updated object.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.api.Api.post_document">
+<code class="descname">post_document</code><span class="sig-paren">(</span><em>name</em>, <em>handle</em>, <em>obj_code</em>, <em>obj_id</em>, <em>version</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/api.html#Api.post_document"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.api.Api.post_document" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.api.Api.put">
+<code class="descname">put</code><span class="sig-paren">(</span><em>obj_code</em>, <em>obj_id</em>, <em>params</em>, <em>fields=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/api.html#Api.put"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.api.Api.put" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates an existing object, returns the updated object.</p>
+<p><a class="reference external" href="https://developers.workfront.com/api-docs/#PUT">https://developers.workfront.com/api-docs/#PUT</a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>obj_code</strong> – object type (i.e. ‘PROJECT’)</li>
+<li><strong>obj_id</strong> – The ID of the object to act on</li>
+<li><strong>params</strong> – A dict of parameters to filter on</li>
+<li><strong>fields</strong> – List of field names to return for each object</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Data from Workfront</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.api.Api.report">
+<code class="descname">report</code><span class="sig-paren">(</span><em>obj_code</em>, <em>params</em>, <em>agg_field</em>, <em>agg_func</em>, <em>group_by_field=None</em>, <em>rollup=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/api.html#Api.report"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.api.Api.report" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create aggregate reports.</p>
+<p>This method will return an aggregate for the fields specified in an object. For example:</p>
+<p>obj_code = ‘TASK’, agg_func=’duration’
+{</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>“data”: {</dt>
+<dd>“durationMinutes”: 24468636,
+“dcount_ID”: 3062</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>}</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>obj_code</strong> – Object type</li>
+<li><strong>params</strong> – <p>Dict of criteria to use as filter
+{‘name’: ‘example task’,</p>
+<blockquote>
+<div>’name_Mod: ‘cicontains’}</div></blockquote>
+</li>
+<li><strong>agg_field</strong> – The field to aggregate on.</li>
+<li><strong>agg_func</strong> – Type of function (sum, avg, etc)</li>
+<li><strong>group_by_field</strong> – <p>Group results by this field</p>
+<dl class="docutils">
+<dt>”data”: {</dt>
+<dd><dl class="first docutils">
+<dt>“Project 1”: {</dt>
+<dd>“durationMinutes”: 24000,
+“dcount_ID”: 4,
+“project_name”: “Project 1”</dd>
+</dl>
+<p>},
+“Project 2”: {</p>
+<blockquote>
+<div>”durationMinutes”: 3360,
+“dcount_ID”: 1,
+“project_name”: “Project 1”</div></blockquote>
+<p class="last">}</p>
+</dd>
+</dl>
+<p>}</p>
+</li>
+<li><strong>rollup</strong> – <p>Flag to indicate a roll-up of all groupings.</p>
+<dl class="docutils">
+<dt>”data”: {</dt>
+<dd><dl class="first docutils">
+<dt>“Project 1”: {</dt>
+<dd>“durationMinutes”: 24000,
+“dcount_ID”: 4,
+“project_name”: “Project 1”</dd>
+</dl>
+<p>},
+“Project 2”: {</p>
+<blockquote>
+<div>”durationMinutes”: 3360,
+“dcount_ID”: 1,
+“project_name”: “Project 1”</div></blockquote>
+<p>},
+“$$ROLLUP”: {</p>
+<blockquote>
+<div>”durationMinutes”: 27600,
+“dcount_ID”: 5</div></blockquote>
+<p class="last">}</p>
+</dd>
+</dl>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">dict with the results</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.api.Api.search">
+<code class="descname">search</code><span class="sig-paren">(</span><em>obj_code</em>, <em>params</em>, <em>fields=None</em>, <em>get_all=False</em>, <em>limit=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/api.html#Api.search"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.api.Api.search" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search for objects against a given set of filters (params).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>obj_code</strong> – Object code to search for.</li>
+<li><strong>params</strong> – Search parameters</li>
+<li><strong>fields</strong> – List of fields to search for</li>
+<li><strong>get_all</strong> – The get_all flag will return all search results, looping as many times as
+necessary to return all results.</li>
+<li><strong>limit</strong> – </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.api.Api.share_obj">
+<code class="descname">share_obj</code><span class="sig-paren">(</span><em>obj_code</em>, <em>obj_id</em>, <em>accessor_id</em>, <em>accessor_obj_code</em>, <em>level</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/api.html#Api.share_obj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.api.Api.share_obj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets sharing levels for an object with one or more ID numbers</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>obj_code</strong> – </li>
+<li><strong>obj_id</strong> – </li>
+<li><strong>ids</strong> – </li>
+<li><strong>accessor_obj_code</strong> – </li>
+<li><strong>level</strong> – </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="workfrontapi_plus.api.Api.test_mode_make_request">
+<em class="property">static </em><code class="descname">test_mode_make_request</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/api.html#Api.test_mode_make_request"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.api.Api.test_mode_make_request" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.api.Api.upload_document">
+<code class="descname">upload_document</code><span class="sig-paren">(</span><em>file</em>, <em>name</em>, <em>obj_code</em>, <em>obj_id</em>, <em>version=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/api.html#Api.upload_document"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.api.Api.upload_document" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-workfrontapi_plus.core_wf_object">
+<span id="workfrontapi-plus-core-wf-object-module"></span><h2>workfrontapi_plus.core_wf_object module<a class="headerlink" href="#module-workfrontapi_plus.core_wf_object" title="Permalink to this headline">¶</a></h2>
+<p>Copyright 2017, Integrated Device Technologies, Inc.</p>
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the “Software”), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:</p>
+<p>The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.</p>
+<p>THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.</p>
+<p>Authors: Roshan Bal, Craig Lathrop</p>
+<dl class="exception">
+<dt id="workfrontapi_plus.core_wf_object.WorkfrontAPIException">
+<em class="property">exception </em><code class="descclassname">workfrontapi_plus.core_wf_object.</code><code class="descname">WorkfrontAPIException</code><span class="sig-paren">(</span><em>error_msg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/core_wf_object.html#WorkfrontAPIException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.core_wf_object.WorkfrontAPIException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">Exception</span></code></p>
+<p>Raised when a _request fails with error</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="workfrontapi_plus.core_wf_object.WorkfrontObject">
+<em class="property">class </em><code class="descclassname">workfrontapi_plus.core_wf_object.</code><code class="descname">WorkfrontObject</code><span class="sig-paren">(</span><em>data</em>, <em>api=None</em>, <em>obj_code=None</em>, <em>obj_id=None</em>, <em>convert_dates=False</em>, <em>fields=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/core_wf_object.html#WorkfrontObject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.core_wf_object.WorkfrontObject" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="workfrontapi_plus.core_wf_object.WorkfrontObject.delete">
+<code class="descname">delete</code><span class="sig-paren">(</span><em>force=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/core_wf_object.html#WorkfrontObject.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.core_wf_object.WorkfrontObject.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes the current object by id</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.core_wf_object.WorkfrontObject.get_share">
+<code class="descname">get_share</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/core_wf_object.html#WorkfrontObject.get_share"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.core_wf_object.WorkfrontObject.get_share" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.core_wf_object.WorkfrontObject.save">
+<code class="descname">save</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/core_wf_object.html#WorkfrontObject.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.core_wf_object.WorkfrontObject.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save updated fields</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.core_wf_object.WorkfrontObject.share">
+<code class="descname">share</code><span class="sig-paren">(</span><em>user_ids</em>, <em>level='view'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/core_wf_object.html#WorkfrontObject.share"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.core_wf_object.WorkfrontObject.share" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-workfrontapi_plus.objects">
+<span id="workfrontapi-plus-objects-module"></span><h2>workfrontapi_plus.objects module<a class="headerlink" href="#module-workfrontapi_plus.objects" title="Permalink to this headline">¶</a></h2>
+<p>Copyright 2017, Integrated Device Technologies, Inc.</p>
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the “Software”), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:</p>
+<p>The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.</p>
+<p>THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.</p>
+<p>Authors: Roshan Bal, Craig Lathrop</p>
+<dl class="class">
+<dt id="workfrontapi_plus.objects.Issue">
+<em class="property">class </em><code class="descclassname">workfrontapi_plus.objects.</code><code class="descname">Issue</code><span class="sig-paren">(</span><em>data=None</em>, <em>api=None</em>, <em>name=None</em>, <em>issue_id=None</em>, <em>convert_dates=False</em>, <em>fields=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/objects.html#Issue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.objects.Issue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">workfrontapi_plus.objects._WorkTypeObject</span></code></p>
+<dl class="method">
+<dt id="workfrontapi_plus.objects.Issue.accept_work">
+<code class="descname">accept_work</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/objects.html#Issue.accept_work"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.objects.Issue.accept_work" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.objects.Issue.approve_approval">
+<code class="descname">approve_approval</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/objects.html#Issue.approve_approval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.objects.Issue.approve_approval" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.objects.Issue.assign">
+<code class="descname">assign</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/objects.html#Issue.assign"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.objects.Issue.assign" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.objects.Issue.calculate_data_extension">
+<code class="descname">calculate_data_extension</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/objects.html#Issue.calculate_data_extension"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.objects.Issue.calculate_data_extension" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.objects.Issue.mark_done">
+<code class="descname">mark_done</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/objects.html#Issue.mark_done"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.objects.Issue.mark_done" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.objects.Issue.mark_not_done">
+<code class="descname">mark_not_done</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/objects.html#Issue.mark_not_done"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.objects.Issue.mark_not_done" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.objects.Issue.move">
+<code class="descname">move</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/objects.html#Issue.move"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.objects.Issue.move" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.objects.Issue.move_to_task">
+<code class="descname">move_to_task</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/objects.html#Issue.move_to_task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.objects.Issue.move_to_task" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="workfrontapi_plus.objects.Project">
+<em class="property">class </em><code class="descclassname">workfrontapi_plus.objects.</code><code class="descname">Project</code><span class="sig-paren">(</span><em>data=None</em>, <em>api=None</em>, <em>name=None</em>, <em>proj_id=None</em>, <em>convert_dates=False</em>, <em>fields=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/objects.html#Project"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.objects.Project" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">workfrontapi_plus.objects._WorkTypeObject</span></code></p>
+<p>Class for the project object type.</p>
+<dl class="method">
+<dt id="workfrontapi_plus.objects.Project.approve_approval">
+<code class="descname">approve_approval</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/objects.html#Project.approve_approval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.objects.Project.approve_approval" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.objects.Project.attach_template">
+<code class="descname">attach_template</code><span class="sig-paren">(</span><em>template_id</em>, <em>fields=None</em>, <em>predecessor_task_id=None</em>, <em>parent_task_id=None</em>, <em>exclude_template_task_ids=None</em>, <em>options=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/objects.html#Project.attach_template"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.objects.Project.attach_template" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attaches a template to a project with options.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>template_id</strong> – </li>
+<li><strong>fields</strong> – </li>
+<li><strong>predecessor_task_id</strong> – </li>
+<li><strong>parent_task_id</strong> – </li>
+<li><strong>exclude_template_task_ids</strong> – </li>
+<li><strong>options</strong> – </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.objects.Project.calculate_data_extension">
+<code class="descname">calculate_data_extension</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/objects.html#Project.calculate_data_extension"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.objects.Project.calculate_data_extension" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.objects.Project.calculate_finance">
+<code class="descname">calculate_finance</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/objects.html#Project.calculate_finance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.objects.Project.calculate_finance" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.objects.Project.calculate_timeline">
+<code class="descname">calculate_timeline</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/objects.html#Project.calculate_timeline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.objects.Project.calculate_timeline" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.objects.Project.recall_approval">
+<code class="descname">recall_approval</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/objects.html#Project.recall_approval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.objects.Project.recall_approval" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.objects.Project.reject_approval">
+<code class="descname">reject_approval</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/objects.html#Project.reject_approval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.objects.Project.reject_approval" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.objects.Project.set_budget_to_schedule">
+<code class="descname">set_budget_to_schedule</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/objects.html#Project.set_budget_to_schedule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.objects.Project.set_budget_to_schedule" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="workfrontapi_plus.objects.Task">
+<em class="property">class </em><code class="descclassname">workfrontapi_plus.objects.</code><code class="descname">Task</code><span class="sig-paren">(</span><em>data=None</em>, <em>api=None</em>, <em>name=None</em>, <em>task_id=None</em>, <em>convert_dates=False</em>, <em>fields=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/objects.html#Task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.objects.Task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">workfrontapi_plus.objects._WorkTypeObject</span></code></p>
+<dl class="method">
+<dt id="workfrontapi_plus.objects.Task.accept_work">
+<code class="descname">accept_work</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/objects.html#Task.accept_work"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.objects.Task.accept_work" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.objects.Task.approve_approval">
+<code class="descname">approve_approval</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/objects.html#Task.approve_approval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.objects.Task.approve_approval" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.objects.Task.assign">
+<code class="descname">assign</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/objects.html#Task.assign"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.objects.Task.assign" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.objects.Task.bulk_copy">
+<code class="descname">bulk_copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/objects.html#Task.bulk_copy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.objects.Task.bulk_copy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.objects.Task.bulk_move">
+<code class="descname">bulk_move</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/objects.html#Task.bulk_move"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.objects.Task.bulk_move" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.objects.Task.calculate_data_extension">
+<code class="descname">calculate_data_extension</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/objects.html#Task.calculate_data_extension"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.objects.Task.calculate_data_extension" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.objects.Task.calculate_data_extensions">
+<code class="descname">calculate_data_extensions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/objects.html#Task.calculate_data_extensions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.objects.Task.calculate_data_extensions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.objects.Task.mark_done">
+<code class="descname">mark_done</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/objects.html#Task.mark_done"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.objects.Task.mark_done" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.objects.Task.mark_not_done">
+<code class="descname">mark_not_done</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/objects.html#Task.mark_not_done"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.objects.Task.mark_not_done" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.objects.Task.move">
+<code class="descname">move</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/objects.html#Task.move"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.objects.Task.move" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.objects.Task.recall_approval">
+<code class="descname">recall_approval</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/objects.html#Task.recall_approval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.objects.Task.recall_approval" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.objects.Task.reject_approval">
+<code class="descname">reject_approval</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/objects.html#Task.reject_approval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.objects.Task.reject_approval" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.objects.Task.reply_to_assignment">
+<code class="descname">reply_to_assignment</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/objects.html#Task.reply_to_assignment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.objects.Task.reply_to_assignment" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.objects.Task.unaccept_work">
+<code class="descname">unaccept_work</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/objects.html#Task.unaccept_work"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.objects.Task.unaccept_work" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.objects.Task.unassign">
+<code class="descname">unassign</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/objects.html#Task.unassign"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.objects.Task.unassign" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.objects.Task.unassign_occurrences">
+<code class="descname">unassign_occurrences</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/objects.html#Task.unassign_occurrences"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.objects.Task.unassign_occurrences" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-workfrontapi_plus.tools">
+<span id="workfrontapi-plus-tools-module"></span><h2>workfrontapi_plus.tools module<a class="headerlink" href="#module-workfrontapi_plus.tools" title="Permalink to this headline">¶</a></h2>
+<p>Copyright 2017, Integrated Device Technologies, Inc.</p>
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the “Software”), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:</p>
+<p>The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.</p>
+<p>THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.</p>
+<p>Authors: Roshan Bal, Craig Lathrop</p>
+<dl class="class">
+<dt id="workfrontapi_plus.tools.Tools">
+<em class="property">class </em><code class="descclassname">workfrontapi_plus.tools.</code><code class="descname">Tools</code><a class="reference internal" href="_modules/workfrontapi_plus/tools.html#Tools"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.tools.Tools" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="workfrontapi_plus.tools.Tools.flatten_dict">
+<code class="descname">flatten_dict</code><span class="sig-paren">(</span><em>data</em>, <em>parent_key=''</em>, <em>sep=':'</em>, <em>pretty=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/tools.html#Tools.flatten_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.tools.Tools.flatten_dict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.tools.Tools.flatten_response">
+<code class="descname">flatten_response</code><span class="sig-paren">(</span><em>data</em>, <em>sep=':'</em>, <em>pretty=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/tools.html#Tools.flatten_response"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.tools.Tools.flatten_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flattens out nested dict</p>
+<p>This method will take a Workfront API response and “flatten out” certain nested dicts.
+For example, here is a response for a task
+[{‘ID’: ‘abc123…’,</p>
+<blockquote>
+<div><p>‘name’: ‘test task’,
+‘project’: {‘ID’: ‘cde456’,</p>
+<blockquote>
+<div>‘name’: ‘My Proj’}</div></blockquote>
+<p>}]</p>
+</div></blockquote>
+<p>would be converted to
+[{‘ID’: ‘abc123…’,</p>
+<blockquote>
+<div>‘name’: ‘test task’,
+‘project:ID’: ‘cde456’,
+‘project:name’: ‘My Proj’
+}]</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> – </li>
+<li><strong>skip_keys</strong> – </li>
+<li><strong>use_keys</strong> – </li>
+<li><strong>pretty</strong> – <p>Removes the project:name style notation. Example:
+with pretty set to true
+[{‘ID’: ‘abc123…’,</p>
+<blockquote>
+<div>’Name’: ‘test task’,
+‘Project ID’: ‘cde456’,
+‘Project Name’: ‘My Proj’
+}]</div></blockquote>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A processed list or dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="workfrontapi_plus.tools.Tools.make_config_file">
+<em class="property">static </em><code class="descname">make_config_file</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/tools.html#Tools.make_config_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.tools.Tools.make_config_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes a config file to hold sub domain and API Key</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="workfrontapi_plus.tools.Tools.make_signature">
+<em class="property">static </em><code class="descname">make_signature</code><span class="sig-paren">(</span><em>message</em>, <em>key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/tools.html#Tools.make_signature"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.tools.Tools.make_signature" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="workfrontapi_plus.tools.Tools.parse_workfront_date">
+<em class="property">static </em><code class="descname">parse_workfront_date</code><span class="sig-paren">(</span><em>date_string</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/tools.html#Tools.parse_workfront_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.tools.Tools.parse_workfront_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts from the Workfront datetime format into a Python datetime object</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>date_string</strong> – The workfront date string. Example “2017-01-01T01:01:00.000-0800”</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A datetime object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="workfrontapi_plus.tools.Tools.pretty_keys">
+<code class="descname">pretty_keys</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/tools.html#Tools.pretty_keys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.tools.Tools.pretty_keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="workfrontapi_plus.tools.Tools.text_mode">
+<em class="property">static </em><code class="descname">text_mode</code><span class="sig-paren">(</span><em>text</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/workfrontapi_plus/tools.html#Tools.text_mode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#workfrontapi_plus.tools.Tools.text_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts Workfront “Text Mode” into a parameter string.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>text</strong> – A string containing Workfront text mode parameters</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A dict version of the passed in parameters</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-workfrontapi_plus">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-workfrontapi_plus" title="Permalink to this headline">¶</a></h2>
+<p>workfrontapi_plus is an upgraded version of the Python API distributed by Workfront.</p>
+<p>This package adds some key features to the standard Workfront API package. Important features:</p>
+<ul class="simple">
+<li>Upgraded for Python 3.x (Does not support 2.x) *</li>
+</ul>
+<p>This pacakge will only work with Python 3.x.</p>
+<ul class="simple">
+<li>Make updates as or on behalf of a user *</li>
+</ul>
+<p>This allows a user with an API key to “login” as another user and make updates. For example a note update could be
+left on behalf of another user.</p>
+<ul class="simple">
+<li>Bulk Update, Bulk Delete and Bulk Create with automatic handling of over 100 items*</li>
+</ul>
+<p>Bulk update will automatically handle lists greater than 100 elements (the Workfront API limit). In addition to the 
+standard “bulk” update support has been added for creation and deletion in bulk.</p>
+<ul class="simple">
+<li>Support for lists as parameter items *</li>
+</ul>
+<p>The workfront API will reject the [‘something’,’somethingelse’] format if sent as a parameter value. This
+method looks through the params for lists and converts them to simple comma separated values in a string. For
+example.</p>
+<dl class="docutils">
+<dt>{‘status’: [‘CUR’, ‘PLN’, ‘APP’],</dt>
+<dd><p class="first">‘status_Mod’: ‘in’}</p>
+<p class="last">will be converted to</p>
+</dd>
+<dt>{‘status’: ‘CUR’,</dt>
+<dd>‘status’: ‘PLN’,
+‘status’: ‘APP’,
+‘status_Mod’: ‘in’}</dd>
+</dl>
+<p>Authors: Roshan Bal, Craig Lathrop</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">workfrontapi_plus</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="break_bulk_updates.html">break_bulk_updates module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="setup.html">setup module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests.html">tests package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wfconfig.html">wfconfig module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">workfrontapi_plus package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-workfrontapi_plus.api">workfrontapi_plus.api module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-workfrontapi_plus.core_wf_object">workfrontapi_plus.core_wf_object module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-workfrontapi_plus.objects">workfrontapi_plus.objects module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-workfrontapi_plus.tools">workfrontapi_plus.tools module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-workfrontapi_plus">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="wfconfig.html" title="previous chapter">wfconfig module</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Integrated Device Technology.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/workfrontapi_plus.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

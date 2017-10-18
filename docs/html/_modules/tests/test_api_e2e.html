@@ -1,0 +1,368 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>tests.test_api_e2e &#8212; workfrontapi_plus Version 1.0.23 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     'Version 1.0.23',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for tests.test_api_e2e</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Copyright 2017, Integrated Device Technologies, Inc.</span>
+
+<span class="sd">Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="sd">of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="sd">in the Software without restriction, including without limitation the rights</span>
+<span class="sd">to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="sd">copies of the Software, and to permit persons to whom the Software is</span>
+<span class="sd">furnished to do so, subject to the following conditions:</span>
+
+<span class="sd">The above copyright notice and this permission notice shall be included in all</span>
+<span class="sd">copies or substantial portions of the Software.</span>
+
+<span class="sd">THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="sd">IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="sd">FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="sd">AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="sd">LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="sd">OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="sd">SOFTWARE.</span>
+
+<span class="sd">Authors: Roshan Bal, Craig Lathrop</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">unittest</span> <span class="k">import</span> <span class="n">TestCase</span>
+<span class="kn">from</span> <span class="nn">workfrontapi_plus</span> <span class="k">import</span> <span class="n">Api</span><span class="p">,</span> <span class="n">Tools</span>
+
+<span class="kn">from</span> <span class="nn">wfconfig</span> <span class="k">import</span> <span class="n">WorkfrontConfig</span>
+
+<span class="kn">import</span> <span class="nn">hashlib</span><span class="o">,</span> <span class="nn">json</span><span class="o">,</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">nose.tools</span> <span class="k">import</span> <span class="n">assert_true</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="sd">&#39;&#39;&#39;https://realpython.com/blog/python/testing-third-party-apis-with-mocks/&#39;&#39;&#39;</span>
+
+
+<div class="viewcode-block" id="TestWorkfrontE2E"><a class="viewcode-back" href="../../tests.html#tests.test_api_e2e.TestWorkfrontE2E">[docs]</a><span class="k">class</span> <span class="nc">TestWorkfrontE2E</span><span class="p">(</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="n">api</span> <span class="o">=</span> <span class="n">Api</span><span class="p">(</span><span class="n">WorkfrontConfig</span><span class="o">.</span><span class="n">subdomain</span><span class="p">,</span>
+              <span class="s">&#39;preview&#39;</span><span class="p">,</span>
+              <span class="n">api_version</span><span class="o">=</span><span class="s">&#39;6.0&#39;</span><span class="p">,</span>
+              <span class="n">api_key</span><span class="o">=</span><span class="n">WorkfrontConfig</span><span class="o">.</span><span class="n">api_key</span><span class="p">,</span>
+              <span class="p">)</span>
+
+    <span class="c">########  LIVE E2E TESTS #############</span>
+
+<div class="viewcode-block" id="TestWorkfrontE2E.test_e2e_controller"><a class="viewcode-back" href="../../tests.html#tests.test_api_e2e.TestWorkfrontE2E.test_e2e_controller">[docs]</a>    <span class="k">def</span> <span class="nf">test_e2e_controller</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">_request</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">_make_request</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">debug</span> <span class="o">=</span> <span class="k">True</span>
+        <span class="n">rnd</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">900</span><span class="p">)</span> <span class="o">*</span> <span class="mi">54</span><span class="p">)</span>
+        <span class="n">rnd</span> <span class="o">=</span> <span class="n">rnd</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;ascii&#39;</span><span class="p">)</span>
+        <span class="n">hash_str</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha224</span><span class="p">(</span><span class="n">rnd</span><span class="p">)</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+        <span class="c"># Make some projects</span>
+        <span class="n">project_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">test_proj_num</span> <span class="o">=</span> <span class="mi">3</span>
+
+        <span class="c"># Make the API return an error</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">return_api_errors</span> <span class="o">=</span> <span class="k">True</span>
+        <span class="n">error_res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&#39;task&#39;</span><span class="p">,</span> <span class="p">{},</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;booobooobooooboooboo&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s">&#39;APIModel V6_0 does not support field booobooobooooboooboo (Task)&#39;</span><span class="p">,</span> <span class="n">error_res</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s">&#39;Proper Error &#39;</span><span class="o">+</span><span class="n">error_res</span><span class="p">)</span>
+
+        <span class="c"># Make three projects</span>
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">test_proj_num</span><span class="p">):</span>
+            <span class="n">project_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">make_proj</span><span class="p">(</span><span class="n">hash_str</span><span class="p">))</span>
+
+        <span class="n">proj_id_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s">&#39;ID&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">project_list</span><span class="p">]</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s">&#39;Created project: &#39;</span><span class="p">,</span> <span class="n">project_list</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;name&#39;</span><span class="p">],</span> <span class="s">&#39; with ID: &#39;</span><span class="p">,</span> <span class="n">project_list</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;ID&#39;</span><span class="p">])</span>
+
+        <span class="c"># Make a task</span>
+        <span class="n">task</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_a_task</span><span class="p">(</span><span class="n">project_list</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;ID&#39;</span><span class="p">])</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s">&#39;Created task: &#39;</span><span class="p">,</span> <span class="n">task</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">])</span>
+
+        <span class="c"># Share the task out</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">share</span><span class="p">(</span><span class="n">task</span><span class="p">[</span><span class="s">&#39;ID&#39;</span><span class="p">])</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s">&#39;Shared task with: &#39;</span><span class="p">,</span> <span class="n">task</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">])</span>
+
+
+        <span class="c"># Test get_list</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">get_list</span><span class="p">(</span><span class="s">&#39;proj&#39;</span><span class="p">,</span> <span class="n">proj_id_list</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s">&#39;Returned a list of {0} projects&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">)))</span>
+
+        <span class="c"># Test Action by Assigning User</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;objID&#39;</span><span class="p">:</span> <span class="n">WorkfrontConfig</span><span class="o">.</span><span class="n">test_user_id</span><span class="p">,</span>
+                  <span class="s">&#39;objCode&#39;</span><span class="p">:</span> <span class="s">&#39;USER&#39;</span><span class="p">}</span>
+        <span class="n">assign_action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_action</span><span class="p">(</span><span class="s">&#39;TASK&#39;</span><span class="p">,</span> <span class="s">&#39;assign&#39;</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">objid</span><span class="o">=</span><span class="n">task</span><span class="p">[</span><span class="s">&#39;ID&#39;</span><span class="p">])</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s">&#39;Assigned task to &#39;</span><span class="p">,</span> <span class="n">WorkfrontConfig</span><span class="o">.</span><span class="n">test_user_id</span><span class="p">)</span>
+
+        <span class="c"># Test Put</span>
+
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;status&#39;</span><span class="p">:</span> <span class="s">&#39;INP&#39;</span><span class="p">}</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tst_put</span><span class="p">(</span><span class="s">&#39;TASK&#39;</span><span class="p">,</span> <span class="n">task</span><span class="p">[</span><span class="s">&#39;ID&#39;</span><span class="p">],</span> <span class="n">params</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s">&#39;Updated task &#39;</span><span class="p">,</span> <span class="n">task</span><span class="p">[</span><span class="s">&#39;ID&#39;</span><span class="p">],</span> <span class="s">&#39; to have a status of in progress&#39;</span><span class="p">)</span>
+
+        <span class="c"># Delete a task</span>
+        <span class="n">del_res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">delete_a_task</span><span class="p">(</span><span class="n">task</span><span class="p">[</span><span class="s">&#39;ID&#39;</span><span class="p">])</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s">&#39;Deleted task: &#39;</span><span class="p">,</span> <span class="n">del_res</span><span class="p">[</span><span class="s">&#39;success&#39;</span><span class="p">])</span>
+
+        <span class="c"># Make a lot of tasks</span>
+        <span class="n">tasks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_bulk_tasks</span><span class="p">(</span><span class="n">project_list</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;ID&#39;</span><span class="p">])</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s">&#39;Created {0} tasks&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tasks</span><span class="p">)))</span>
+        <span class="n">task_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="s">&#39;ID&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">tasks</span><span class="p">]</span>
+        <span class="c"># # Update a lot of tasks</span>
+        <span class="n">t_updates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bulk_update_tasks</span><span class="p">(</span><span class="n">task_ids</span><span class="p">,</span> <span class="n">hash_str</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s">&#39;Updated task name to {0}.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t_updates</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;name&#39;</span><span class="p">]))</span>
+
+        <span class="c"># Test search</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="n">hash_str</span><span class="p">,</span> <span class="s">&#39;name_Mod&#39;</span><span class="p">:</span> <span class="s">&#39;cicontains&#39;</span><span class="p">}</span>
+        <span class="n">search_res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&#39;PROJ&#39;</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+
+        <span class="n">search_res_id_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s">&#39;ID&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">search_res</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertCountEqual</span><span class="p">(</span><span class="n">search_res_id_list</span><span class="p">,</span> <span class="n">proj_id_list</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s">&#39;Successfully searched for and found project: &#39;</span><span class="p">,</span> <span class="n">search_res</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;ID&#39;</span><span class="p">])</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c"># self.assertEqual(len(search_res), len(task_ids))</span>
+        <span class="c">#</span>
+        <span class="n">del_res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bulk_delete_tasks</span><span class="p">(</span><span class="n">task_ids</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s">&#39;Deleted task: &#39;</span><span class="p">,</span> <span class="n">del_res</span><span class="p">[</span><span class="s">&#39;success&#39;</span><span class="p">])</span>
+
+        <span class="c"># self.delete_a_proj(project[&#39;id&#39;])</span>
+
+        <span class="c"># Test Document Uploading</span>
+        <span class="n">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s">&#39;../test_doc.pdf&#39;</span><span class="p">,</span> <span class="s">&#39;rb&#39;</span><span class="p">)</span>
+        <span class="n">made_doc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_doc</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s">&#39;PROJ&#39;</span><span class="p">,</span> <span class="n">project_list</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;ID&#39;</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s">&#39;Got handle &#39;</span><span class="p">,</span> <span class="n">made_doc</span><span class="p">)</span>
+
+        <span class="n">posted_doc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_doc</span><span class="p">(</span><span class="s">&#39;document.pdf&#39;</span><span class="p">,</span> <span class="n">made_doc</span><span class="p">,</span> <span class="s">&#39;PROJ&#39;</span><span class="p">,</span> <span class="n">project_list</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;ID&#39;</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s">&#39;Posted document named, &#39;</span><span class="p">,</span> <span class="s">&#39;&quot;document.pdf&quot;&#39;</span><span class="p">)</span>
+
+        <span class="c"># Test Report</span>
+        <span class="c"># params = {&#39;DE:JIRA Project ID=CTP&#39;,</span>
+        <span class="c">#          &#39;DE:JIRA Project ID_Mod=cieq&#39;}</span>
+        <span class="c">#</span>
+        <span class="c"># report = self.report_tst(&#39;PROJ&#39;, params)</span>
+
+
+        <span class="c"># Test Count</span>
+
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;status&#39;</span><span class="p">:</span> <span class="s">&#39;CUR&#39;</span><span class="p">}</span>
+
+        <span class="n">count_res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_count</span><span class="p">(</span><span class="s">&#39;TASK&#39;</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s">&#39;Got count of &#39;</span><span class="p">,</span> <span class="n">count_res</span><span class="p">)</span>
+
+        <span class="c"># Test Get List</span>
+        <span class="c"># ids = [&#39;599636f70000b26a0d9032d3f3dc7eb6&#39;, &#39;59934a0e00068fc9ab14ef083d54962f&#39;,</span>
+        <span class="c">#        &#39;56d8b69f0077e4db6bdb89c9288ec11c&#39;]</span>
+        <span class="c"># fields = [&#39;name&#39;, &#39;status&#39;]</span>
+        <span class="c"># list = self.get_the_list(&#39;PROJ&#39;, ids, fields)</span>
+        <span class="c">#</span>
+        <span class="c"># print(&#39;Got the list &#39;, list)</span>
+
+
+
+        <span class="c"># Test Login</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">login_tst</span><span class="p">(</span><span class="n">WorkfrontConfig</span><span class="o">.</span><span class="n">test_login_email</span><span class="p">,</span> <span class="n">WorkfrontConfig</span><span class="o">.</span><span class="n">test_pass</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="s">&#39;userID&#39;</span><span class="p">],</span> <span class="n">WorkfrontConfig</span><span class="o">.</span><span class="n">test_user_id</span><span class="p">,</span> <span class="n">WorkfrontConfig</span><span class="o">.</span><span class="n">test_pass</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s">&#39;Logged into user &#39;</span><span class="p">,</span> <span class="n">res</span><span class="p">[</span><span class="s">&#39;userID&#39;</span><span class="p">])</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c"># Test Make Update as User</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;objID&#39;</span><span class="p">:</span> <span class="n">project_list</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;ID&#39;</span><span class="p">],</span>
+                  <span class="s">&#39;noteText&#39;</span><span class="p">:</span> <span class="s">&#39;Comment coming from workfront&#39;</span><span class="p">,</span>
+                  <span class="s">&#39;noteObjCode&#39;</span><span class="p">:</span> <span class="s">&#39;PROJ&#39;</span><span class="p">}</span>
+        <span class="n">made_comment</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_update_by_user</span><span class="p">(</span><span class="n">WorkfrontConfig</span><span class="o">.</span><span class="n">test_make_update_email</span><span class="p">,</span> <span class="s">&#39;post&#39;</span><span class="p">,</span> <span class="s">&#39;NOTE&#39;</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s">&#39;Created comment: &#39;</span><span class="p">,</span> <span class="n">made_comment</span><span class="p">[</span><span class="s">&#39;noteText&#39;</span><span class="p">],</span> <span class="s">&#39; on behalf of &#39;</span><span class="p">,</span> <span class="n">WorkfrontConfig</span><span class="o">.</span><span class="n">test_login_email</span><span class="p">)</span>
+
+        <span class="c"># Test Logout</span>
+        <span class="n">logout_res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logout_tst</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">logout_res</span><span class="p">[</span><span class="s">&#39;success&#39;</span><span class="p">],</span> <span class="k">True</span><span class="p">)</span>
+        <span class="c"># self.assertEqual(logout_res[&#39;session_id&#39;], None)</span>
+        <span class="c"># self.assertEqual(logout_res[&#39;user_id&#39;], None)</span>
+
+        <span class="c"># Delete the test projects</span>
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">test_proj_num</span><span class="p">):</span>
+            <span class="n">p_id</span> <span class="o">=</span> <span class="n">project_list</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="s">&#39;ID&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">delete_a_proj</span><span class="p">(</span><span class="n">p_id</span><span class="p">)</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="s">&#39;Deleted the project &#39;</span><span class="p">,</span> <span class="n">p_id</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestWorkfrontE2E.login_tst"><a class="viewcode-back" href="../../tests.html#tests.test_api_e2e.TestWorkfrontE2E.login_tst">[docs]</a>    <span class="k">def</span> <span class="nf">login_tst</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="k">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestWorkfrontE2E.logout_tst"><a class="viewcode-back" href="../../tests.html#tests.test_api_e2e.TestWorkfrontE2E.logout_tst">[docs]</a>    <span class="k">def</span> <span class="nf">logout_tst</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">logout</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="TestWorkfrontE2E.get_count"><a class="viewcode-back" href="../../tests.html#tests.test_api_e2e.TestWorkfrontE2E.get_count">[docs]</a>    <span class="k">def</span> <span class="nf">get_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">objcode</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">objcode</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestWorkfrontE2E.make_doc"><a class="viewcode-back" href="../../tests.html#tests.test_api_e2e.TestWorkfrontE2E.make_doc">[docs]</a>    <span class="k">def</span> <span class="nf">make_doc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">obj_code</span><span class="p">,</span> <span class="n">obj_id</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">make_document</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">obj_code</span><span class="p">,</span> <span class="n">obj_id</span><span class="p">,</span> <span class="n">version</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestWorkfrontE2E.post_doc"><a class="viewcode-back" href="../../tests.html#tests.test_api_e2e.TestWorkfrontE2E.post_doc">[docs]</a>    <span class="k">def</span> <span class="nf">post_doc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">handle</span><span class="p">,</span> <span class="n">obj_code</span><span class="p">,</span> <span class="n">obj_id</span><span class="p">,</span> <span class="n">version</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">post_document</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">handle</span><span class="p">,</span> <span class="n">obj_code</span><span class="p">,</span> <span class="n">obj_id</span><span class="p">,</span> <span class="n">version</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestWorkfrontE2E.get_the_list"><a class="viewcode-back" href="../../tests.html#tests.test_api_e2e.TestWorkfrontE2E.get_the_list">[docs]</a>    <span class="k">def</span> <span class="nf">get_the_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">objcode</span><span class="p">,</span> <span class="n">ids</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="k">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">get_list</span><span class="p">(</span><span class="n">objcode</span><span class="p">,</span> <span class="n">ids</span><span class="p">,</span> <span class="n">fields</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestWorkfrontE2E.do_action"><a class="viewcode-back" href="../../tests.html#tests.test_api_e2e.TestWorkfrontE2E.do_action">[docs]</a>    <span class="k">def</span> <span class="nf">do_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">objcode</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="k">None</span><span class="p">,</span> <span class="n">objid</span><span class="o">=</span><span class="k">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">action</span><span class="p">(</span><span class="n">objcode</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">objid</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestWorkfrontE2E.report_tst"><a class="viewcode-back" href="../../tests.html#tests.test_api_e2e.TestWorkfrontE2E.report_tst">[docs]</a>    <span class="k">def</span> <span class="nf">report_tst</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">objcode</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">agg_field</span><span class="o">=</span><span class="k">None</span><span class="p">,</span> <span class="n">agg_func</span><span class="o">=</span><span class="k">None</span><span class="p">,</span> <span class="n">group_by_field</span><span class="o">=</span><span class="k">None</span><span class="p">,</span> <span class="n">rollup</span><span class="o">=</span><span class="k">False</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">report</span><span class="p">(</span><span class="n">objcode</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">agg_field</span><span class="p">,</span> <span class="n">agg_func</span><span class="p">,</span> <span class="n">group_by_field</span><span class="p">,</span> <span class="n">rollup</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestWorkfrontE2E.tst_put"><a class="viewcode-back" href="../../tests.html#tests.test_api_e2e.TestWorkfrontE2E.tst_put">[docs]</a>    <span class="k">def</span> <span class="nf">tst_put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">objcode</span><span class="p">,</span> <span class="n">objid</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="k">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">objcode</span><span class="p">,</span> <span class="n">objid</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">fields</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestWorkfrontE2E.make_update_by_user"><a class="viewcode-back" href="../../tests.html#tests.test_api_e2e.TestWorkfrontE2E.make_update_by_user">[docs]</a>    <span class="k">def</span> <span class="nf">make_update_by_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_email</span><span class="p">,</span> <span class="n">exec_method</span><span class="p">,</span> <span class="n">objcode</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">objid</span><span class="o">=</span><span class="k">None</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="k">None</span><span class="p">,</span> <span class="n">objids</span><span class="o">=</span><span class="k">None</span><span class="p">,</span>
+                            <span class="n">fields</span><span class="o">=</span><span class="k">None</span><span class="p">,</span> <span class="n">logout</span><span class="o">=</span><span class="k">False</span><span class="p">):</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">make_update_as_user</span><span class="p">(</span><span class="n">user_email</span><span class="p">,</span> <span class="n">exec_method</span><span class="p">,</span> <span class="n">objcode</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">objid</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">logout</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="TestWorkfrontE2E.make_proj"><a class="viewcode-back" href="../../tests.html#tests.test_api_e2e.TestWorkfrontE2E.make_proj">[docs]</a>    <span class="k">def</span> <span class="nf">make_proj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hash_str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s">&#39;proj&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="s">&#39;e2e Test Project {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hash_str</span><span class="p">),</span> <span class="s">&#39;status&#39;</span><span class="p">:</span> <span class="s">&#39;PLN&#39;</span><span class="p">})</span></div>
+
+<div class="viewcode-block" id="TestWorkfrontE2E.make_a_task"><a class="viewcode-back" href="../../tests.html#tests.test_api_e2e.TestWorkfrontE2E.make_a_task">[docs]</a>    <span class="k">def</span> <span class="nf">make_a_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proj_id</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s">&#39;task&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="s">&#39;First Task&#39;</span><span class="p">,</span> <span class="s">&#39;projectID&#39;</span><span class="p">:</span> <span class="n">proj_id</span><span class="p">})</span></div>
+
+<div class="viewcode-block" id="TestWorkfrontE2E.share"><a class="viewcode-back" href="../../tests.html#tests.test_api_e2e.TestWorkfrontE2E.share">[docs]</a>    <span class="k">def</span> <span class="nf">share</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_id</span><span class="p">):</span>
+        <span class="n">share_user</span> <span class="o">=</span> <span class="n">WorkfrontConfig</span><span class="o">.</span><span class="n">clover_user_id</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">share_obj</span><span class="p">(</span><span class="s">&#39;task&#39;</span><span class="p">,</span> <span class="n">task_id</span><span class="p">,</span> <span class="n">share_user</span><span class="p">,</span> <span class="s">&#39;USER&#39;</span><span class="p">,</span> <span class="s">&#39;manage&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestWorkfrontE2E.delete_a_task"><a class="viewcode-back" href="../../tests.html#tests.test_api_e2e.TestWorkfrontE2E.delete_a_task">[docs]</a>    <span class="k">def</span> <span class="nf">delete_a_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_id</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s">&#39;task&#39;</span><span class="p">,</span> <span class="n">task_id</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestWorkfrontE2E.make_bulk_tasks"><a class="viewcode-back" href="../../tests.html#tests.test_api_e2e.TestWorkfrontE2E.make_bulk_tasks">[docs]</a>    <span class="k">def</span> <span class="nf">make_bulk_tasks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proj_id</span><span class="p">):</span>
+        <span class="n">tasks</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">):</span>
+            <span class="n">tasks</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="s">&#39;This is task number {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
+                          <span class="s">&#39;projectID&#39;</span><span class="p">:</span> <span class="n">proj_id</span><span class="p">,</span>
+                          <span class="s">&#39;plannedStartDate&#39;</span><span class="p">:</span> <span class="s">&#39;2017-12-01&#39;</span>
+                          <span class="p">})</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">bulk_create</span><span class="p">(</span><span class="s">&#39;task&#39;</span><span class="p">,</span> <span class="n">tasks</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestWorkfrontE2E.bulk_update_tasks"><a class="viewcode-back" href="../../tests.html#tests.test_api_e2e.TestWorkfrontE2E.bulk_update_tasks">[docs]</a>    <span class="k">def</span> <span class="nf">bulk_update_tasks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_ids</span><span class="p">,</span> <span class="n">hash_str</span><span class="p">):</span>
+        <span class="n">updates</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">t_id</span> <span class="ow">in</span> <span class="n">task_ids</span><span class="p">:</span>
+            <span class="n">updates</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="s">&#39;Hash: {0} - {1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hash_str</span><span class="p">,</span> <span class="n">t_id</span><span class="p">[</span><span class="mi">4</span><span class="p">:]),</span>
+                            <span class="s">&#39;ID&#39;</span><span class="p">:</span> <span class="n">t_id</span><span class="p">,</span>
+                            <span class="s">&#39;description&#39;</span><span class="p">:</span> <span class="s">&#39;&#39;&#39;Description here&#39;&#39;&#39;</span><span class="p">})</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">bulk</span><span class="p">(</span><span class="s">&#39;task&#39;</span><span class="p">,</span> <span class="n">updates</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestWorkfrontE2E.bulk_delete_tasks"><a class="viewcode-back" href="../../tests.html#tests.test_api_e2e.TestWorkfrontE2E.bulk_delete_tasks">[docs]</a>    <span class="k">def</span> <span class="nf">bulk_delete_tasks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_ids</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">bulk_delete</span><span class="p">(</span><span class="s">&#39;task&#39;</span><span class="p">,</span> <span class="n">task_ids</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestWorkfrontE2E.live_search"><a class="viewcode-back" href="../../tests.html#tests.test_api_e2e.TestWorkfrontE2E.live_search">[docs]</a>    <span class="k">def</span> <span class="nf">live_search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hash_str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&#39;task&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="s">&#39;Updated name {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hash_str</span><span class="p">),</span> <span class="s">&#39;name_Mod&#39;</span><span class="p">:</span> <span class="s">&#39;cicontains&#39;</span><span class="p">},</span>
+                               <span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="TestWorkfrontE2E.search"><a class="viewcode-back" href="../../tests.html#tests.test_api_e2e.TestWorkfrontE2E.search">[docs]</a>    <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">objcode</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="k">None</span><span class="p">,</span> <span class="n">get_all</span><span class="o">=</span><span class="k">False</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="k">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">objcode</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">get_all</span><span class="p">,</span> <span class="n">limit</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestWorkfrontE2E.make_error"><a class="viewcode-back" href="../../tests.html#tests.test_api_e2e.TestWorkfrontE2E.make_error">[docs]</a>    <span class="k">def</span> <span class="nf">make_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">Exception</span><span class="p">)</span> <span class="k">as</span> <span class="n">context</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&#39;task&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;namea&#39;</span><span class="p">:</span> <span class="s">&#39;cra&#39;</span><span class="p">,</span> <span class="s">&#39;name_Mod&#39;</span><span class="p">:</span> <span class="s">&#39;cicontains&#39;</span><span class="p">},</span> <span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="TestWorkfrontE2E.delete_a_proj"><a class="viewcode-back" href="../../tests.html#tests.test_api_e2e.TestWorkfrontE2E.delete_a_proj">[docs]</a>    <span class="k">def</span> <span class="nf">delete_a_proj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proj_id</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s">&#39;proj&#39;</span><span class="p">,</span> <span class="n">proj_id</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">workfrontapi_plus</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../break_bulk_updates.html">break_bulk_updates module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../setup.html">setup module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tests.html">tests package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../wfconfig.html">wfconfig module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../workfrontapi_plus.html">workfrontapi_plus package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Integrated Device Technology.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

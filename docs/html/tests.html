@@ -1,0 +1,449 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>tests package &#8212; workfrontapi_plus Version 1.0.23 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     'Version 1.0.23',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="wfconfig module" href="wfconfig.html" />
+    <link rel="prev" title="setup module" href="setup.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="tests-package">
+<h1>tests package<a class="headerlink" href="#tests-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-tests.test_api">
+<span id="tests-test-api-module"></span><h2>tests.test_api module<a class="headerlink" href="#module-tests.test_api" title="Permalink to this headline">¶</a></h2>
+<p>Copyright 2017, Integrated Device Technologies, Inc.</p>
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the “Software”), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:</p>
+<p>The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.</p>
+<p>THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.</p>
+<p>Authors: Roshan Bal, Craig Lathrop</p>
+<dl class="class">
+<dt id="tests.test_api.TestWorkfront">
+<em class="property">class </em><code class="descclassname">tests.test_api.</code><code class="descname">TestWorkfront</code><span class="sig-paren">(</span><em>methodName='runTest'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api.html#TestWorkfront"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api.TestWorkfront" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">unittest.case.TestCase</span></code></p>
+<dl class="attribute">
+<dt id="tests.test_api.TestWorkfront.api">
+<code class="descname">api</code><em class="property"> = &lt;workfrontapi_plus.api.Api object&gt;</em><a class="headerlink" href="#tests.test_api.TestWorkfront.api" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="tests.test_api.TestWorkfront.api_response">
+<em class="property">static </em><code class="descname">api_response</code><span class="sig-paren">(</span><em>data</em>, <em>dest</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api.html#TestWorkfront.api_response"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api.TestWorkfront.api_response" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api.TestWorkfront.e2e_controller">
+<code class="descname">e2e_controller</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api.html#TestWorkfront.e2e_controller"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api.TestWorkfront.e2e_controller" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="tests.test_api.TestWorkfront.hash_dict">
+<em class="property">static </em><code class="descname">hash_dict</code><span class="sig-paren">(</span><em>some_dict</em>, <em>make_list=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api.html#TestWorkfront.hash_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api.TestWorkfront.hash_dict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api.TestWorkfront.test__bulksegmenter">
+<code class="descname">test__bulksegmenter</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api.html#TestWorkfront.test__bulksegmenter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api.TestWorkfront.test__bulksegmenter" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api.TestWorkfront.test__make_request">
+<code class="descname">test__make_request</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api.html#TestWorkfront.test__make_request"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api.TestWorkfront.test__make_request" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api.TestWorkfront.test__parse_parameter_lists">
+<code class="descname">test__parse_parameter_lists</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api.html#TestWorkfront.test__parse_parameter_lists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api.TestWorkfront.test__parse_parameter_lists" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api.TestWorkfront.test_action">
+<code class="descname">test_action</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api.html#TestWorkfront.test_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api.TestWorkfront.test_action" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api.TestWorkfront.test_bulk">
+<code class="descname">test_bulk</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api.html#TestWorkfront.test_bulk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api.TestWorkfront.test_bulk" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api.TestWorkfront.test_bulk_create">
+<code class="descname">test_bulk_create</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api.html#TestWorkfront.test_bulk_create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api.TestWorkfront.test_bulk_create" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api.TestWorkfront.test_bulk_delete">
+<code class="descname">test_bulk_delete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api.html#TestWorkfront.test_bulk_delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api.TestWorkfront.test_bulk_delete" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api.TestWorkfront.test_count">
+<code class="descname">test_count</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api.html#TestWorkfront.test_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api.TestWorkfront.test_count" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api.TestWorkfront.test_delete">
+<code class="descname">test_delete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api.html#TestWorkfront.test_delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api.TestWorkfront.test_delete" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api.TestWorkfront.test_get">
+<code class="descname">test_get</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api.html#TestWorkfront.test_get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api.TestWorkfront.test_get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api.TestWorkfront.test_get_list">
+<code class="descname">test_get_list</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api.html#TestWorkfront.test_get_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api.TestWorkfront.test_get_list" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api.TestWorkfront.test_live_search">
+<code class="descname">test_live_search</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api.html#TestWorkfront.test_live_search"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api.TestWorkfront.test_live_search" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api.TestWorkfront.test_login">
+<code class="descname">test_login</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api.html#TestWorkfront.test_login"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api.TestWorkfront.test_login" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api.TestWorkfront.test_logout">
+<code class="descname">test_logout</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api.html#TestWorkfront.test_logout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api.TestWorkfront.test_logout" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api.TestWorkfront.test_make_update_as_user">
+<code class="descname">test_make_update_as_user</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api.html#TestWorkfront.test_make_update_as_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api.TestWorkfront.test_make_update_as_user" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api.TestWorkfront.test_post">
+<code class="descname">test_post</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api.html#TestWorkfront.test_post"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api.TestWorkfront.test_post" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api.TestWorkfront.test_put">
+<code class="descname">test_put</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api.html#TestWorkfront.test_put"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api.TestWorkfront.test_put" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api.TestWorkfront.test_report">
+<code class="descname">test_report</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api.html#TestWorkfront.test_report"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api.TestWorkfront.test_report" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api.TestWorkfront.test_search">
+<code class="descname">test_search</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api.html#TestWorkfront.test_search"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api.TestWorkfront.test_search" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-tests.test_api_e2e">
+<span id="tests-test-api-e2e-module"></span><h2>tests.test_api_e2e module<a class="headerlink" href="#module-tests.test_api_e2e" title="Permalink to this headline">¶</a></h2>
+<p>Copyright 2017, Integrated Device Technologies, Inc.</p>
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the “Software”), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:</p>
+<p>The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.</p>
+<p>THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.</p>
+<p>Authors: Roshan Bal, Craig Lathrop</p>
+<dl class="class">
+<dt id="tests.test_api_e2e.TestWorkfrontE2E">
+<em class="property">class </em><code class="descclassname">tests.test_api_e2e.</code><code class="descname">TestWorkfrontE2E</code><span class="sig-paren">(</span><em>methodName='runTest'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api_e2e.html#TestWorkfrontE2E"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api_e2e.TestWorkfrontE2E" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">unittest.case.TestCase</span></code></p>
+<dl class="attribute">
+<dt id="tests.test_api_e2e.TestWorkfrontE2E.api">
+<code class="descname">api</code><em class="property"> = &lt;workfrontapi_plus.api.Api object&gt;</em><a class="headerlink" href="#tests.test_api_e2e.TestWorkfrontE2E.api" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api_e2e.TestWorkfrontE2E.bulk_delete_tasks">
+<code class="descname">bulk_delete_tasks</code><span class="sig-paren">(</span><em>task_ids</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api_e2e.html#TestWorkfrontE2E.bulk_delete_tasks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api_e2e.TestWorkfrontE2E.bulk_delete_tasks" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api_e2e.TestWorkfrontE2E.bulk_update_tasks">
+<code class="descname">bulk_update_tasks</code><span class="sig-paren">(</span><em>task_ids</em>, <em>hash_str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api_e2e.html#TestWorkfrontE2E.bulk_update_tasks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api_e2e.TestWorkfrontE2E.bulk_update_tasks" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api_e2e.TestWorkfrontE2E.delete_a_proj">
+<code class="descname">delete_a_proj</code><span class="sig-paren">(</span><em>proj_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api_e2e.html#TestWorkfrontE2E.delete_a_proj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api_e2e.TestWorkfrontE2E.delete_a_proj" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api_e2e.TestWorkfrontE2E.delete_a_task">
+<code class="descname">delete_a_task</code><span class="sig-paren">(</span><em>task_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api_e2e.html#TestWorkfrontE2E.delete_a_task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api_e2e.TestWorkfrontE2E.delete_a_task" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api_e2e.TestWorkfrontE2E.do_action">
+<code class="descname">do_action</code><span class="sig-paren">(</span><em>objcode</em>, <em>action</em>, <em>params</em>, <em>fields=None</em>, <em>objid=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api_e2e.html#TestWorkfrontE2E.do_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api_e2e.TestWorkfrontE2E.do_action" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api_e2e.TestWorkfrontE2E.get_count">
+<code class="descname">get_count</code><span class="sig-paren">(</span><em>objcode</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api_e2e.html#TestWorkfrontE2E.get_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api_e2e.TestWorkfrontE2E.get_count" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api_e2e.TestWorkfrontE2E.get_the_list">
+<code class="descname">get_the_list</code><span class="sig-paren">(</span><em>objcode</em>, <em>ids</em>, <em>fields=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api_e2e.html#TestWorkfrontE2E.get_the_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api_e2e.TestWorkfrontE2E.get_the_list" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api_e2e.TestWorkfrontE2E.live_search">
+<code class="descname">live_search</code><span class="sig-paren">(</span><em>hash_str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api_e2e.html#TestWorkfrontE2E.live_search"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api_e2e.TestWorkfrontE2E.live_search" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api_e2e.TestWorkfrontE2E.login_tst">
+<code class="descname">login_tst</code><span class="sig-paren">(</span><em>username</em>, <em>password=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api_e2e.html#TestWorkfrontE2E.login_tst"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api_e2e.TestWorkfrontE2E.login_tst" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api_e2e.TestWorkfrontE2E.logout_tst">
+<code class="descname">logout_tst</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api_e2e.html#TestWorkfrontE2E.logout_tst"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api_e2e.TestWorkfrontE2E.logout_tst" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api_e2e.TestWorkfrontE2E.make_a_task">
+<code class="descname">make_a_task</code><span class="sig-paren">(</span><em>proj_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api_e2e.html#TestWorkfrontE2E.make_a_task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api_e2e.TestWorkfrontE2E.make_a_task" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api_e2e.TestWorkfrontE2E.make_bulk_tasks">
+<code class="descname">make_bulk_tasks</code><span class="sig-paren">(</span><em>proj_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api_e2e.html#TestWorkfrontE2E.make_bulk_tasks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api_e2e.TestWorkfrontE2E.make_bulk_tasks" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api_e2e.TestWorkfrontE2E.make_doc">
+<code class="descname">make_doc</code><span class="sig-paren">(</span><em>file</em>, <em>obj_code</em>, <em>obj_id</em>, <em>version=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api_e2e.html#TestWorkfrontE2E.make_doc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api_e2e.TestWorkfrontE2E.make_doc" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api_e2e.TestWorkfrontE2E.make_error">
+<code class="descname">make_error</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api_e2e.html#TestWorkfrontE2E.make_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api_e2e.TestWorkfrontE2E.make_error" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api_e2e.TestWorkfrontE2E.make_proj">
+<code class="descname">make_proj</code><span class="sig-paren">(</span><em>hash_str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api_e2e.html#TestWorkfrontE2E.make_proj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api_e2e.TestWorkfrontE2E.make_proj" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api_e2e.TestWorkfrontE2E.make_update_by_user">
+<code class="descname">make_update_by_user</code><span class="sig-paren">(</span><em>user_email</em>, <em>exec_method</em>, <em>objcode</em>, <em>params</em>, <em>objid=None</em>, <em>action=None</em>, <em>objids=None</em>, <em>fields=None</em>, <em>logout=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api_e2e.html#TestWorkfrontE2E.make_update_by_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api_e2e.TestWorkfrontE2E.make_update_by_user" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api_e2e.TestWorkfrontE2E.post_doc">
+<code class="descname">post_doc</code><span class="sig-paren">(</span><em>name</em>, <em>handle</em>, <em>obj_code</em>, <em>obj_id</em>, <em>version</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api_e2e.html#TestWorkfrontE2E.post_doc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api_e2e.TestWorkfrontE2E.post_doc" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api_e2e.TestWorkfrontE2E.report_tst">
+<code class="descname">report_tst</code><span class="sig-paren">(</span><em>objcode</em>, <em>params</em>, <em>agg_field=None</em>, <em>agg_func=None</em>, <em>group_by_field=None</em>, <em>rollup=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api_e2e.html#TestWorkfrontE2E.report_tst"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api_e2e.TestWorkfrontE2E.report_tst" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api_e2e.TestWorkfrontE2E.search">
+<code class="descname">search</code><span class="sig-paren">(</span><em>objcode</em>, <em>params</em>, <em>fields=None</em>, <em>get_all=False</em>, <em>limit=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api_e2e.html#TestWorkfrontE2E.search"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api_e2e.TestWorkfrontE2E.search" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api_e2e.TestWorkfrontE2E.share">
+<code class="descname">share</code><span class="sig-paren">(</span><em>task_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api_e2e.html#TestWorkfrontE2E.share"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api_e2e.TestWorkfrontE2E.share" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api_e2e.TestWorkfrontE2E.test_e2e_controller">
+<code class="descname">test_e2e_controller</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api_e2e.html#TestWorkfrontE2E.test_e2e_controller"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api_e2e.TestWorkfrontE2E.test_e2e_controller" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_api_e2e.TestWorkfrontE2E.tst_put">
+<code class="descname">tst_put</code><span class="sig-paren">(</span><em>objcode</em>, <em>objid</em>, <em>params</em>, <em>fields=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_api_e2e.html#TestWorkfrontE2E.tst_put"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_api_e2e.TestWorkfrontE2E.tst_put" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-tests.test_workfrontObject">
+<span id="tests-test-workfrontobject-module"></span><h2>tests.test_workfrontObject module<a class="headerlink" href="#module-tests.test_workfrontObject" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="tests.test_workfrontObject.TestWorkfrontObject">
+<em class="property">class </em><code class="descclassname">tests.test_workfrontObject.</code><code class="descname">TestWorkfrontObject</code><span class="sig-paren">(</span><em>methodName='runTest'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_workfrontObject.html#TestWorkfrontObject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_workfrontObject.TestWorkfrontObject" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">unittest.case.TestCase</span></code></p>
+<dl class="attribute">
+<dt id="tests.test_workfrontObject.TestWorkfrontObject.core_obj">
+<code class="descname">core_obj</code><em class="property"> = &lt;workfrontapi_plus.core_wf_object.WorkfrontObject object&gt;</em><a class="headerlink" href="#tests.test_workfrontObject.TestWorkfrontObject.core_obj" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_workfrontObject.TestWorkfrontObject.test__convert_dates">
+<code class="descname">test__convert_dates</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_workfrontObject.html#TestWorkfrontObject.test__convert_dates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_workfrontObject.TestWorkfrontObject.test__convert_dates" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_workfrontObject.TestWorkfrontObject.test_delete">
+<code class="descname">test_delete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_workfrontObject.html#TestWorkfrontObject.test_delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_workfrontObject.TestWorkfrontObject.test_delete" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_workfrontObject.TestWorkfrontObject.test_get_share">
+<code class="descname">test_get_share</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_workfrontObject.html#TestWorkfrontObject.test_get_share"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_workfrontObject.TestWorkfrontObject.test_get_share" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_workfrontObject.TestWorkfrontObject.test_save">
+<code class="descname">test_save</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_workfrontObject.html#TestWorkfrontObject.test_save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_workfrontObject.TestWorkfrontObject.test_save" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tests.test_workfrontObject.TestWorkfrontObject.test_share">
+<code class="descname">test_share</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_workfrontObject.html#TestWorkfrontObject.test_share"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_workfrontObject.TestWorkfrontObject.test_share" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-tests.wf_project_data_mock">
+<span id="tests-wf-project-data-mock-module"></span><h2>tests.wf_project_data_mock module<a class="headerlink" href="#module-tests.wf_project_data_mock" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-tests">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-tests" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">workfrontapi_plus</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="break_bulk_updates.html">break_bulk_updates module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="setup.html">setup module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">tests package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-tests.test_api">tests.test_api module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-tests.test_api_e2e">tests.test_api_e2e module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-tests.test_workfrontObject">tests.test_workfrontObject module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-tests.wf_project_data_mock">tests.wf_project_data_mock module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-tests">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="wfconfig.html">wfconfig module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="workfrontapi_plus.html">workfrontapi_plus package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="setup.html" title="previous chapter">setup module</a></li>
+      <li>Next: <a href="wfconfig.html" title="next chapter">wfconfig module</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Integrated Device Technology.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/tests.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

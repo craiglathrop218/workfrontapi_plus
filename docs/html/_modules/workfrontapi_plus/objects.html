@@ -1,0 +1,379 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>workfrontapi_plus.objects &#8212; workfrontapi_plus Version 1.0.23 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     'Version 1.0.23',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for workfrontapi_plus.objects</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;Copyright 2017, Integrated Device Technologies, Inc.</span>
+
+<span class="sd">Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="sd">of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="sd">in the Software without restriction, including without limitation the rights</span>
+<span class="sd">to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="sd">copies of the Software, and to permit persons to whom the Software is</span>
+<span class="sd">furnished to do so, subject to the following conditions:</span>
+
+<span class="sd">The above copyright notice and this permission notice shall be included in all</span>
+<span class="sd">copies or substantial portions of the Software.</span>
+
+<span class="sd">THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="sd">IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="sd">FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="sd">AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="sd">LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="sd">OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="sd">SOFTWARE.</span>
+
+<span class="sd">Authors: Roshan Bal, Craig Lathrop</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">workfrontapi_plus.core_wf_object</span> <span class="k">import</span> <span class="n">WorkfrontObject</span>
+
+
+<span class="c"># class Note(object):</span>
+<span class="c">#     def __init__(self, objcode, objid):</span>
+<span class="c">#         self.objcode = objcode</span>
+<span class="c">#         self.objid = objid</span>
+<span class="c">#</span>
+<span class="c">#     def create_note_dictionary(self, comment_text):</span>
+<span class="c">#         comment_dict = {}</span>
+<span class="c">#         comment_dict[&#39;noteObjID&#39;] = self.objid</span>
+<span class="c">#         comment_dict[&#39;noteText&#39;] = comment_text</span>
+<span class="c">#         comment_dict[&#39;noteObjCode&#39;] = self.objcode</span>
+<span class="c">#</span>
+<span class="c">#         return comment_dict</span>
+
+
+<span class="k">class</span> <span class="nc">_WorkTypeObject</span><span class="p">(</span><span class="n">WorkfrontObject</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class that shares common traits with issues, tasks, and projects</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="k">None</span><span class="p">,</span> <span class="n">api</span><span class="o">=</span><span class="k">None</span><span class="p">,</span> <span class="n">obj_code</span><span class="o">=</span><span class="k">None</span><span class="p">,</span> <span class="n">obj_id</span><span class="o">=</span><span class="k">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="k">None</span><span class="p">,</span> <span class="n">convert_dates</span><span class="o">=</span><span class="k">False</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="k">None</span><span class="p">):</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">api</span><span class="p">,</span> <span class="n">obj_code</span><span class="o">=</span><span class="n">obj_code</span><span class="p">,</span> <span class="n">obj_id</span><span class="o">=</span><span class="n">obj_id</span><span class="p">,</span> <span class="n">convert_dates</span><span class="o">=</span><span class="n">convert_dates</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="n">fields</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">name</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="k">def</span> <span class="nf">change_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_status</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_status</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span>
+
+    <span class="k">def</span> <span class="nf">add_comment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comment_text</span><span class="p">,</span> <span class="n">author_email</span><span class="o">=</span><span class="k">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">author_email</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">api_key</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="s">&#39;To post comment on behalf of a user, an admin API key must be used for authentication.&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">author_email</span><span class="p">)</span>
+
+        <span class="n">comment</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_note_dictionary</span><span class="p">(</span><span class="n">comment_text</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s">&#39;NOTE&#39;</span><span class="p">,</span> <span class="n">comment</span><span class="p">)</span>
+        <span class="c"># Clear the login session if the update was made on behalf of the user</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">logout</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">res</span>
+
+    <span class="k">def</span> <span class="nf">_create_note_dictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comment_text</span><span class="p">):</span>
+        <span class="n">comment_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;objID&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ID</span><span class="p">,</span>
+                        <span class="s">&#39;noteText&#39;</span><span class="p">:</span> <span class="n">comment_text</span><span class="p">,</span>
+                        <span class="s">&#39;noteObjCode&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">objCode</span><span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">comment_dict</span>
+
+
+<div class="viewcode-block" id="Task"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.objects.Task">[docs]</a><span class="k">class</span> <span class="nc">Task</span><span class="p">(</span><span class="n">_WorkTypeObject</span><span class="p">):</span>
+    <span class="c"># TODO: edit available people, name, description, status, etc... possibly change the way we do comments?</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="k">None</span><span class="p">,</span> <span class="n">api</span><span class="o">=</span><span class="k">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="k">None</span><span class="p">,</span> <span class="n">task_id</span><span class="o">=</span><span class="k">None</span><span class="p">,</span> <span class="n">convert_dates</span><span class="o">=</span><span class="k">False</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="k">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c"># params = params</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">api</span><span class="o">=</span><span class="n">api</span><span class="p">,</span> <span class="n">obj_code</span><span class="o">=</span><span class="s">&#39;TASK&#39;</span><span class="p">,</span> <span class="n">obj_id</span><span class="o">=</span><span class="n">task_id</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">convert_dates</span><span class="o">=</span><span class="n">convert_dates</span><span class="p">,</span>
+                         <span class="n">fields</span><span class="o">=</span><span class="n">fields</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">name</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+<div class="viewcode-block" id="Task.accept_work"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.objects.Task.accept_work">[docs]</a>    <span class="k">def</span> <span class="nf">accept_work</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># acceptWork</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Task.approve_approval"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.objects.Task.approve_approval">[docs]</a>    <span class="k">def</span> <span class="nf">approve_approval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># approveApproval</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Task.assign"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.objects.Task.assign">[docs]</a>    <span class="k">def</span> <span class="nf">assign</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># assign</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Task.bulk_copy"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.objects.Task.bulk_copy">[docs]</a>    <span class="k">def</span> <span class="nf">bulk_copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># bulkCopy</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Task.bulk_move"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.objects.Task.bulk_move">[docs]</a>    <span class="k">def</span> <span class="nf">bulk_move</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># bulkMove</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Task.calculate_data_extension"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.objects.Task.calculate_data_extension">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_data_extension</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># calculateDataExtension</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Task.calculate_data_extensions"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.objects.Task.calculate_data_extensions">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_data_extensions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># calculateDataExtensions</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Task.mark_done"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.objects.Task.mark_done">[docs]</a>    <span class="k">def</span> <span class="nf">mark_done</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># markDone</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Task.mark_not_done"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.objects.Task.mark_not_done">[docs]</a>    <span class="k">def</span> <span class="nf">mark_not_done</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># markNotDone</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Task.move"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.objects.Task.move">[docs]</a>    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># move</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Task.recall_approval"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.objects.Task.recall_approval">[docs]</a>    <span class="k">def</span> <span class="nf">recall_approval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># recallApproval</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Task.reject_approval"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.objects.Task.reject_approval">[docs]</a>    <span class="k">def</span> <span class="nf">reject_approval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># rejectApproval</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Task.reply_to_assignment"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.objects.Task.reply_to_assignment">[docs]</a>    <span class="k">def</span> <span class="nf">reply_to_assignment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># replyToAssignment</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Task.unaccept_work"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.objects.Task.unaccept_work">[docs]</a>    <span class="k">def</span> <span class="nf">unaccept_work</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># unacceptWork</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Task.unassign"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.objects.Task.unassign">[docs]</a>    <span class="k">def</span> <span class="nf">unassign</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># unassign</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Task.unassign_occurrences"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.objects.Task.unassign_occurrences">[docs]</a>    <span class="k">def</span> <span class="nf">unassign_occurrences</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># unassignOccurrences</span>
+        <span class="k">pass</span></div></div>
+
+
+<div class="viewcode-block" id="Issue"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.objects.Issue">[docs]</a><span class="k">class</span> <span class="nc">Issue</span><span class="p">(</span><span class="n">_WorkTypeObject</span><span class="p">):</span>
+    <span class="c"># TODO: edit available people, name, description, status, etc... possibly change the way we do comments?</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="k">None</span><span class="p">,</span> <span class="n">api</span><span class="o">=</span><span class="k">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="k">None</span><span class="p">,</span> <span class="n">issue_id</span><span class="o">=</span><span class="k">None</span><span class="p">,</span> <span class="n">convert_dates</span><span class="o">=</span><span class="k">False</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="k">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c"># params = params</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">api</span><span class="o">=</span><span class="n">api</span><span class="p">,</span> <span class="n">obj_code</span><span class="o">=</span><span class="s">&#39;OPTASK&#39;</span><span class="p">,</span> <span class="n">obj_id</span><span class="o">=</span><span class="n">issue_id</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">convert_dates</span><span class="o">=</span><span class="n">convert_dates</span><span class="p">,</span>
+                         <span class="n">fields</span><span class="o">=</span><span class="n">fields</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">name</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+<div class="viewcode-block" id="Issue.accept_work"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.objects.Issue.accept_work">[docs]</a>    <span class="k">def</span> <span class="nf">accept_work</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># acceptWork</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Issue.approve_approval"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.objects.Issue.approve_approval">[docs]</a>    <span class="k">def</span> <span class="nf">approve_approval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># approveApproval</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Issue.assign"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.objects.Issue.assign">[docs]</a>    <span class="k">def</span> <span class="nf">assign</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># assign</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Issue.calculate_data_extension"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.objects.Issue.calculate_data_extension">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_data_extension</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># calculateDataExtension</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Issue.mark_done"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.objects.Issue.mark_done">[docs]</a>    <span class="k">def</span> <span class="nf">mark_done</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># markDone</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Issue.mark_not_done"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.objects.Issue.mark_not_done">[docs]</a>    <span class="k">def</span> <span class="nf">mark_not_done</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># markNotDone</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Issue.move"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.objects.Issue.move">[docs]</a>    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># move</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Issue.move_to_task"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.objects.Issue.move_to_task">[docs]</a>    <span class="k">def</span> <span class="nf">move_to_task</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># moveToTask</span>
+        <span class="k">pass</span></div></div>
+
+
+<div class="viewcode-block" id="Project"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.objects.Project">[docs]</a><span class="k">class</span> <span class="nc">Project</span><span class="p">(</span><span class="n">_WorkTypeObject</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for the project object type.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c"># TODO: edit available people, name, description, status, etc... possibly change the way we do comments?</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="k">None</span><span class="p">,</span> <span class="n">api</span><span class="o">=</span><span class="k">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="k">None</span><span class="p">,</span> <span class="n">proj_id</span><span class="o">=</span><span class="k">None</span><span class="p">,</span> <span class="n">convert_dates</span><span class="o">=</span><span class="k">False</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="k">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c"># params = params</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">api</span><span class="o">=</span><span class="n">api</span><span class="p">,</span> <span class="n">obj_code</span><span class="o">=</span><span class="s">&#39;PROJ&#39;</span><span class="p">,</span> <span class="n">obj_id</span><span class="o">=</span><span class="n">proj_id</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">convert_dates</span><span class="o">=</span><span class="n">convert_dates</span><span class="p">,</span>
+                         <span class="n">fields</span><span class="o">=</span><span class="n">fields</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">name</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+<div class="viewcode-block" id="Project.attach_template"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.objects.Project.attach_template">[docs]</a>    <span class="k">def</span> <span class="nf">attach_template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">template_id</span><span class="p">,</span>
+                        <span class="n">fields</span><span class="o">=</span><span class="k">None</span><span class="p">,</span>
+                        <span class="n">predecessor_task_id</span><span class="o">=</span><span class="k">None</span><span class="p">,</span>
+                        <span class="n">parent_task_id</span><span class="o">=</span><span class="k">None</span><span class="p">,</span>
+                        <span class="n">exclude_template_task_ids</span><span class="o">=</span><span class="k">None</span><span class="p">,</span>
+                        <span class="n">options</span><span class="o">=</span><span class="k">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Attaches a template to a project with options.</span>
+
+<span class="sd">        :param template_id:</span>
+<span class="sd">        :param fields:</span>
+<span class="sd">        :param predecessor_task_id:</span>
+<span class="sd">        :param parent_task_id:</span>
+<span class="sd">        :param exclude_template_task_ids:</span>
+<span class="sd">        :param options:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;templateID&#39;</span><span class="p">:</span> <span class="n">template_id</span><span class="p">,</span>
+                  <span class="s">&#39;predecessorTaskID&#39;</span><span class="p">:</span> <span class="n">predecessor_task_id</span><span class="p">,</span>
+                  <span class="s">&#39;parentTaskID&#39;</span><span class="p">:</span> <span class="n">parent_task_id</span><span class="p">,</span>
+                  <span class="s">&#39;excludeTemplateTask_IDs&#39;</span><span class="p">:</span> <span class="n">exclude_template_task_ids</span><span class="p">,</span>
+                  <span class="s">&#39;options&#39;</span><span class="p">:</span> <span class="n">options</span><span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">action</span><span class="p">(</span><span class="s">&#39;PROJ&#39;</span><span class="p">,</span> <span class="s">&#39;attachTemplate&#39;</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ID</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Project.approve_approval"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.objects.Project.approve_approval">[docs]</a>    <span class="k">def</span> <span class="nf">approve_approval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># approveApproval</span>
+        <span class="k">pass</span></div>
+
+    <span class="c"># def attach_template(self):</span>
+    <span class="c">#     # attachTemplate</span>
+    <span class="c">#     pass</span>
+
+<div class="viewcode-block" id="Project.calculate_data_extension"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.objects.Project.calculate_data_extension">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_data_extension</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># calculateDataExtension</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Project.calculate_finance"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.objects.Project.calculate_finance">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_finance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># calculateFinance</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Project.calculate_timeline"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.objects.Project.calculate_timeline">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_timeline</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># calculateTimeline</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Project.recall_approval"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.objects.Project.recall_approval">[docs]</a>    <span class="k">def</span> <span class="nf">recall_approval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># recallApproval</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Project.reject_approval"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.objects.Project.reject_approval">[docs]</a>    <span class="k">def</span> <span class="nf">reject_approval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># rejectApproval</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Project.set_budget_to_schedule"><a class="viewcode-back" href="../../workfrontapi_plus.html#workfrontapi_plus.objects.Project.set_budget_to_schedule">[docs]</a>    <span class="k">def</span> <span class="nf">set_budget_to_schedule</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># setBudgetToSchedule</span>
+        <span class="k">pass</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">workfrontapi_plus</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../break_bulk_updates.html">break_bulk_updates module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../setup.html">setup module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tests.html">tests package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../wfconfig.html">wfconfig module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../workfrontapi_plus.html">workfrontapi_plus package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Integrated Device Technology.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
